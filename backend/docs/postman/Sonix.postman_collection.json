@@ -1,0 +1,419 @@
+{
+  "info": {
+    "name": "SonixApp API",
+    "description": "All API endpoints for SonixVisualiser v2. Auth uses HTTP-only cookies — after Login, subsequent requests in the same Postman session are automatically authenticated.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "SonixBaseUrl",
+      "value": "http://localhost:5001/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "visualizerId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/health",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Returns server status."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\"status\": \"ok\"}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{SonixBaseUrl}}/auth/register",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Creates a new user account and sets an HTTP-only auth cookie."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data._id) {",
+                  "  pm.collectionVariables.set('userId', json.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{SonixBaseUrl}}/auth/login",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates a user and sets an HTTP-only auth cookie. The test script saves the userId to collection variables."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/auth/logout",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Clears the auth cookie."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": { \"message\": \"Logged out\" }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Visualizers",
+      "item": [
+        {
+          "name": "List Visualizers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/visualizers",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["visualizers"]
+            },
+            "description": "Returns all visualizers (excludes glsl and source fields). Public."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": [\n    {\n      \"_id\": \"...\",\n      \"name\": \"My Visualizer\",\n      \"isDemo\": false,\n      \"createdAt\": \"...\",\n      \"updatedAt\": \"...\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Demo Visualizer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/visualizers/demo",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["visualizers", "demo"]
+            },
+            "description": "Returns the single visualizer marked as isDemo=true. Public."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"Demo\",\n    \"isDemo\": true,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Visualizer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/visualizers/{{visualizerId}}",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["visualizers", "{{visualizerId}}"]
+            },
+            "description": "Returns full visualizer details including glsl and source. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"My Visualizer\",\n    \"source\": \"...\",\n    \"glsl\": \"...\",\n    \"isDemo\": false,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/users/user",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["users", "user"]
+            },
+            "description": "Returns the authenticated user's profile. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Current User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newemail@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{SonixBaseUrl}}/users/user",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["users", "user"]
+            },
+            "description": "Updates the authenticated user's email. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"name\": \"John Doe\",\n    \"email\": \"newemail@example.com\",\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Saved Visuals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/users/user/visuals",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["users", "user", "visuals"]
+            },
+            "description": "Returns all visualizers saved by the authenticated user, sorted by savedAt descending. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": [\n    {\n      \"_id\": \"...\",\n      \"userId\": \"...\",\n      \"visualizerId\": {\n        \"_id\": \"...\",\n        \"name\": \"My Visualizer\"\n      },\n      \"savedAt\": \"...\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Save Visual",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/users/user/visuals/{{visualizerId}}",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["users", "user", "visuals", "{{visualizerId}}"]
+            },
+            "description": "Saves a visualizer to the authenticated user's collection. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"userId\": \"...\",\n    \"visualizerId\": \"...\",\n    \"savedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Remove Saved Visual",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/users/user/visuals/{{visualizerId}}",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["users", "user", "visuals", "{{visualizerId}}"]
+            },
+            "description": "Removes a visualizer from the authenticated user's saved collection. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": { \"message\": \"Removed\" }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "Upload User Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": "",
+                  "description": "Image file (max 5MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{SonixBaseUrl}}/images/users/user",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["images", "users", "user"]
+            },
+            "description": "Uploads a profile image for the authenticated user. Accepts multipart/form-data with an `image` field. Replaces any existing image. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"data\": {\n    \"_id\": \"...\",\n    \"ownerType\": \"user\",\n    \"ownerId\": \"...\",\n    \"fileId\": \"...\",\n    \"filename\": \"avatar.png\",\n    \"contentType\": \"image/png\",\n    \"size\": 12345,\n    \"createdAt\": \"...\",\n    \"updatedAt\": \"...\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/images/users/{{userId}}",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["images", "users", "{{userId}}"]
+            },
+            "description": "Streams a user's profile image from GridFS. Returns binary image data with appropriate Content-Type header. Public."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User Image",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/images/users/user",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["images", "users", "user"]
+            },
+            "description": "Deletes the authenticated user's profile image from GridFS and removes the reference from the user document. Requires authentication (cookie)."
+          },
+          "response": [
+            {
+              "name": "OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": { \"message\": \"Deleted\" }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Visualizer Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{SonixBaseUrl}}/images/visualizers/{{visualizerId}}",
+              "host": ["{{SonixBaseUrl}}"],
+              "path": ["images", "visualizers", "{{visualizerId}}"]
+            },
+            "description": "Streams a visualizer's image from GridFS. Returns binary image data with appropriate Content-Type header. Public."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
