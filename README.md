@@ -93,7 +93,7 @@ project-root/
 ## ⚙️ Setup & Installation
 
 ### Prerequisites
-- Node.js (v18+ recommended)
+- Node.js 24 LTS (recommended)
 - npm or yarn
 - MongoDB or PostgreSQL (local or cloud)
 
