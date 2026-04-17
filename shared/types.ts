@@ -1,0 +1,1 @@
+// Shaded types for applications will be placed here
