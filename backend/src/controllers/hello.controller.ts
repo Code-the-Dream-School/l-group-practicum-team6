@@ -1,7 +1,9 @@
-import type { Request, Response } from 'express';
+import type { Request, Response } from "express";
+import type { ApiResponse } from "@sonix/shared";
 
 export const getHello = (_req: Request, res: Response): void => {
-  res.json({
-    message: 'Hello World'
-  });
+  const payload: ApiResponse<{ message: string }> = {
+    data: { message: "Hello World" },
+  };
+  res.json(payload);
 };

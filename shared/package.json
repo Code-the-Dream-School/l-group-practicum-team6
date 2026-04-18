@@ -1,5 +1,6 @@
 {
     "name": "@sonix/shared",
     "version": "1.0.0",
-    "private": true
+    "private": true,
+    "main": "types.ts"
 }
