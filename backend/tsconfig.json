@@ -10,7 +10,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@sonix/shared": ["../shared/types.ts"],
       "../../errors": ["./src/errors/index.ts"]
     }
   },

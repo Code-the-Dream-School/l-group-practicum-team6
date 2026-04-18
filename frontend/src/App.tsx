@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import './App.css'
+import type { ApiResponse } from '@sonix/shared';
+import './App.css';
+
+type HelloCall = ApiResponse<{ message: string }>;
 
 function App() {
   const [message, setMessage] = useState('');
@@ -12,10 +15,11 @@ function App() {
         if (!response.ok) {
           throw new Error('Failed to fetch from backend');
         }
-        return response.json();
+        return response.json() as Promise<HelloCall>;
       })
-      .then((data) => {
-        setMessage(data.message);
+      .then((body: HelloCall) => {
+        console.log(body.data);
+        setMessage(body.data.message);
       })
       .catch((err) => {
         setError(err.message);
