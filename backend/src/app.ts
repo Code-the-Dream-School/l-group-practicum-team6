@@ -7,6 +7,9 @@ import cookieParser from "cookie-parser";
 
 import helloRoutes from "./routes/hello.routes";
 
+import { notFound } from "./middleware/notFound";
+import { errorHandler } from "./middleware/errorHandler";
+
 const app = express();
 
 app.use(helmet());
@@ -26,5 +29,8 @@ app.use("/api/hello", helloRoutes);
 app.get("/", (_req, res) => {
   res.send("Backend API is running");
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;
