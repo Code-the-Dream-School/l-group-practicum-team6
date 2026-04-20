@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <main className="p-8">
       <h1 className="text-2xl font-bold">Frontend ↔ Backend Test</h1>
 
       {error && <p className="text-error">{error}</p>}

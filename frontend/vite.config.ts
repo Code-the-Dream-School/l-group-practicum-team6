@@ -1,5 +1,4 @@
 import react from "@vitejs/plugin-react";
-import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -7,13 +6,6 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": "http://localhost:5001",
-    },
-  },
-  resolve: {
-    alias: {
-      "@sonix/shared": fileURLToPath(
-        new URL("../shared/src/index.ts", import.meta.url),
-      ),
     },
   },
   test: {

@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
+@layer base {
+  html {
+    @apply font-sans antialiased;
+  }
+}
+
 @layer components {
   .btn-primary {
     @apply inline-flex items-center;
