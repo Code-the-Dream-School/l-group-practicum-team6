@@ -1,0 +1,20 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center;
+  }
+
+  .input-field {
+    @apply inline-flex items-center;
+  }
+
+  .glass-card {
+    @apply inline-flex items-center;
+  }
+}
