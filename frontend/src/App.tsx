@@ -6,10 +6,11 @@ type HelloCall = ApiResponse<{ message: string }>;
 function App() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
-
+  
   useEffect(() => {
     // Call the backend API
-    fetch('/api/hello')
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL : '';
+    fetch(`${apiBaseUrl}/api/hello`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch from backend');
