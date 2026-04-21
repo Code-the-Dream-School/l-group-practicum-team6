@@ -14,6 +14,7 @@
         "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
         "build": "npm run build -w shared && npm run build -w frontend && npm run build -w backend",
         "test": "npm run test -w backend && npm run test -w frontend",
+        "coverage": "npm run test -w backend && npm run coverage -w frontend",
         "start:frontend": "npm run dev -w frontend",
         "start:backend": "npm run start -w backend"
     },

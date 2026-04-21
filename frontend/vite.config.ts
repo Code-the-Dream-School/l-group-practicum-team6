@@ -16,6 +16,7 @@ export default defineConfig({
     css: true,
     coverage: {
       provider: "v8",
+      include: ["src/**/*.{ts,tsx}"],
       reporter: ["text", "json", "html"],
       exclude: [
         "node_modules/**",
@@ -23,9 +24,11 @@ export default defineConfig({
         "**/*.d.ts",
         "**/*.config.*",
         "src/setupTests.ts",
+        "src/main.tsx",
         "tests/**",
       ],
       thresholds: {
+        perFile: true,
         lines: 70,
         functions: 70,
         branches: 70,
