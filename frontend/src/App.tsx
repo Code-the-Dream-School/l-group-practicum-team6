@@ -9,8 +9,7 @@ function App() {
   
   useEffect(() => {
     // Call the backend API
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL : '';
-    fetch(`${apiBaseUrl}/api/hello`)
+    fetch(`/api/hello`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch from backend');
