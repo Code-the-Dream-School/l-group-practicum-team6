@@ -15,7 +15,8 @@
   "dependencies": {
     "@sonix/shared": "*",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-router-dom": "^6.30.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
