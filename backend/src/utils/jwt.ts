@@ -6,8 +6,13 @@ import { Response } from 'express';
   Signs it with JWT_SECRET and sets expiration from JWT_LIFETIME.
  */
 export const createJWT = (payload: string | Buffer | object): string => {
-  return jwt.sign(payload, process.env.JWT_SECRET as string, {
-    expiresIn: (process.env.JWT_LIFETIME as string) || '7d',
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined');
+  }
+
+  return jwt.sign(payload, secret, {
+    expiresIn: (process.env.JWT_LIFETIME || '7d') as '7d',
   });
 };
 
