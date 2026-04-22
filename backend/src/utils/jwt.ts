@@ -7,7 +7,7 @@ import { Response } from 'express';
  */
 export const createJWT = (payload: string | Buffer | object): string => {
   return jwt.sign(payload, process.env.JWT_SECRET as string, {
-    expiresIn: (process.env.JWT_LIFETIME as any) || '7d',
+    expiresIn: (process.env.JWT_LIFETIME as string) || '7d',
   });
 };
 
