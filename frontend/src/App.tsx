@@ -6,7 +6,7 @@ type HelloCall = ApiResponse<{ message: string }>;
 function App() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     // Call the backend API
     fetch(`/api/hello`)

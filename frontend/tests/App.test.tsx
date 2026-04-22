@@ -39,4 +39,17 @@ describe("App", () => {
       await screen.findByText(/Failed to fetch from backend/),
     ).toBeInTheDocument();
   });
+
+  it("shows error when fetch rejects (network failure)", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() =>
+        Promise.reject(new TypeError("Failed to fetch")),
+      ),
+    );
+    render(<App />);
+    expect(
+      await screen.findByText(/Failed to fetch/),
+    ).toBeInTheDocument();
+  });
 });

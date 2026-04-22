@@ -8,6 +8,7 @@
 }
 
 @layer components {
+  /* Placeholders for a future design-system */
   .btn-primary {
     @apply inline-flex items-center;
   }
