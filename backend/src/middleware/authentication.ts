@@ -28,9 +28,16 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
     throw new UnauthenticatedError('Authentication Invalid');
   }
 
+  // Saving JWT_SECRET into variable, removed '!'
+  const secret = process.env.JWT_SECRET;
+  // Check if secret is availble 
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
+
   try {
     // 2. Verify the token
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as UserPayload;
+    const payload = jwt.verify(token, secret) as UserPayload;
 
     // 3. Attach user data to the request for use in controllers
     req.user = { 
