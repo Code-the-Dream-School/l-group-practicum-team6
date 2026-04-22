@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { ApiResponse } from '@sonix/shared';
-import './App.css';
 
 type HelloCall = ApiResponse<{ message: string }>;
 
@@ -10,7 +9,7 @@ function App() {
 
   useEffect(() => {
     // Call the backend API
-    fetch('http://localhost:8080/api/hello')
+    fetch(`/api/hello`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch from backend');
@@ -27,14 +26,14 @@ function App() {
   }, []);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Frontend ↔ Backend Test</h1>
+    <main className="p-8">
+      <h1 className="text-2xl font-bold">Frontend ↔ Backend Test</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="text-error">{error}</p>}
 
       {!error && (
-        <p>
-          Message from API: <strong>{message}</strong>
+        <p className="text-lg">
+          Message from API: <strong className="font-bold text-success">{message}</strong>
         </p>
       )}
     </main>

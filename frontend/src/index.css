@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@layer base {
+  html {
+    @apply font-sans antialiased;
+  }
+}
+
+@layer components {
+  /* Placeholders for a future design-system */
+  .btn-primary {
+    @apply inline-flex items-center;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center;
+  }
+
+  .input-field {
+    @apply inline-flex items-center;
+  }
+
+  .glass-card {
+    @apply inline-flex items-center;
+  }
+}
