@@ -10,6 +10,9 @@ import helloRoutes from './routes/hello.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
+import { notFound } from "./middleware/notFound";
+import { errorHandler } from "./middleware/errorHandler";
+
 const app = express();
 
 // Rate limiter — must be first to protect all routes
@@ -40,6 +43,9 @@ app.get('/api/v1/health', (_req, res) => {
 app.use('/api/hello', helloRoutes);
 
 // 404 + global error handler — must be last
+app.use(notFound);
+app.use(errorHandler);
+
 app.use(notFound);
 app.use(errorHandler);
 
