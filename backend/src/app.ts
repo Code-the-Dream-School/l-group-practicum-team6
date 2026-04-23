@@ -7,10 +7,16 @@ import cookieParser from "cookie-parser";
 
 import helloRoutes from "./routes/hello.routes";
 
+
 import { notFound } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
+
+app.use((req, res, next) => {
+  console.log("Incoming request:", req.method, req.url);
+  next();
+});
 
 app.use(helmet());
 app.use(cors());
@@ -25,6 +31,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 app.use("/api/hello", helloRoutes);
+
 
 app.get("/", (_req, res) => {
   res.send("Backend API is running");
