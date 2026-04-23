@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { connectDB } from "./connect";
+import { connectDB } from "../../src/db/connect";
 
 vi.mock("mongoose", () => ({
   default: {
