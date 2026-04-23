@@ -19,6 +19,10 @@
         "start:backend": "npm run start -w backend"
     },
     "devDependencies": {
+        "@types/cookie-parser": "^1.4.10",
         "concurrently": "^9.2.1"
+    },
+    "dependencies": {
+        "cookie-parser": "^1.4.7"
     }
 }
