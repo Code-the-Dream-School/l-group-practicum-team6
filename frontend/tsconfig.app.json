@@ -14,8 +14,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
-      "@sonix/shared": ["../shared/types.ts"]
+      "@sonix/shared": ["../shared/src/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "tests"]
 }

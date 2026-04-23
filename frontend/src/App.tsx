@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import type { ApiResponse } from "@sonix/shared";
-import LandingPage from "./pages/LandingPage";
 import "./App.css";
 
 type HelloCall = ApiResponse<{ message: string }>;
 
 function App() {
   const [message, setMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Call the backend API
@@ -22,27 +21,23 @@ function App() {
         console.log(body.data);
         setMessage(body.data.message);
       })
-      .catch((err: Error) => {
+      .catch((err) => {
         setError(err.message);
       });
   }, []);
 
   return (
-    <>
-      <LandingPage />
+    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+      <h1>Frontend ↔ Backend Test</h1>
 
-      <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-        <h1>Frontend ↔ Backend Test</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        {!error && (
-          <p>
-            Message from API: <strong>{message}</strong>
-          </p>
-        )}
-      </main>
-    </>
+      {!error && (
+        <p>
+          Message from API: <strong>{message}</strong>
+        </p>
+      )}
+    </main>
   );
 }
 
