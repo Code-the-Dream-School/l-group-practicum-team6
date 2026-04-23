@@ -2,16 +2,12 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import helmet from 'helmet';
-import xss from 'xss-clean';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 
 import helloRoutes from './routes/hello.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
-
-import { notFound } from "./middleware/notFound";
-import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
 
@@ -29,7 +25,6 @@ app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true,
 }));
-app.use(xss());
 app.use(cookieParser(process.env.JWT_SECRET));
 
 if (process.env.NODE_ENV !== 'production') {
@@ -43,9 +38,6 @@ app.get('/api/v1/health', (_req, res) => {
 app.use('/api/hello', helloRoutes);
 
 // 404 + global error handler — must be last
-app.use(notFound);
-app.use(errorHandler);
-
 app.use(notFound);
 app.use(errorHandler);
 
