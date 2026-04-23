@@ -1,43 +1,68 @@
-import { useEffect, useState } from 'react';
-import type { ApiResponse } from '@sonix/shared';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-type HelloCall = ApiResponse<{ message: string }>;
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import ExplorePage from "./pages/ExplorePage";
+import DemoPlayerPage from "./pages/DemoPlayerPage";
+import PlayerPage from "./pages/PlayerPage";
+import MyVisualsPage from "./pages/MyVisualsPage";
+import NotFoundPage from "./pages/NotFoundPage";
+
+import ProtectedRoute from "./routes/ProtectedRoute";
+import GuestRoute from "./routes/GuestRoute";
 
 function App() {
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Call the backend API
-    fetch(`/api/hello`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch from backend');
-        }
-        return response.json() as Promise<HelloCall>;
-      })
-      .then((body: HelloCall) => {
-        console.log(body.data);
-        setMessage(body.data.message);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  }, []);
-
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">Frontend ↔ Backend Test</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
 
-      {error && <p className="text-error">{error}</p>}
+        <Route
+        path="/login"
+        element={
+          <GuestRoute>
+            <LoginPage />
+          </GuestRoute>
+        }
+        />
 
-      {!error && (
-        <p className="text-lg">
-          Message from API: <strong className="font-bold text-success">{message}</strong>
-        </p>
-      )}
-    </main>
+        <Route
+        path="/signup"
+        element={
+          <GuestRoute>
+            <SignUpPage />
+          </GuestRoute>
+
+        }
+        />
+
+        <Route path="/explore" element={<ExplorePage />} />
+
+        <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
+
+        <Route
+        path="/visualizer/:id"
+        element={
+          <ProtectedRoute>
+            <PlayerPage />
+          </ProtectedRoute>
+        }
+        />
+
+        <Route
+        path="/my-visuals"
+        element={
+          <ProtectedRoute>
+            <MyVisualsPage />
+          </ProtectedRoute>
+        }
+        />
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;
