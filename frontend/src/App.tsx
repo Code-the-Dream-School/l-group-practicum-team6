@@ -1,43 +1,40 @@
-import { useEffect, useState } from "react";
-import type { ApiResponse } from "@sonix/shared";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
-type HelloCall = ApiResponse<{ message: string }>;
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import GuestRoute from "./components/GuestRoute";
 
 function App() {
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Call the backend API
-    fetch("http://localhost:8080/api/hello")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch from backend");
-        }
-        return response.json() as Promise<HelloCall>;
-      })
-      .then((body: HelloCall) => {
-        console.log(body.data);
-        setMessage(body.data.message);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  }, []);
-
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Frontend ↔ Backend Test</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
 
-      {!error && (
-        <p>
-          Message from API: <strong>{message}</strong>
-        </p>
-      )}
-    </main>
+        <Route
+          path="/signup"
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
+        />
+
+        <Route path="/explore" element={<div>Explore</div>} />
+
+        <Route path="/visualizer/demo" element={<div>Demo Visualizer</div>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
