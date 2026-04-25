@@ -36,13 +36,14 @@ export async function apiFetch<T>(
       message = 
         errorData.error?.message || 
         message;
-    } catch (error){
+    } catch (error) {
       console.error(
         `Failed to parse error response as JSON`, 
         { 
           status: response.status, 
           url, 
-          method: options.method ?? 'GET'},
+          method: options.method ?? 'GET' 
+        },
         error
       );
     }
