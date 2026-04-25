@@ -1,3 +1,5 @@
+import type { ApiError as ApiErrorResponse } from '@sonix/shared';
+
 export class ApiError extends Error {
   constructor(message: string, public status: number) {
     super(message);
@@ -6,13 +8,6 @@ export class ApiError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
-
-type ErrorResponse = {
-  error?: {
-    message?: string;
-  };
-  message?: string;
-};
 
 export async function apiFetch<T>(
   url: string, 
@@ -36,11 +31,10 @@ export async function apiFetch<T>(
     let message = `Request failed with status: ${response.status}`;
 
     try {
-      const errorData: ErrorResponse = await response.json();
+      const errorData: ApiErrorResponse = await response.json();
 
       message = 
         errorData.error?.message || 
-        errorData.message || 
         message;
     } catch {
       // Response body is not JSON — use default message
