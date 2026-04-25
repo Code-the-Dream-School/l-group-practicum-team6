@@ -36,8 +36,15 @@ export async function apiFetch<T>(
       message = 
         errorData.error?.message || 
         message;
-    } catch {
-      // Response body is not JSON — use default message
+    } catch (error){
+      console.error(
+        `Failed to parse error response as JSON`, 
+        { 
+          status: response.status, 
+          url, 
+          method: options.method ?? 'GET'},
+        error
+      );
     }
 
     throw new ApiError(message, response.status);
