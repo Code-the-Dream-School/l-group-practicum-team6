@@ -108,13 +108,13 @@ npm run dev
 Create a `.env` file inside the `backend` folder:
 
 ```env
-PORT=5000
+PORT=5001
 DATABASE_URL=your_database_url
 JWT_SECRET=your_secret_key
 ```
 
 Backend runs on:  
-http://localhost:8080
+http://localhost:5001
 
 ### Frontend Setup
 
