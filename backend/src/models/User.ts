@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import { createJWT } from "../utils/jwt";
 
 //define TypeScript interface
 export interface IUser extends Document {
@@ -59,16 +59,8 @@ UserSchema.methods.comparePassword = async function (
 };
 
 //create JWT method
-UserSchema.methods.createJWT = function (): string {
-  return jwt.sign(
-    {
-      userId: this._id,
-      name: this.name,
-      email: this.email,
-    },
-    process.env.JWT_SECRET as string,
-    { expiresIn: "1d" },
-  );
+UserSchema.methods.createJWT = function () {
+  return createJWT({ userId: this._id, name: this.name, email: this.email });
 };
 
 //remove password from output
