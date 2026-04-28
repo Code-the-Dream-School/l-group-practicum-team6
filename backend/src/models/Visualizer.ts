@@ -11,18 +11,19 @@
 
     What I will do:
 
-    Declare Visualizer
+    Declare Visualizer (name,image, id will created by mongoDB )
     name: string 
     image_Url: string
     timestamps: true
 */
 
+// Mongoose library to work with DB
 import mongoose, { Schema, Document} from 'mongoose';
 
-// Describing structure of data for ts
+// Describing structure of data 
 export interface IVisualizer extends Document {
     name: string;
-    imageUrl: string;
+    imageUrl: string; // Link to preview
     }
 
 // Creating Model schema Visualizer
