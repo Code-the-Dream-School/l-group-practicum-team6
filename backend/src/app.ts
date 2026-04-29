@@ -35,7 +35,6 @@ app.get('/api/v1/health', (_req, res) => {
 app.use('/api/v1/auth', authRouter);
 
 // 404 + global error handler — must be last
-
 app.use(notFound);
 app.use(errorHandler);
 
