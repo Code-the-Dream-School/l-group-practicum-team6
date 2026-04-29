@@ -11,14 +11,12 @@ import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
 
-// Rate limiter — must be first to protect all routes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
 app.use(limiter);
 
-// Core middleware stack
 app.use(express.json());
 app.use(helmet());
 app.use(cors({
@@ -31,7 +29,6 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Routes
 app.get('/api/v1/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
