@@ -4,6 +4,13 @@ export {
 } from './client';
 
 export { 
+  ApiEndpoints, 
+  buildVisualizerDetailEndpoint, 
+  buildVisualizerImageEndpoint, 
+  buildSavedVisualEndpoint 
+} from './endpoints';
+
+export { 
   getUser, 
   login, 
   register, 
@@ -21,7 +28,9 @@ export {
 
 export { 
   uploadAvatar, 
-  deleteAvatar 
+  deleteAvatar,
+  uploadVisualizerImage,
+  deleteVisualizerImage 
 } from './images';
 
 export { 

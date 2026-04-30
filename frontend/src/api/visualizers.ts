@@ -1,5 +1,6 @@
 import type { ApiResponse, Visualizer } from '@sonix/shared';
 import { apiFetch } from './client';
+import { ApiEndpoints, buildVisualizerDetailEndpoint } from './endpoints';
 
 type ListVisualizersParams = {
   search?: string;
@@ -31,14 +32,14 @@ function buildQuery(
 export function listVisualizers(
   params?: ListVisualizersParams
 ): Promise<ApiResponse<ListVisualizersData>> {
-  return apiFetch<ApiResponse<ListVisualizersData>>(`/api/visualizers${buildQuery(params)}`
+  return apiFetch<ApiResponse<ListVisualizersData>>(`${ApiEndpoints.VISUALIZERS}${buildQuery(params)}`
 );
 }
 
 export function getDemoVisualizer(): Promise<ApiResponse<Visualizer>> {
-  return apiFetch<ApiResponse<Visualizer>>('/api/visualizers/demo');
+  return apiFetch<ApiResponse<Visualizer>>(ApiEndpoints.VISUALIZERS_DEMO);
 }
 
 export function getVisualizer(id: string): Promise<ApiResponse<Visualizer>> {
-  return apiFetch<ApiResponse<Visualizer>>(`/api/visualizers/${id}`);
+  return apiFetch<ApiResponse<Visualizer>>(buildVisualizerDetailEndpoint(id));
 }

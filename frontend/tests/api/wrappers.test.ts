@@ -31,7 +31,7 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/me');
+    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/user');
   });
 
   it('login posts credentials', () => {
