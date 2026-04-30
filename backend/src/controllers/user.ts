@@ -19,6 +19,7 @@
 
 import { Request, Response } from 'express'; // Answers to client
 import { StatusCodes } from 'http-status-codes'; // Wrraped tool to show codes
+import mongoose from 'mongoose';
 import { BadRequestError, NotFoundError } from '../errors';
 
 import User from '../models/User';
@@ -83,7 +84,7 @@ export const updateUserPassword = async (req: AuthRequest, res: Response) => {
   await user.save();
 
   // Respond
-  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()) });
+  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()), signed: true });
   res.status(StatusCodes.OK).json({ msg: 'Password updated' });
 };
 
@@ -103,11 +104,14 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   if (!user) throw new NotFoundError('User not found');
   const isMatch = await user.comparePassword(password);
   if (!isMatch) throw new BadRequestError('Invalid password');
+  
+  // Cascade delete 
   await UserVisual.deleteMany({ userId: user._id });
+  
   await User.findByIdAndDelete(user._id);
 
   // Respond
-  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()) });
+  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()), signed: true });
   res.status(StatusCodes.NO_CONTENT).send();
 };
 
@@ -124,30 +128,52 @@ export const getUserVisuals = async (req: AuthRequest, res: Response) => {
 // Add visual collection
 export const addVisualToCollection = async (req: AuthRequest, res: Response) => {
   
-  // Get data from url
-  const { id } = req.params;
+  // Get data from url and ensure it is a string
+  const id = req.params.id as string;
+
+  // Validate if id is valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new BadRequestError('Invalid visualizer ID');
+  }
 
   // Go to DB
   const visualizer = await Visualizer.findById(id);
 
   // Processing and go to DB
   if (!visualizer) throw new NotFoundError('Visualizer not found');
-  const alreadySaved = await UserVisual.findOne({ userId: req.user!.userId, visualizerId: id });
+  
+  const alreadySaved = await UserVisual.findOne({ 
+    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    visualizerId: new mongoose.Types.ObjectId(id) 
+  });
+  
   if (alreadySaved) throw new BadRequestError('Visualizer already in collection');
-  const userVisual = await UserVisual.create({ userId: req.user!.userId, visualizerId: id });
+  
+  const userVisual = await UserVisual.create({ 
+    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    visualizerId: new mongoose.Types.ObjectId(id) 
+  });
   
   // respond
   res.status(StatusCodes.CREATED).json({ data: userVisual });
 };
 
-// Reomve visualiser from collection
+// Remove visualiser from collection
 export const removeVisualFromCollection = async (req: AuthRequest, res: Response) => {
   
-  // Get data
-  const { id } = req.params;
+  // Get data and ensure it is a string
+  const id = req.params.id as string;
+
+  // Validate if id is valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new BadRequestError('Invalid visualizer ID');
+  }
 
   // Go to DB , find and remove
-  const userVisual = await UserVisual.findOneAndDelete({ userId: req.user!.userId, visualizerId: id });
+  const userVisual = await UserVisual.findOneAndDelete({ 
+    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    visualizerId: new mongoose.Types.ObjectId(id) 
+  });
 
   // Process result
   if (!userVisual) throw new NotFoundError('Visualizer not found in collection');
