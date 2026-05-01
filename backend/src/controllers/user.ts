@@ -66,8 +66,8 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
 
 // Update password
 export const updateUserPassword = async (req: AuthRequest, res: Response) => {
-  const { currentPassword, newPassword, confirmNewPassword } = req.body;
-  if (!currentPassword || !newPassword || !confirmNewPassword) {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
     throw new BadRequestError('Please provide all password fields');
   }
 
@@ -78,7 +78,6 @@ export const updateUserPassword = async (req: AuthRequest, res: Response) => {
   if (!isMatch) throw new BadRequestError('Current password is incorrect');
 
   if (newPassword.length < 8) throw new BadRequestError('Password must be at least 8 characters');
-  if (newPassword !== confirmNewPassword) throw new BadRequestError('Passwords do not match');
 
   user.password = newPassword;
   await user.save();
