@@ -16,7 +16,8 @@
         "test": "npm run test -w backend && npm run test -w frontend",
         "coverage": "npm run test -w backend && npm run coverage -w frontend",
         "start:frontend": "npm run dev -w frontend",
-        "start:backend": "npm run start -w backend"
+        "start:backend": "npm run start -w backend",
+        "start": "npm run start:backend"
     },
     "devDependencies": {
         "@types/cookie-parser": "^1.4.10",
