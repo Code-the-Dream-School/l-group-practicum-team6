@@ -1,55 +1,31 @@
 import { render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 
 describe("App", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
+  test("renders landing page", () => {
+    render(<App />);
+
+    expect(screen.getByText(/See Your Sound/i)).toBeInTheDocument();
   });
 
-  it("renders message from API", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({ data: { message: "Hello World" } }),
-        } as Response),
-      ),
-    );
+  test("renders CTA links with correct routes", () => {
     render(<App />);
+
+    expect(screen.getByRole("link", { name: /Try the Demo/i })).toHaveAttribute(
+      "href",
+      "/visualizer/demo"
+    );
+
     expect(
-      await screen.findByText(/Hello World/, {}, { timeout: 3000 }),
-    ).toBeInTheDocument();
+      screen.getByRole("link", { name: /Get Started Free/i })
+    ).toHaveAttribute("href", "/signup");
   });
 
-  it("shows error when response is not ok", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.resolve({
-          ok: false,
-          json: () => Promise.resolve({}),
-        } as Response),
-      ),
-    );
+  test("renders feature cards", () => {
     render(<App />);
-    expect(
-      await screen.findByText(/Failed to fetch from backend/),
-    ).toBeInTheDocument();
-  });
 
-  it("shows error when fetch rejects (network failure)", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.reject(new TypeError("Failed to fetch")),
-      ),
-    );
-    render(<App />);
-    expect(
-      await screen.findByText(/Failed to fetch/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Audio-reactive shaders/i)).toBeInTheDocument();
+    expect(screen.getByText(/No-setup mic access/i)).toBeInTheDocument();
+    expect(screen.getByText(/Growing visualizer library/i)).toBeInTheDocument();
   });
 });
