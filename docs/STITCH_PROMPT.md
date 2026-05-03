@@ -20,7 +20,16 @@ GLOBAL CONSTRAINTS (apply to every single screen without exception)
 - Footer behavior is also context-aware — do not apply one footer pattern to every page
 - The visualizer screen uses a minimal 48px nav to maximize canvas space; all other authenticated screens use a standard 64px nav
 - Dark theme is the only required MVP presentation
+- Authenticated app screens use #0A0A0F background (unless page specifies animated background)
 - ALL screens must be responsive — provide layout notes for desktop (1440px), laptop (1280px), tablet (768px), and phone (375px)
+
+PINNED COMPONENT RULES (critical to enforce — violations break the spec)
+- User avatar is ALWAYS a 32px circle with gradient fill #7C5CFC→#00E5FF (purple to cyan). Never a photograph, illustration, or solid color.
+- Visualizer nav (Variant D): logo icon ONLY — no wordmark. Hamburger and avatar belong on the RIGHT side, not left.
+- Visualizer nav (Variant D): user avatar on right has NO chevron, NO username text, no dropdown indicator.
+- Playlist and session names (e.g., "Late Night Sessions", "Bass Heavy") NEVER appear in MVP screens — not in control bar, tickers, nav, or badges. They are deferred post-MVP features.
+- Visualizer ticker / marquee shows exactly: "Aurora Wave  ●  Microphone — Built-in  ●  Now Playing" — single segment, no repeats, no playlist names. Font: 12px / 400, text-secondary, letter-spacing 0.02em.
+- Hamburger nav on /visualizer: icon on RIGHT (not left), opens side-drawer from left edge.
 
 ---
 
@@ -86,7 +95,6 @@ Accessibility and usability rules:
 - All interactive controls must have visible keyboard focus on desktop
 - Minimum touch target for tablet and phone: 44×44px
 - Respect reduced-motion preferences by reducing ambient animation, glows, and non-essential movement
-- Hotkey indicators are supplementary — never the only affordance; always pair with visible tooltips
 
 Border radius:
 - Small (inputs, buttons, list items): 8px
@@ -120,7 +128,7 @@ Wordmark:
 
 Combined lockup (icon + wordmark):
 - 8px gap between icon and wordmark
-- Use on: public pages, standard authenticated nav, onboarding tour
+- Use on: public pages, standard authenticated nav
 
 Icon only (no wordmark):
 - Use on: visualizer nav (minimized), favicon, mobile nav
@@ -141,16 +149,13 @@ The application contains the following pages:
 3.  /login      — Log in (public)
 4.  /about      — About Sonix (public)
 5.  /demo       — Live visualizer demo (public)
-6.  /privacy    — Privacy policy (public) — NOT CONFIRMED, may be deferred
-7.  /terms      — Terms of service (public) — NOT CONFIRMED, may be deferred
-8.  /visualizer — Main visualizer (authenticated)
-9.  /explore    — Explore visuals / global library (authenticated)
-10. /favorites  — My favorited visuals (authenticated)
-11. /settings   — User settings (authenticated)
-12. /404        — Error / not found (public)
+6.  /visualizer — Main visualizer (authenticated)
+7.  /explore    — Explore visuals / global library (authenticated)
+8.  /favorites  — My favorited visuals (authenticated)
+9.  /settings   — User settings (authenticated)
+10. /404        — Error / not found (public)
 
 Route rules:
-- If /privacy and /terms are confirmed, public site pages should expose them in the footer so the legal pages are always reachable
 - About should remain part of the public marketing navigation rather than footer-only
 
 ---
@@ -168,52 +173,6 @@ Login and Sign Up pages:
 - Subtle animated particle field: 20–30 small dots (1–2px diameter, #8888AA color, 25% opacity) drifting slowly upward with slight horizontal drift, low density, random placement
 - Dots loop seamlessly when they exit the top edge
 - Reduced-motion fallback: static #0A0A0F background, no particles
-
----
-
-HOTKEYS (desktop only) — NOT CONFIRMED, may be deferred. Specs below are preserved for reference if confirmed.
-
-Keyboard shortcuts are only active on /visualizer in the MVP. Other authenticated screens may expose a "Keyboard Shortcuts" help entry, but they must not bind playback or visualizer keys globally.
-
-Visualizer screen keyboard shortcuts:
-- Space  — Play / Pause visual switching
-- F      — Toggle fullscreen
-- S      — Toggle shuffle
-- ←      — Previous visual
-- →      — Next visual
-- H      — Toggle favorite (heart)
-- D      — Open device selector dropdown
-- ? or K — Open keyboard shortcuts overlay
-
-UI treatment:
-- Every button tooltip in the control bar shows the hotkey inline: e.g., "Play  [Space]" or "Fullscreen  [F]"
-- Hotkey badge style: monospace, 11px, surface background, 2px border #2A2A3D, 4px border radius, text-secondary color — rendered as a small kbd chip next to the tooltip label
-- ? key opens a centered modal: "Keyboard Shortcuts" — two-column grid of action/shortcut pairs grouped by category (Playback, Navigation, Display); ghost close button top-right
-- On tablet and phone: hotkeys are not available; tooltips do not show keyboard badges; no hotkey modal is accessible
-
----
-
-TOUR COMPONENT (first-login onboarding) — NOT CONFIRMED, may be deferred. Specs below are preserved for reference if confirmed.
-
-Triggered automatically on first login only. Not shown on subsequent visits (stored in user preferences). Only shown on the visualizer screen.
-
-Overlay:
-- Full-screen semi-transparent backdrop: rgba(10, 10, 15, 0.85)
-- The spotlit element is visually elevated with a 2px #7C5CFC ring and higher z-index; rest of UI is dimmed
-
-Steps (in order):
-1. Targets device dropdown — Title: "Connect your audio" — Body: "Choose a microphone or audio device to start the visualizer."
-2. Targets play/pause button — Title: "Start the show" — Body: "Press play to begin cycling through visuals synced to your audio."
-3. Targets Explore link in hamburger nav — Title: "Discover visuals" — Body: "Browse the library of reactive visuals and save your favorites."
-4. Targets favorite (heart) button — Title: "Save your favorites" — Body: "Heart any visual to save it. Find all your favorites in My Favorites."
-5. Targets fullscreen button — Title: "Go fullscreen" — Body: "Use fullscreen for live performances or immersive sessions."
-
-Tooltip card:
-- 320px wide, surface-elevated background, 16px radius, 24px padding, 1px #2A2A3D border, purple glow
-- Title: H3, text-primary
-- Body: 14px / 400, text-secondary, 8px below title
-- Footer row: progress dots on left (active dot = 8px filled circle #7C5CFC, inactive = 6px #2A2A3D) + "Next →" primary button (small, 32px) on right
-- "Skip tour" caption link, text-secondary, centered below footer row, 8px below
 
 ---
 
@@ -264,7 +223,7 @@ Tags / pills:
 
 COMPONENT SPECIFICATIONS
 
-NAV VARIANTS — NOT CONFIRMED, may be deferred. Specs below are preserved for reference if confirmed.
+NAV VARIANTS
 
 The navbar stays as consistent as possible across pages. Variants exist only where layout context strictly requires it. For a fully distraction-free visualizer experience, users can enter fullscreen mode — no need for more nav variants.
 
@@ -291,10 +250,11 @@ Variant C — Authenticated standard (explore, favorites, settings):
 Variant D — Visualizer (maximized canvas, minimal chrome):
 - Height: 48px
 - Background: surface #12121A, NO bottom border (reduces visual separation from canvas)
-- Left: logo icon only (24px height, no wordmark, links to /visualizer)
+- Left: logo icon ONLY (24px height, NO wordmark, links to /visualizer)
 - Center: empty
-- Right (16px from edge): hamburger/menu icon (24px, text-secondary) + 16px gap + user avatar icon (32px circle, no username text)
+- Right (16px from edge): hamburger/menu icon (24px, text-secondary) + 16px gap + user avatar icon (32px circle, gradient fill #7C5CFC→#00E5FF, NO chevron, NO username text)
 - Hamburger opens a side-drawer nav; user avatar opens the user modal
+- CRITICAL: Logo must never include wordmark on /visualizer. Hamburger must be on right side, not left. Avatar is gradient-filled circle only.
 
 User modal (opened from user avatar in Variant C and D):
 - Floating panel, 240px wide, right-aligned below trigger, 8px from right edge
@@ -303,7 +263,6 @@ User modal (opened from user avatar in Variant C and D):
 - 1px #2A2A3D divider, 8px below top row
 - Menu items (36px each, icon left + label, sidebar interaction states):
   - Settings — gear icon
-  - Keyboard Shortcuts — keyboard icon (opens hotkey modal) — NOT CONFIRMED
   - 1px divider
   - Log Out — exit icon, #FF4D6D text color
 
@@ -312,18 +271,17 @@ Hamburger side-drawer (Variant D only):
 - Items: Visualizer / Explore / My Favorites / Settings — sidebar interaction states
 - Closes on backdrop click or Escape key
 
-FOOTER VARIANTS — NOT CONFIRMED, may be deferred. Specs below are preserved for reference if confirmed.
+FOOTER VARIANTS
 
 Variant A — Public site footer (landing, about, 404):
 - Height: 64px
 - Background: surface #12121A, 1px top border #2A2A3D
 - Left: "© 2025 Sonix" — caption, text-secondary
-- Right: legal links "Privacy / Terms" plus optional lightweight product links such as "About"; caption text, text-secondary, 24px gaps
+- Right: optional lightweight product links such as "About"; caption text, text-secondary, 24px gaps
 
-Variant B — Public auth / legal footer (login, signup, privacy, terms):
-- Minimal footer treatment; do not let it compete with the main form or legal document content
-- Can be a centered caption row with "Privacy / Terms" links, 48px tall, text-secondary
-- On /privacy or /terms, the current page link can use text-primary while the other remains text-secondary
+Variant B — Public auth footer (login, signup):
+- Minimal footer treatment; do not let it compete with the main form or document content
+- Can be a centered caption row, 48px tall, text-secondary
 
 Variant C — Authenticated app footer (explore, favorites, settings):
 - Default to no persistent footer unless the screen needs one for layout balance
@@ -365,10 +323,8 @@ Tags / pills:
 Tooltip component:
 - Background: surface-elevated, 1px #2A2A3D border, 8px radius, 8px vertical / 12px horizontal padding
 - Font: 12px / 400, text-primary
-- Hotkey badge (inline with label): monospace, 11px, surface background, 2px border #2A2A3D, 4px radius, text-secondary — e.g., [Space] or [F]
 - Appear delay: 400ms; hide: instant
 - Position: above target by default; auto-flip if near viewport edge
-- On tablet and phone: no hotkey badges shown in tooltips
 
 Scrollbars (all scrollable regions):
 - Width: 4px
@@ -522,7 +478,7 @@ Ticker / visual marquee:
 - 28px height strip, full canvas width
 - Position: within canvas, pinned just above the bottom control bar overlay
 - Background: linear-gradient(to top, rgba(10,10,15,0.7), transparent)
-- Content: single-line scrolling text — "Aurora Wave  ●  Microphone — Built-in  ●  Now Playing"
+- Content: EXACTLY "Aurora Wave  ●  Microphone — Built-in  ●  Now Playing" — single segment, NEVER repeating the phrase, NEVER including playlist names
 - Font: 12px / 400, text-secondary, letter-spacing 0.02em
 - Animation: continuous left-to-right marquee scroll at slow speed (60–80s full cycle); pauses on hover
 - Auto-hides with the control bar; visible whenever cursor moves
@@ -536,23 +492,23 @@ Bottom control bar (canvas overlay):
 
 Control bar inner layout (24px outer padding, vertical center-aligned):
 - Left zone (~380px):
-  - Device dropdown button: mic icon + "Microphone — Built-in" (body, text-primary, max 160px, truncate) + chevron-down; 40px height, surface-elevated bg, 1px #2A2A3D border, 8px radius; tooltip: "Audio Input  [D]"; opens dropdown of available input devices
+  - Device dropdown button: mic icon + "Microphone — Built-in" (body, text-primary, max 160px, truncate) + chevron-down; 40px height, surface-elevated bg, 1px #2A2A3D border, 8px radius; tooltip: "Audio Input"; opens dropdown of available input devices
   - 16px gap
   - Sensitivity control: "Sensitivity" label (caption, text-secondary) 4px above a 120px horizontal range slider; thumb: 14px circle in #7C5CFC; filled track: #7C5CFC; unfilled track: #2A2A3D; tooltip: "Input Sensitivity"
 
 - Center zone (~680px, content horizontally centered):
-  - Shuffle toggle (icon-only, 20px) — tooltip: "Shuffle  [S]"; active state: primary accent icon with purple glow
+  - Shuffle toggle (icon-only, 20px) — tooltip: "Shuffle"; active state: primary accent icon with purple glow
   - 16px gap
-  - Previous (icon-only, 20px) — tooltip: "Previous  [←]"
+  - Previous (icon-only, 20px) — tooltip: "Previous"
   - 16px gap
-  - Play/Pause (48px circle button, primary accent bg, #F0F0FF icon, purple glow) — tooltip: "Play / Pause  [Space]"; currently shows pause icon (auto-switching every 10s is active); this is the most prominent control
+  - Play/Pause (48px circle button, primary accent bg, #F0F0FF icon, purple glow) — tooltip: "Play / Pause"; currently shows pause icon (auto-switching every 10s is active); this is the most prominent control
   - 16px gap
-  - Next (icon-only, 20px) — tooltip: "Next  [→]"
+  - Next (icon-only, 20px) — tooltip: "Next"
   - 16px gap
-  - Favorite / heart (icon-only, 20px) — unfilled = not favorited; filled cyan = favorited; tooltip: "Favorite  [H]"
+  - Favorite / heart (icon-only, 20px) — unfilled = not favorited; filled cyan = favorited; tooltip: "Favorite"
 
 - Right zone (~380px, right-aligned):
-  - Fullscreen (icon-only, 24px) — tooltip: "Fullscreen  [F]"
+  - Fullscreen (icon-only, 24px) — tooltip: "Fullscreen"
 
 Z-index layering (back to front):
 1. Canvas (#000000 background and visual content)
@@ -620,7 +576,7 @@ Full-page layout (not modal). Standard page scroll.
 Two-column layout within layout grid, 48px top padding:
 - Left sidebar: 200px wide, surface background, 1px right border #2A2A3D, 24px padding
   - Section heading "Settings" — H3, 16px bottom margin
-  - Nav items (sidebar interaction states): Profile / Audio / Privacy
+  - Nav items (sidebar interaction states): Profile / Account
 - Main content panel: fills remaining width, 48px horizontal padding
 
 Profile section:
@@ -628,63 +584,15 @@ Profile section:
 - "Display Name" input + "Email Address" input, 16px gap
 - "Save Changes" primary button, left-aligned, 24px below inputs
 
-Audio section:
-- "Default Input Device" dropdown (same style as control bar device dropdown, full width)
-- "Default Sensitivity" slider (full-width range input, same style as control bar sensitivity)
-
-Privacy section:
-- "Delete Account" — destructive ghost button (1px #FF4D6D border, #FF4D6D text); clicking requires a confirmation modal
-
----
-
-9. PRIVACY PAGE  (public, /privacy) — NOT CONFIRMED, may be deferred
-
-Header treatment:
-- Do not use the public marketing nav
-- Use a simple top row with the Sonix logo lockup only, aligned to the layout grid
-- No auth CTAs or center nav links
-
-Footer: Variant B
-
-Page content:
-- Main document container: max 840px wide, centered, 64px top padding, 96px bottom padding
-- Title row: "Privacy Policy" — H1, text-primary
-- Meta line 8px below: "Last updated: April 1, 2026" — caption, text-secondary
-- Intro paragraph in body text explaining microphone access, account data, and favorited visual metadata at a high level
-- Legal content sections stacked with 32px vertical spacing:
-  - "What we collect"
-  - "How audio permissions work"
-  - "How we use account data"
-  - "Data retention and deletion"
-  - "Contact"
-- Each section uses an H3 heading and 2–4 short body paragraphs; use realistic product/legal copy, not lorem ipsum
+Account section:
+- "Change Password" heading — H3
+- "Current Password" input, "New Password" input, "Confirm Password" input, 16px gap between
+- "Update Password" primary button, 24px below inputs
+- "Delete Account" — destructive ghost button (1px #FF4D6D border, #FF4D6D text), positioned 48px below "Update Password"; clicking requires a confirmation modal
 
 ---
 
-10. TERMS PAGE  (public, /terms) — NOT CONFIRMED, may be deferred
-
-Header treatment:
-- Do not use the public marketing nav
-- Use a simple top row with the Sonix logo lockup only, aligned to the layout grid
-- No auth CTAs or center nav links
-
-Footer: Variant B
-
-Page content:
-- Main document container: max 840px wide, centered, 64px top padding, 96px bottom padding
-- Title row: "Terms of Service" — H1, text-primary
-- Meta line 8px below: "Last updated: April 1, 2026" — caption, text-secondary
-- Intro paragraph summarizing account usage and acceptable use
-- Legal content sections stacked with 32px vertical spacing:
-  - "Using Sonix"
-  - "Content and availability"
-  - "Account termination"
-  - "Contact"
-- Each section uses an H3 heading and 2–4 short body paragraphs; use realistic product/legal copy, not lorem ipsum
-
----
-
-11. ERROR / 404 PAGE  (public, /404)
+9. ERROR / 404 PAGE  (public, /404)
 
 Nav: Variant A
 Footer: Variant A
@@ -728,31 +636,29 @@ Live streaming (over-stretch):
 TONE AND COPY RULES
 - Product name: always "Sonix" — capital S, lowercase remaining — never "SONIX" in body copy (only the wordmark uses all-caps styling)
 - Visual names (use these exact strings everywhere): "Aurora Wave", "Spectrum Pulse", "Deep Bass Bloom", "Neon Lattice", "Void Drift", "Solar Flare", "Crystal Echo", "Fractal Storm"
-- Playlist names (for future reference / post-MVP): "Late Night Sessions", "Bass Heavy", "Ambient Drift" — do not display in MVP screens
+- Playlist names (for future reference / post-MVP): "Late Night Sessions", "Bass Heavy", "Ambient Drift" — NEVER display in MVP screens, not in nav, control bar, tickers, badges, or labels
 - No lorem ipsum anywhere — every text string must be plausible product copy
-- Username: "Alex Rivera" with a 32px circular avatar (gradient fill: #7C5CFC to #00E5FF)
+- Username: "Alex Rivera" with a 32px circular avatar (gradient fill: #7C5CFC to #00E5FF, always — never photograph)
 - All copy must feel earnest and confident — not salesy; no exclamation marks
-- Hotkey tooltips format: "Action Label  [Key]" — one space between label and badge
 
 ---
 
 OUTPUT REQUIREMENT
-Generate all confirmed screens as a single unified design file. Skip screens 9 (/privacy) and 10 (/terms) unless specifically requested — those pages are not confirmed for MVP. Desktop dark-theme artboards are the required MVP artboards. All screens must be responsive — include layout notes or separate artboards for laptop (1280px), tablet (768px), and phone (375px). Do not generate active light-theme screens or an appearance toggle for the MVP. Every screen must use identical type sizes, identical component styles, and consistent color values. If any screen contradicts another, it is wrong.
+Generate all confirmed screens as a single unified design file. Desktop dark-theme artboards are the required MVP artboards. All screens must be responsive — include layout notes or separate artboards for laptop (1280px), tablet (768px), and phone (375px). Do not generate active light-theme screens or an appearance toggle for the MVP. Every screen must use identical type sizes, identical component styles, and consistent color values. If any screen contradicts another, it is wrong.
 ```
 
 ## Why This Works Better Than Short Prompts
 
 - Hex codes and exact pixel dimensions eliminate color and spacing drift between generations.
 - `GLOBAL CONSTRAINTS` at the top is the first thing Stitch reads — it anchors all decisions before screen details begin.
+- `PINNED COMPONENT RULES` enforce critical visual decisions (avatar gradient, nav layout, playlist removal) upfront so Stitch cannot improvise.
 - Context-aware nav variants prevent Stitch from applying one nav pattern everywhere; each page specifies exactly which variant to use.
 - The visualizer screen's canvas-maximized layout (no sidebars, overlay control bar) is spelled out in exact pixel math, leaving no room for Stitch to add sidebars back.
-- Bottom control bar zones (left/center/right) are precisely defined with pixel widths, control names, hotkey tooltips, and interaction states — preventing improvised layouts.
+- Bottom control bar zones (left/center/right) are precisely defined with pixel widths, control names, and interaction states — preventing improvised layouts.
 - The hover watermark and ticker/marquee are specified as canvas overlays with exact positioning, size, and animation rules.
 - Explicit interaction states (hover/focus/active/disabled/locked) prevent Stitch from inventing component variants per screen.
 - Animated background specs are tied to specific pages and include reduced-motion fallbacks.
-- Hotkey system is defined once at the global level with badge style, tooltip format, and per-screen scope rules.
-- Tour component steps are enumerated with exact target elements, copy, and card layout — making it buildable directly from the spec.
 - Stretch features are represented as design states (coming-soon, locked, disabled) rather than omitted — keeping the design coherent without specifying unbuilt behavior.
 - Static pages list gives Stitch the full product map upfront so no screen exists in isolation.
-- Fixed copy strings (visual names, username) prevent text drift across all 11 screens.
+- Fixed copy strings (visual names, username) prevent text drift across all 10 confirmed screens.
 - The output requirement at the end reinforces the constraints as the last thing read.
