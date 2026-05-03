@@ -67,8 +67,8 @@ The navbar stays as consistent as possible across all pages. Variants exist only
 
 | Variant | Pages | Content |
 | --- | --- | --- |
-| A — Public marketing | `/`, `/about` | Logo lockup · center nav links (Features / About) · Log In ghost + Sign Up primary |
-| B — Public minimal | `/signup`, `/login` | Logo lockup only — no secondary nav |
+| A — Public marketing | `/`, `/about`, `/404` | Logo lockup · center nav links (Features / About) · Log In ghost + Sign Up primary |
+| B — Public minimal | `/signup`, `/login`, `/privacy`, `/terms` | Logo lockup only — no secondary nav |
 | C — Authenticated standard | `/explore`, `/favorites`, `/settings` | Logo lockup (links to `/visualizer`) · user avatar + name + chevron (opens user modal) |
 | D — Visualizer minimal | `/visualizer` | Logo icon only (no wordmark) · hamburger (opens side drawer) · user avatar icon only |
 
