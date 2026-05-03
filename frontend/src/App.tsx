@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
@@ -19,22 +20,21 @@ function App() {
         <Route path="/" element={<LandingPage />} />
 
         <Route
-        path="/login"
-        element={
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        }
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
         />
 
         <Route
-        path="/signup"
-        element={
-          <GuestRoute>
-            <SignUpPage />
-          </GuestRoute>
-
-        }
+          path="/signup"
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
         />
 
         <Route path="/explore" element={<ExplorePage />} />
@@ -42,23 +42,22 @@ function App() {
         <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
 
         <Route
-        path="/visualizer/:id"
-        element={
-          <ProtectedRoute>
-            <PlayerPage />
-          </ProtectedRoute>
-        }
+          path="/visualizer/:id"
+          element={
+            <ProtectedRoute>
+              <PlayerPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-        path="/my-visuals"
-        element={
-          <ProtectedRoute>
-            <MyVisualsPage />
-          </ProtectedRoute>
-        }
+          path="/my-visuals"
+          element={
+            <ProtectedRoute>
+              <MyVisualsPage />
+            </ProtectedRoute>
+          }
         />
-
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
