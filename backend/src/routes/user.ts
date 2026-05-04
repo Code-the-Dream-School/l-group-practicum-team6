@@ -20,21 +20,21 @@ const router = Router();
 router.use(authenticateUser)
 
 // User profile , get, edit, remove
-router.route('/user')
+router.route('/me')
     .get(showCurrentUser)
     .patch(updateUser)
     .delete(deleteUser);
 
 // Change password
-router.route('/user/password')
+router.route('/me/password')
     .patch(updateUserPassword);
 
 // List of visuals
-router.route('/user/visuals')
+router.route('/me/visuals')
     .get(getUserVisuals);
 
 // Manage with particular visual, remove , add
-router.route('/user/visuals/:id')
+router.route('/me/visuals/:id')
     .post(addVisualToCollection)
     .delete(removeVisualFromCollection);
 
