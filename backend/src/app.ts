@@ -36,7 +36,8 @@ app.get('/api/v1/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/api/v1/auth', authRouter)
+// Auth routes — register, login, logout
+app.use('/api/v1/auth', authRouter);
 
 // Serve built SPA: static assets first, then send index.html for any
 // non-/api GET so client-side routes (e.g. /login) resolve on refresh.
