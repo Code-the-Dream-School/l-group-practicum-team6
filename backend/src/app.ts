@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import authRouter from './routes/auth';
-import userRouter from './routes/user';  
+import userRouter from './routes/user';
 
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
@@ -37,7 +37,7 @@ app.get('/api/v1/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Register, Login, Logout
+// Auth routes — register, login, logout
 app.use('/api/v1/auth', authRouter);
 // Profile management, visualiser collection
 app.use('/api/v1/users', userRouter);
@@ -50,8 +50,8 @@ app.get(/^\/(?!api\/).*/, (_req, res) => {
   res.sendFile(path.join(clientDist, 'index.html'));
 });
 
-// 404 + global error handler — must be last
 app.use(notFound);
 app.use(errorHandler);
 
 export default app;
+
