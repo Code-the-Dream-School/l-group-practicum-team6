@@ -19,7 +19,18 @@ import {
   saveVisual,
   removeVisual,
 } from '../../src/api/users';
-import { uploadAvatar, deleteAvatar } from '../../src/api/images';
+import { 
+  uploadAvatar, 
+  deleteAvatar,
+  uploadVisualizerImage,
+  deleteVisualizerImage
+} from '../../src/api/images';
+import { 
+  ApiEndpoints,
+  buildVisualizerDetailEndpoint,
+  buildSavedVisualEndpoint,
+  buildVisualizerImageEndpoint
+} from '../../src/api';
 
 const mockedApiFetch = vi.mocked(apiFetch);
 
@@ -31,13 +42,13 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/user');
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_USER);
   });
 
   it('login posts credentials', () => {
     login('test@example.com', 'password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/login', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_LOGIN, {
       method: 'POST',
       body: JSON.stringify({
         email: 'test@example.com',
@@ -49,7 +60,7 @@ describe('auth api', () => {
   it('register posts user data', () => {
     register('John', 'test@example.com', 'password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/register', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_REGISTER, {
       method: 'POST',
       body: JSON.stringify({
         name: 'John',
@@ -62,7 +73,7 @@ describe('auth api', () => {
   it('logout posts to logout endpoint', () => {
     logout();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/auth/logout', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_LOGOUT, {
       method: 'POST',
     });
   });
@@ -72,27 +83,47 @@ describe('visualizers api', () => {
   it('listVisualizers calls base endpoint without params', () => {
     listVisualizers();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/visualizers');
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS);
+  });
+
+  it('listVisualizers skips undefined params', () => {
+    listVisualizers({ search: 'wave', page: undefined, limit: 10 });
+
+    expect(mockedApiFetch).toHaveBeenCalledWith(
+      `${ApiEndpoints.VISUALIZERS}?search=wave&limit=10`
+    );
+  });
+
+  it('listVisualizers returns base endpoint when all params are undefined', () => {
+    listVisualizers({
+      search: undefined,
+      page: undefined,
+      limit: undefined,
+    });
+
+    expect(mockedApiFetch).toHaveBeenCalledWith(
+      ApiEndpoints.VISUALIZERS
+    );
   });
 
   it('listVisualizers includes query params', () => {
     listVisualizers({ search: 'wave', page: 1, limit: 10 });
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      '/api/visualizers?search=wave&page=1&limit=10'
+      `${ApiEndpoints.VISUALIZERS}?search=wave&page=1&limit=10`
     );
   });
 
   it('getDemoVisualizer calls demo endpoint', () => {
     getDemoVisualizer();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/visualizers/demo');
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS_DEMO);
   });
 
   it('getVisualizer calls visualizer by id endpoint', () => {
-    getVisualizer('abc123');
+    getVisualizer('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/visualizers/abc123');
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildVisualizerDetailEndpoint('visual123'));
   });
 });
 
@@ -100,7 +131,7 @@ describe('users api', () => {
   it('updateProfile patches profile data', () => {
     updateProfile({ name: 'Bob' });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/users/profile', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_PROFILE, {
       method: 'PATCH',
       body: JSON.stringify({ name: 'Bob' }),
     });
@@ -112,7 +143,7 @@ describe('users api', () => {
       newPassword: 'newpass',
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/users/password', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_PASSWORD, {
       method: 'PATCH',
       body: JSON.stringify({
         currentPassword: 'oldpass',
@@ -124,7 +155,7 @@ describe('users api', () => {
   it('deleteAccount deletes account with password confirmation', () => {
     deleteAccount('password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/users/account', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_ACCOUNT, {
       method: 'DELETE',
       body: JSON.stringify({ password: 'password123' }),
     });
@@ -133,14 +164,14 @@ describe('users api', () => {
   it('getSavedVisuals calls saved visuals endpoint', () => {
     getSavedVisuals();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/users/saved-visuals');
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_SAVED_VISUALS);
   });
 
   it('saveVisual posts visual id', () => {
     saveVisual('visual123');
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      '/api/users/saved-visuals/visual123',
+      buildSavedVisualEndpoint('visual123'),
       {
         method: 'POST',
       }
@@ -151,7 +182,7 @@ describe('users api', () => {
     removeVisual('visual123');
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      '/api/users/saved-visuals/visual123',
+      buildSavedVisualEndpoint('visual123'),
       {
         method: 'DELETE',
       }
@@ -166,7 +197,7 @@ describe('images api', () => {
     uploadAvatar(file);
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      '/api/images/avatar',
+      ApiEndpoints.IMAGES_AVATAR,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(FormData),
@@ -177,8 +208,33 @@ describe('images api', () => {
   it('deleteAvatar deletes avatar', () => {
     deleteAvatar();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith('/api/images/avatar', {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_AVATAR, {
       method: 'DELETE',
     });
+  });
+
+  it('uploadVisualizerImage uploads image for visualizer', () => {
+    const file = new File(['image'], 'visual.png', { type: 'image/png' });
+
+    uploadVisualizerImage('visual123', file);
+
+    expect(mockedApiFetch).toHaveBeenCalledWith(
+      buildVisualizerImageEndpoint('visual123'),
+      expect.objectContaining({
+        method: 'POST',
+        body: expect.any(FormData),
+      })
+    );
+  });
+
+  it('deleteVisualizerImage deletes image for visualizer', () => {
+    deleteVisualizerImage('visual123');
+
+    expect(mockedApiFetch).toHaveBeenCalledWith(
+      buildVisualizerImageEndpoint('visual123'),
+      {
+        method: 'DELETE',
+      }
+    );
   });
 });
