@@ -17,6 +17,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (window.location.pathname === '/' ||
+      window.location.pathname === '/login' ||
+      window.location.pathname === '/signup') {
+        // avoid calls from public pages
+        setTimeout(() => {
+          setLoading(false);
+        }, 50);
+        return; 
+    }
+
     async function fetchUser() {
       try {
         const res = await fetch('/api/v1/users/user', { credentials: 'include' });
