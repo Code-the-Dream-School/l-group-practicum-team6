@@ -1,21 +1,3 @@
-/*
-    Сonceptual understanding, how I can understand task for this block and model
-
-    User visualizers managment
-
-    endpoints: GET, PATCH, DELETE, POST for /user/visuals
-    
-    keywords: 'Populated', 'VisualizerListItem', '404 if visualizer doesn't exist'
-    pattern: User (who), Visualizer(what), UserVisual(connection who+what)
-    tool: in mongoDB from backend course we know we can use mongoose schema
-
-    What I will do:
-
-    Declare Visualizer (name,image, id will created by mongoDB )
-    name: string 
-    image_Url: string
-    timestamps: true
-*/
 
 // Mongoose library to work with DB
 import mongoose, { Schema, Document} from 'mongoose';

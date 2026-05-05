@@ -1,6 +1,3 @@
-/*
-    Here will be. So magic doors!!!Дописать will communcate with Controllers and Models
-*/
 
 import {Router} from 'express';
 import { authenticateUser } from '../middleware/authentication';

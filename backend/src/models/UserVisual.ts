@@ -1,18 +1,3 @@
-/*
-    Conceptual for this Model is connection between User and Visualizer
-
-    endpoints GET, POST, DELETE /user/visuals
-
-    Here I will I will use keyword from ticket 'populated with VisualizerListItem' 
-    where UserVisual will save ref to Visualizer. With userId + visualizeId.
-
-    Pattern will answer to questions, who saves? (User), What?(Visualizer),
-    UserVisual will connect both ID (userId and visualizerId)
-
-    Tools, ref will tell Mongoose where to populate from
-
-    Declare UserVisual, where following attributes: userId, visualizerId
-*/
 
 import mongoose, {Schema, Document} from 'mongoose';
 
