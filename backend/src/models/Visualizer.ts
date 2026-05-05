@@ -13,7 +13,6 @@ const VisualizerSchema = new Schema<IVisualizer>({
     name: { // Attribute
         type: String,
         required: true,
-        // Do we need min, max?
     },
     imageUrl: { // Attribute
         type: String,
