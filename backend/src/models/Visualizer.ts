@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';                                             
                                                                                                      
   export interface IVisualizer extends Document {                                                    
-      name: string; // from 51
+      name: string; 
       source: string;
       glsl: string;                                                                                  
-      imageUrl?: mongoose.Types.ObjectId;   // changed, from 51
+      imageUrl?: mongoose.Types.ObjectId;  
       isDemo: boolean;
       tags: string[];                                                                        
   }                                                                                                  
@@ -13,14 +13,14 @@ import mongoose, { Schema, Document } from 'mongoose';
       name: { 
         type: String, 
         required: true,
-        trim: true, // 46
+        trim: true, 
     },
 
-      source: { // 46
+      source: { 
           type: String,
       },
 
-      glsl: { // 46
+      glsl: { 
         type: String,
         required: true,
     },
@@ -30,17 +30,17 @@ import mongoose, { Schema, Document } from 'mongoose';
         ref: 'Image',
     },
 
-      isDemo: { // 46
+      isDemo: {
           type: Boolean,
           default: false,
       },
     
-      tags: { // 46
+      tags: { 
           type: [String],
           default: [],
       },
 
                                                       
-  }, { timestamps: true });  // 51                                                                        
+  }, { timestamps: true });                                                                       
                                                                                                      
   export default mongoose.model<IVisualizer>('Visualizer', VisualizerSchema);
