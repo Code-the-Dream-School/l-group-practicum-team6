@@ -15,7 +15,7 @@ interface AuthRequest extends Request {
 
 // Show current User 
 export const showCurrentUser = async (req: AuthRequest, res: Response) => {
-  const user = await User.findById(req.user!.userId);
+  const user = await User.findById(req.user?.userId ?? "");
 
   if (!user) throw new NotFoundError('User not found');
   res.status(StatusCodes.OK).json({ data: user });
@@ -31,7 +31,7 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
   if (!name && !email) throw new BadRequestError('Please provide name or email');
 
   // Check DB
-  const user = await User.findById(req.user!.userId);
+   const user = await User.findById(req.user?.userId ?? "");
 
   // Working on result (checking, changes)
   if (!user) throw new NotFoundError('User not found');
@@ -49,18 +49,28 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
 // Update password
 export const updateUserPassword = async (req: AuthRequest, res: Response) => {
   const { currentPassword, newPassword } = req.body;
+
+  // Checking data
   if (!currentPassword || !newPassword) {
     throw new BadRequestError('Please provide all password fields');
   }
 
-  const user = await User.findById(req.user!.userId).select('+password');
+  if (newPassword.length < 8) 
+    throw new BadRequestError('Password must be at least 8 characters');
+
+  // check if new password is the same as previus 
+  if(currentPassword === newPassword) {
+    throw new BadRequestError('New password must be different from current password');
+  }
+
+  // Manipulation with DB
+  const user = await User.findById(req.user?.userId ?? "").select('+password');
   if (!user) throw new NotFoundError('User not found');
 
   const isMatch = await user.comparePassword(currentPassword);
   if (!isMatch) throw new BadRequestError('Current password is incorrect');
 
-  if (newPassword.length < 8) throw new BadRequestError('Password must be at least 8 characters');
-
+  // Save
   user.password = newPassword;
   await user.save();
 
@@ -79,7 +89,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   if (!password) throw new BadRequestError('Please provide password');
 
   // go to DB
-  const user = await User.findById(req.user!.userId).select('+password');
+  const user = await User.findById(req.user?.userId ?? "").select('+password');
 
   // Process and delete
   if (!user) throw new NotFoundError('User not found');
@@ -100,7 +110,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
 export const getUserVisuals = async (req: AuthRequest, res: Response) => {
   
   // Get data and Go to DB
-  const visuals = await UserVisual.find({ userId: req.user!.userId }).populate('visualizerId');
+  const visuals = await UserVisual.find({ userId: req.user?.userId ?? "" }).populate('visualizerId');
   
   // respond
   res.status(StatusCodes.OK).json({ data: visuals });
@@ -124,14 +134,14 @@ export const addVisualToCollection = async (req: AuthRequest, res: Response) => 
   if (!visualizer) throw new NotFoundError('Visualizer not found');
   
   const alreadySaved = await UserVisual.findOne({ 
-    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    userId: new mongoose.Types.ObjectId(req.user?.userId ?? ""), 
     visualizerId: new mongoose.Types.ObjectId(id) 
   });
   
   if (alreadySaved) throw new BadRequestError('Visualizer already in collection');
   
   const userVisual = await UserVisual.create({ 
-    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    userId: new mongoose.Types.ObjectId(req.user?.userId ?? ""), 
     visualizerId: new mongoose.Types.ObjectId(id) 
   });
   
@@ -152,7 +162,7 @@ export const removeVisualFromCollection = async (req: AuthRequest, res: Response
 
   // Go to DB , find and remove
   const userVisual = await UserVisual.findOneAndDelete({ 
-    userId: new mongoose.Types.ObjectId(req.user!.userId), 
+    userId: new mongoose.Types.ObjectId(req.user?.userId ?? ""), 
     visualizerId: new mongoose.Types.ObjectId(id) 
   });
 

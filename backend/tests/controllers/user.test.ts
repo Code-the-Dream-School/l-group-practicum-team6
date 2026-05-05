@@ -144,6 +144,13 @@ describe('updateUserPassword', () => {
     await expect(updateUserPassword(req, res)).rejects.toThrow('Please provide all password fields');
   });
 
+  it('throws BadRequestError when new password is same as current', async () => {
+    const req = makeReq({ body: { currentPassword: 'samepass1', newPassword: 'samepass1' } });
+    const res = makeRes();
+
+    await expect(updateUserPassword(req, res)).rejects.toThrow('New password must be different from current password');
+  });
+
   it('throws NotFoundError when user does not exist', async () => {
     vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(null) } as any);
 
