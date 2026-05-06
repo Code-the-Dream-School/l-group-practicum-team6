@@ -2,54 +2,97 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "../src/App";
 
-describe("App", () => {
+vi.mock("../src/pages/LandingPage", () => ({
+  default: () => <div>Landing Page</div>,
+}));
+
+vi.mock("../src/pages/LoginPage", () => ({
+  default: () => <div>Login Page</div>,
+}));
+
+vi.mock("../src/pages/SignUpPage", () => ({
+  default: () => <div>Sign Up Page</div>,
+}));
+
+vi.mock("../src/pages/ExplorePage", () => ({
+  default: () => <div>Explore Page</div>,
+}));
+
+vi.mock("../src/pages/DemoPlayerPage", () => ({
+  default: () => <div>Demo Player Page</div>,
+}));
+
+vi.mock("../src/pages/PlayerPage", () => ({
+  default: () => <div>Player Page</div>,
+}));
+
+vi.mock("../src/pages/MyVisualsPage", () => ({
+  default: () => <div>My Visuals Page</div>,
+}));
+
+vi.mock("../src/pages/NotFoundPage", () => ({
+  default: () => <div>Not Found Page</div>,
+}));
+
+vi.mock("../src/routes/ProtectedRoute", () => ({
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
+
+vi.mock("../src/routes/GuestRoute", () => ({
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
+
+function renderAt(path: string) {
+  window.history.pushState({}, '', path);
+  render(<App />);
+}
+
+describe("App routes", () => {
   afterEach(() => {
-    vi.unstubAllGlobals();
+    vi.clearAllMocks();
   });
 
-  it("renders message from API", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () =>
-            Promise.resolve({ data: { message: "Hello World" } }),
-        } as Response),
-      ),
-    );
-    render(<App />);
-    expect(
-      await screen.findByText(/Hello World/, {}, { timeout: 3000 }),
-    ).toBeInTheDocument();
+  it("renders landing page at /", () => {
+    renderAt("/");
+    expect(screen.getByText('Landing Page')).toBeInTheDocument();
   });
 
-  it("shows error when response is not ok", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.resolve({
-          ok: false,
-          json: () => Promise.resolve({}),
-        } as Response),
-      ),
-    );
-    render(<App />);
-    expect(
-      await screen.findByText(/Failed to fetch from backend/),
-    ).toBeInTheDocument();
+  it("renders login page at /login", () => {
+    renderAt("/login");
+    expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
-  it("shows error when fetch rejects (network failure)", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(() =>
-        Promise.reject(new TypeError("Failed to fetch")),
-      ),
-    );
-    render(<App />);
-    expect(
-      await screen.findByText(/Failed to fetch/),
-    ).toBeInTheDocument();
+  it("renders sign up page at /signup", () => {
+    renderAt("/signup");
+    expect(screen.getByText('Sign Up Page')).toBeInTheDocument();
+  });
+
+  it("renders explore page at /explore", () => {
+    renderAt("/explore");
+    expect(screen.getByText('Explore Page')).toBeInTheDocument();
+  });
+
+  it("renders demo player page at /visualizers/demo", () => {
+    renderAt("/visualizer/demo");
+    expect(screen.getByText('Demo Player Page')).toBeInTheDocument();
+  });
+
+  it("renders player page at /visualizers/123", () => {
+    renderAt("/visualizer/123");
+    expect(screen.getByText('Player Page')).toBeInTheDocument();
+  });
+
+  it("renders my visuals page at /my-visuals", () => {
+    renderAt("/my-visuals");
+    expect(screen.getByText('My Visuals Page')).toBeInTheDocument();
+  });
+
+  it("renders not found page at unknown route", () => {
+    renderAt("/some/unknown/path");
+    expect(screen.getByText('Not Found Page')).toBeInTheDocument();
   });
 });

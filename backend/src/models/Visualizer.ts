@@ -1,24 +1,46 @@
+import mongoose, { Schema, Document } from 'mongoose';                                             
+                                                                                                     
+  export interface IVisualizer extends Document {                                                    
+      name: string; 
+      source: string;
+      glsl: string;                                                                                  
+      imageUrl?: mongoose.Types.ObjectId;  
+      isDemo: boolean;
+      tags: string[];                                                                        
+  }                                                                                                  
+                                                                                                     
+  const VisualizerSchema = new Schema<IVisualizer>({                                                 
+      name: { 
+        type: String, 
+        required: true,
+        trim: true, 
+    },
 
-// Mongoose library to work with DB
-import mongoose, { Schema, Document} from 'mongoose';
+      source: { 
+          type: String,
+      },
 
-// Describing structure of data 
-export interface IVisualizer extends Document {
-    name: string;
-    imageUrl: string; // Link to preview
-    }
-
-// Creating Model schema Visualizer
-const VisualizerSchema = new Schema<IVisualizer>({
-    name: { // Attribute
+      glsl: { 
         type: String,
         required: true,
     },
-    imageUrl: { // Attribute
-        type: String,
-        required: true, 
-    },
-}, { timestamps: true}) // auto adding Date, when created and updated
 
-// Exporting and Creating model by mongoose
-export default mongoose.model<IVisualizer>('Visualizer', VisualizerSchema)
+      imageUrl: { // 51
+        type: Schema.Types.ObjectId,
+        ref: 'Image',
+    },
+
+      isDemo: {
+          type: Boolean,
+          default: false,
+      },
+    
+      tags: { 
+          type: [String],
+          default: [],
+      },
+
+                                                      
+  }, { timestamps: true });                                                                       
+                                                                                                     
+  export default mongoose.model<IVisualizer>('Visualizer', VisualizerSchema);
