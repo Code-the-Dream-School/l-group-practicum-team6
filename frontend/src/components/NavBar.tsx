@@ -3,7 +3,7 @@ import logoFull from "../assets/logo-full.svg";
 
 const NavBar = () => {
     return (
-        <div className="bg-surface px-[80px] h-[64px] flex items-center justify-between">
+        <div className="bg-surface h-16 px-20 flex items-center justify-between">
             <Link to="/">
                 <img src={logoFull} alt="Sonix" className="" />
             </Link>

@@ -5,7 +5,7 @@ export default function SignUpPage() {
     return (
         <div className="flex flex-col h-screen justify-between">
             <NavBar />
-            <div className="flex items-center justify-center bg-void h-[calc(100%-64px-48px)]">
+            <div className="flex items-center justify-center bg-void flex-1">
                 <h1 className="text-xl text-text-primary">Sign Up Page</h1>
             </div>
             <Footer />

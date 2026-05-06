@@ -18,7 +18,9 @@
   }
 
   .input-field {
-    @apply inline-flex items-center;
+    @apply w-full border text-sm focus-visible:outline-none selection:bg-transparent;
+    @apply border-primary-border bg-surface text-text-primary placeholder:text-text-secondary;
+    @apply h-10 rounded-lg px-[13px];
   }
 
   .glass-card {
