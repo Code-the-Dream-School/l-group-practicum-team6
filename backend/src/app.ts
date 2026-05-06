@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
+import visualizerRouter from './routes/visualizer';
 
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
@@ -41,6 +42,8 @@ app.get('/api/v1/health', (_req, res) => {
 app.use('/api/v1/auth', authRouter);
 // Profile management, visualiser collection
 app.use('/api/v1/users', userRouter);
+// Visualizer route
+app.use('/api/v1/visualizers', visualizerRouter);
 
 // Serve built SPA: static assets first, then send index.html for any
 // non-/api GET so client-side routes (e.g. /login) resolve on refresh.
