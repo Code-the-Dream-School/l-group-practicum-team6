@@ -6,6 +6,7 @@ import NavBar from "../components/NavBar";
 import { useAuth } from "../context/useAuth";
 
 import eyeIcon from "../assets/icons/eye.svg";
+import eyeOffIcon from "../assets/icons/eyeOff.svg";
 import logoFull from "../assets/logo-full.svg";
 
 export default function SignUpPage() {
@@ -15,11 +16,9 @@ export default function SignUpPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
-
-// todo: login form
-// todo: navbar logout cleaning functions
 
     async function handleSubmit(e: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
         e.preventDefault();
@@ -128,7 +127,7 @@ export default function SignUpPage() {
                                 <input
                                     id="signup-password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     autoComplete="new-password"
                                     required
                                     minLength={8}
@@ -137,18 +136,19 @@ export default function SignUpPage() {
                                     onChange={(ev) =>
                                         setPassword(ev.target.value)
                                     }
-                                    className="input-field"
+                                    className="input-field pr-10"
                                 />
-                                <div
-                                    className="pointer-events-none absolute right-3 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center text-text-secondary"
-                                    aria-hidden
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="absolute right-3 top-3 text-text-secondary cursor-pointer"
                                 >
                                     <img
-                                        src={eyeIcon}
+                                        src={showPassword ? eyeOffIcon : eyeIcon}
                                         alt=""
                                         className="h-4 w-4"
                                     />
-                                </div>
+                                </button>
                             </div>
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -162,7 +162,7 @@ export default function SignUpPage() {
                                 <input
                                     id="signup-confirm"
                                     name="confirmPassword"
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     autoComplete="new-password"
                                     required
                                     minLength={8}
@@ -171,18 +171,21 @@ export default function SignUpPage() {
                                     onChange={(ev) =>
                                         setConfirmPassword(ev.target.value)
                                     }
-                                    className="input-field"
+                                    className="input-field pr-10"
                                 />
-                                <div
-                                    className="pointer-events-none absolute right-3 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center text-text-secondary"
-                                    aria-hidden
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword((prev) => !prev)
+                                    }
+                                    className="absolute right-3 top-3 text-text-secondary cursor-pointer"
                                 >
                                     <img
-                                        src={eyeIcon}
+                                        src={showPassword ? eyeOffIcon : eyeIcon}
                                         alt=""
                                         className="h-4 w-4"
                                     />
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -198,7 +201,17 @@ export default function SignUpPage() {
                         disabled={submitting}
                         className="btn-primary mt-3 h-12 w-full cursor-pointer justify-center py-0 text-sm disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        {submitting ? "Signing up…" : "Sign Up"}
+                        {submitting ? (
+                            <span className="inline-flex items-center gap-2">
+                                <span
+                                    className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                                    aria-hidden
+                                />
+                                Signing up…
+                            </span>
+                        ) : (
+                            "Sign Up"
+                        )}
                     </button>
 
                     <div className="flex items-center justify-center gap-1">

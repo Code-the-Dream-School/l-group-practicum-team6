@@ -1,20 +1,51 @@
-import NavBar from "../components/NavBar";
+import { useState, type SyntheticEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import Footer from "../components/Footer";
-import logoFull from "../assets/logo-full.svg";
+import NavBar from "../components/NavBar";
+import { useAuth } from "../context/useAuth";
+
 import eyeIcon from "../assets/icons/eye.svg";
-import { Link } from "react-router-dom";
+import eyeOffIcon from "../assets/icons/eyeOff.svg";
+import logoFull from "../assets/logo-full.svg";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [submitting, setSubmitting] = useState(false);
 
-    const handleLogin = () => {
-        console.log(" --login--");
-    };
+    async function handleSubmit(e: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
+        e.preventDefault();
+        setError(null);
+
+        if (!email || !password) {
+            setError("Please fill in email and password");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            await login(email.trim(), password);
+            navigate("/explore", { replace: true });
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Login error");
+        } finally {
+            setSubmitting(false);
+        }
+    }
 
     return (
         <div className="flex h-screen flex-col justify-between">
             <NavBar />
             <div className="flex items-center justify-center bg-void px-4 flex-1">
-                <div className="flex w-120 flex-col gap-4 p-10 rounded-2xl border border-primary-border bg-surface">
+                <form
+                    onSubmit={handleSubmit}
+                    className="flex w-120 flex-col gap-4 p-10 rounded-2xl border border-primary-border bg-surface"
+                >
                     <div className="flex justify-center">
                         <img src={logoFull} alt="Sonix Logo" className="h-7 w-auto" />
                     </div>
@@ -29,8 +60,14 @@ export default function LoginPage() {
                                 Email Address
                             </label>
                             <input
+                                id="login-email"
+                                name="email"
                                 type="email"
+                                autoComplete="email"
+                                required
                                 placeholder="you@example.com"
+                                value={email}
+                                onChange={(ev) => setEmail(ev.target.value)}
                                 className="input-field"
                             />
                         </div>
@@ -43,26 +80,53 @@ export default function LoginPage() {
                             </label>
                             <div className="relative">
                                 <input
-                                    type="password"
+                                    id="login-password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    autoComplete="current-password"
+                                    required
                                     placeholder="Enter your password"
-                                    className="input-field"
+                                    value={password}
+                                    onChange={(ev) => setPassword(ev.target.value)}
+                                    className="input-field pr-10"
                                 />
-                                <div
-                                    className="absolute right-3 top-3 items-center justify-center text-text-secondary"
-                                    aria-hidden
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((prev) => !prev)}
+                                    className="absolute right-3 top-3 text-text-secondary"
                                 >
                                     <img
-                                        src={eyeIcon}
+                                        src={showPassword ? eyeOffIcon : eyeIcon}
                                         alt=""
                                         className="h-4 w-4 cursor-pointer"
                                     />
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <button className="btn-primary mt-3 h-12 w-full justify-center py-0 text-sm cursor-pointer" onClick={handleLogin}>
-                        Log In
+                    {error ? (
+                        <p className="text-center text-sm text-error" role="alert">
+                            {error}
+                        </p>
+                    ) : null}
+
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="btn-primary mt-3 h-12 w-full justify-center py-0 text-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                        {submitting ? (
+                            <span className="inline-flex items-center gap-2">
+                                <span
+                                    className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                                    aria-hidden
+                                />
+                                Signing in...
+                            </span>
+                        ) : (
+                            "Log In"
+                        )}
                     </button>
 
                     <div className="flex justify-center items-center gap-1">
@@ -71,7 +135,7 @@ export default function LoginPage() {
                         </p>
                         <Link to="/signup" className="text-sm text-primary">Sign Up</Link>
                     </div>
-                </div>
+                </form>
             </div>
             <Footer />
         </div>
