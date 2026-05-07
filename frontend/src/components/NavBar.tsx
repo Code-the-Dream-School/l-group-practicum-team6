@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import logoFull from "../assets/logo-full.svg";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 const NavBar = () => {
     const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 import eyeIcon from "../assets/icons/eye.svg";
 import logoFull from "../assets/logo-full.svg";
@@ -20,7 +20,6 @@ export default function SignUpPage() {
 
 // todo: login form
 // todo: navbar logout cleaning functions
-// todo: fix broken authcontext
 
     async function handleSubmit(e: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
         e.preventDefault();
