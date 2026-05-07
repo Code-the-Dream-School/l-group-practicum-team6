@@ -44,7 +44,7 @@ const UserSchema = new Schema<IUser>({
 });
 
 //password hash before save
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (_next) {
   if (!this.isModified('password')) return;
 
   const salt = await bcrypt.genSalt(10);

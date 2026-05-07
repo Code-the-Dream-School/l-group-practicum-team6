@@ -34,7 +34,7 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
     };
 
     next();
-  } catch (error) {
+  } catch {
     throw new UnauthenticatedError('Authentication Invalid');
   }
 };
