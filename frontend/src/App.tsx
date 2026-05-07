@@ -37,7 +37,14 @@ function App() {
         }
         />
 
-        <Route path="/explore" element={<ExplorePage />} />
+        <Route
+          path="/explore"
+          element={
+            <ProtectedRoute>
+              <ExplorePage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
 
