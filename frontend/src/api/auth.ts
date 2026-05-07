@@ -1,4 +1,4 @@
-import type { ApiResponse, User} from '@sonix/shared';
+import type { ApiResponse, User } from '@sonix/shared';
 import { apiFetch } from './client';
 import { ApiEndpoints } from './endpoints';
 
@@ -19,8 +19,8 @@ export function login(email: string, password: string): Promise<ApiResponse<Auth
 }
 
 export function register(
-  name: string, 
-  email: string, 
+  name: string,
+  email: string,
   password: string
 ): Promise<ApiResponse<AuthData>> {
   return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.AUTH_REGISTER, {

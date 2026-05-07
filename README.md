@@ -8,8 +8,8 @@ A full-stack web application with a React frontend and a Node/Express backend th
 
 ## 🚀 Live Demo
 
-- **Frontend Live Site:** https://your-frontend-url.com  
-- **Frontend Repo:** /frontend  
+- **Frontend Live Site:** https://your-frontend-url.com
+- **Frontend Repo:** /frontend
 - **Backend Repo:** /backend
 
 ## 🧠 Problem Statement
@@ -35,11 +35,10 @@ Focus on the **user problem**, not the technology.
 
 Add screenshots or GIFs of key features here.
 
-
-
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - React
 - JavaScript (ES6+)
 - HTML5
@@ -47,15 +46,18 @@ Add screenshots or GIFs of key features here.
 - Vite or Create React App
 
 ### Backend
+
 - Node.js
 - Express.js
 - REST API
 
 ### Database
+
 - MongoDB (Mongoose) **or**
 - PostgreSQL (Prisma / Knex / Sequelize)
 
 ### Tooling
+
 - Git & GitHub
 - dotenv (environment variables)
 - ESLint / Prettier
@@ -69,7 +71,7 @@ project-root/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── hooks/
-│   │   ├── services/        
+│   │   ├── services/
 │   │   ├── styles/
 │   │   ├── utils/
 │   │   ├── App.jsx
@@ -93,6 +95,7 @@ project-root/
 ## ⚙️ Setup & Installation
 
 ### Prerequisites
+
 - Node.js 24 LTS (recommended)
 - npm or yarn
 - MongoDB or PostgreSQL (local or cloud)
@@ -130,6 +133,7 @@ http://localhost:5173
 ## 🧪 Available Scripts
 
 ### Frontend
+
 ```bash
 npm run dev
 npm run build
@@ -137,6 +141,7 @@ npm run preview
 ```
 
 ### Backend
+
 ```bash
 npm run dev
 npm start
@@ -158,16 +163,17 @@ DELETE /api/items/:id
 ## 🤝 Team & Collaboration
 
 ### Team Members
+
 - Name — Role
 - Name — Role
 - Name — Role
 
 ### Workflow
+
 - GitHub Issues for task tracking
 - Feature branches for development
 - Pull Requests required for all merges
 - Code reviews before merging to `main`
-
 
 ## 🧩 Development Process
 

@@ -30,7 +30,7 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
     req.user = {
       userId: payload.userId,
       name: payload.name,
-      email: payload.email
+      email: payload.email,
     };
 
     next();

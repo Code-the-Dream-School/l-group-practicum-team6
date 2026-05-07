@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getAllVisualizers, getDemoVisualizer, getTags, getVisualizerById } from '../../src/controllers/visualizer';
+import {
+  getAllVisualizers,
+  getDemoVisualizer,
+  getTags,
+  getVisualizerById,
+} from '../../src/controllers/visualizer';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import Visualizer from '../../src/models/Visualizer';
@@ -9,7 +14,7 @@ vi.mock('../../src/models/Visualizer', () => {
     select: vi.fn().mockReturnThis(),
     skip: vi.fn().mockReturnThis(),
     limit: vi.fn().mockReturnThis(),
-    then: vi.fn(), 
+    then: vi.fn(),
   };
 
   return {
@@ -90,8 +95,9 @@ describe('Visualizer Controller', () => {
     it('should throw NotFoundError if no demo found', async () => {
       mockedVisualizer.findOne.mockResolvedValue(null);
 
-      await expect(getDemoVisualizer(req as Request, res as Response))
-        .rejects.toThrow('No demo visualizer found');
+      await expect(getDemoVisualizer(req as Request, res as Response)).rejects.toThrow(
+        'No demo visualizer found'
+      );
     });
   });
 
@@ -123,8 +129,9 @@ describe('Visualizer Controller', () => {
       req.params = { id: '999' };
       mockedVisualizer.findById.mockResolvedValue(null);
 
-      await expect(getVisualizerById(req as Request, res as Response))
-        .rejects.toThrow('Visualizer not found');
+      await expect(getVisualizerById(req as Request, res as Response)).rejects.toThrow(
+        'Visualizer not found'
+      );
     });
   });
 });

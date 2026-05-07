@@ -1,16 +1,16 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ExplorePage from "./pages/ExplorePage";
-import DemoPlayerPage from "./pages/DemoPlayerPage";
-import PlayerPage from "./pages/PlayerPage";
-import MyVisualsPage from "./pages/MyVisualsPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import ExplorePage from './pages/ExplorePage';
+import DemoPlayerPage from './pages/DemoPlayerPage';
+import PlayerPage from './pages/PlayerPage';
+import MyVisualsPage from './pages/MyVisualsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-import ProtectedRoute from "./routes/ProtectedRoute";
-import GuestRoute from "./routes/GuestRoute";
+import ProtectedRoute from './routes/ProtectedRoute';
+import GuestRoute from './routes/GuestRoute';
 
 function App() {
   return (
@@ -19,22 +19,21 @@ function App() {
         <Route path="/" element={<LandingPage />} />
 
         <Route
-        path="/login"
-        element={
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        }
+          path="/login"
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
         />
 
         <Route
-        path="/signup"
-        element={
-          <GuestRoute>
-            <SignUpPage />
-          </GuestRoute>
-
-        }
+          path="/signup"
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
         />
 
         <Route path="/explore" element={<ExplorePage />} />
@@ -42,21 +41,21 @@ function App() {
         <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
 
         <Route
-        path="/visualizer/:id"
-        element={
-          <ProtectedRoute>
-            <PlayerPage />
-          </ProtectedRoute>
-        }
+          path="/visualizer/:id"
+          element={
+            <ProtectedRoute>
+              <PlayerPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-        path="/my-visuals"
-        element={
-          <ProtectedRoute>
-            <MyVisualsPage />
-          </ProtectedRoute>
-        }
+          path="/my-visuals"
+          element={
+            <ProtectedRoute>
+              <MyVisualsPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route path="*" element={<NotFoundPage />} />

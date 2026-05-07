@@ -1,5 +1,4 @@
 export enum ApiEndpoints {
-
   // Authentication
   AUTH_LOGIN = '/api/auth/login',
   AUTH_LOGOUT = '/api/auth/logout',

@@ -14,7 +14,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: NODE_VERSION
-        value: "24"
+        value: '24'
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
@@ -24,6 +24,6 @@ services:
       - key: CLIENT_URL
         sync: false
       - key: VITE_API_BASE_URL
-        value: ""
+        value: ''
       - key: VITE_PUBLIC_APP_NAME
         value: Sonix

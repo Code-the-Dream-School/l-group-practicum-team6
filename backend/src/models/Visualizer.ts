@@ -1,46 +1,48 @@
-import mongoose, { Schema, Document } from 'mongoose';                                             
-                                                                                                     
-  export interface IVisualizer extends Document {                                                    
-      name: string; 
-      source: string;
-      glsl: string;                                                                                  
-      imageUrl?: mongoose.Types.ObjectId;  
-      isDemo: boolean;
-      tags: string[];                                                                        
-  }                                                                                                  
-                                                                                                     
-  const VisualizerSchema = new Schema<IVisualizer>({                                                 
-      name: { 
-        type: String, 
-        required: true,
-        trim: true, 
+import mongoose, { Schema, Document } from 'mongoose';
+
+export interface IVisualizer extends Document {
+  name: string;
+  source: string;
+  glsl: string;
+  imageUrl?: mongoose.Types.ObjectId;
+  isDemo: boolean;
+  tags: string[];
+}
+
+const VisualizerSchema = new Schema<IVisualizer>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
-      source: { 
-          type: String,
-      },
-
-      glsl: { 
-        type: String,
-        required: true,
+    source: {
+      type: String,
     },
 
-      imageUrl: { // 51
-        type: Schema.Types.ObjectId,
-        ref: 'Image',
+    glsl: {
+      type: String,
+      required: true,
     },
 
-      isDemo: {
-          type: Boolean,
-          default: false,
-      },
-    
-      tags: { 
-          type: [String],
-          default: [],
-      },
+    imageUrl: {
+      // 51
+      type: Schema.Types.ObjectId,
+      ref: 'Image',
+    },
 
-                                                      
-  }, { timestamps: true });                                                                       
-                                                                                                     
-  export default mongoose.model<IVisualizer>('Visualizer', VisualizerSchema);
+    isDemo: {
+      type: Boolean,
+      default: false,
+    },
+
+    tags: {
+      type: [String],
+      default: [],
+    },
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model<IVisualizer>('Visualizer', VisualizerSchema);

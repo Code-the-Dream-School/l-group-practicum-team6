@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from "express";
-import { CustomAPIError } from "../errors/CustomAPIError";
+import { NextFunction, Request, Response } from 'express';
+import { CustomAPIError } from '../errors/CustomAPIError';
 
 export const errorHandler = (
   err: Error,
   _req: Request,
   res: Response,
-  _next: NextFunction,
+  _next: NextFunction
 ): void => {
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === 'production';
 
   // Log full error details in development, but only essential info in production
   console.error(`Error:`, {
@@ -29,7 +29,7 @@ export const errorHandler = (
   // Unknown errors - 500
   res.status(500).json({
     error: {
-      message: isProduction ? "Internal server error" : err.message,
+      message: isProduction ? 'Internal server error' : err.message,
     },
   });
 };

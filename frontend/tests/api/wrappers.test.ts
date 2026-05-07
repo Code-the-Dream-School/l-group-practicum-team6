@@ -6,11 +6,7 @@ vi.mock('../../src/api/client', () => ({
 
 import { apiFetch } from '../../src/api/client';
 import { getUser, login, register, logout } from '../../src/api/auth';
-import {
-  listVisualizers,
-  getDemoVisualizer,
-  getVisualizer,
-} from '../../src/api/visualizers';
+import { listVisualizers, getDemoVisualizer, getVisualizer } from '../../src/api/visualizers';
 import {
   updateProfile,
   changePassword,
@@ -19,17 +15,17 @@ import {
   saveVisual,
   removeVisual,
 } from '../../src/api/users';
-import { 
-  uploadAvatar, 
+import {
+  uploadAvatar,
   deleteAvatar,
   uploadVisualizerImage,
-  deleteVisualizerImage
+  deleteVisualizerImage,
 } from '../../src/api/images';
-import { 
+import {
   ApiEndpoints,
   buildVisualizerDetailEndpoint,
   buildSavedVisualEndpoint,
-  buildVisualizerImageEndpoint
+  buildVisualizerImageEndpoint,
 } from '../../src/api';
 
 const mockedApiFetch = vi.mocked(apiFetch);
@@ -89,9 +85,7 @@ describe('visualizers api', () => {
   it('listVisualizers skips undefined params', () => {
     listVisualizers({ search: 'wave', page: undefined, limit: 10 });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(
-      `${ApiEndpoints.VISUALIZERS}?search=wave&limit=10`
-    );
+    expect(mockedApiFetch).toHaveBeenCalledWith(`${ApiEndpoints.VISUALIZERS}?search=wave&limit=10`);
   });
 
   it('listVisualizers returns base endpoint when all params are undefined', () => {
@@ -101,9 +95,7 @@ describe('visualizers api', () => {
       limit: undefined,
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(
-      ApiEndpoints.VISUALIZERS
-    );
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS);
   });
 
   it('listVisualizers includes query params', () => {
@@ -170,23 +162,17 @@ describe('users api', () => {
   it('saveVisual posts visual id', () => {
     saveVisual('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(
-      buildSavedVisualEndpoint('visual123'),
-      {
-        method: 'POST',
-      }
-    );
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildSavedVisualEndpoint('visual123'), {
+      method: 'POST',
+    });
   });
 
   it('removeVisual deletes saved visual id', () => {
     removeVisual('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(
-      buildSavedVisualEndpoint('visual123'),
-      {
-        method: 'DELETE',
-      }
-    );
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildSavedVisualEndpoint('visual123'), {
+      method: 'DELETE',
+    });
   });
 });
 
@@ -230,11 +216,8 @@ describe('images api', () => {
   it('deleteVisualizerImage deletes image for visualizer', () => {
     deleteVisualizerImage('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(
-      buildVisualizerImageEndpoint('visual123'),
-      {
-        method: 'DELETE',
-      }
-    );
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildVisualizerImageEndpoint('visual123'), {
+      method: 'DELETE',
+    });
   });
 });

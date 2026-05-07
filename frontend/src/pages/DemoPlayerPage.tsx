@@ -1,3 +1,3 @@
 export default function DemoPlayerPage() {
-    return <div>Demo Player Page</div>;
+  return <div>Demo Player Page</div>;
 }

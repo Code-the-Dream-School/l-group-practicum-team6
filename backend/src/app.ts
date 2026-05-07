@@ -23,10 +23,12 @@ app.use(limiter);
 app.use(express.json());
 app.use(helmet());
 // credentials: true required so browser sends auth cookie cross-origin.
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 // Secret enables signed cookies for JWT-bearing auth cookies.
 app.use(cookieParser(process.env.JWT_SECRET));
 
@@ -57,4 +59,3 @@ app.use(notFound);
 app.use(errorHandler);
 
 export default app;
-
