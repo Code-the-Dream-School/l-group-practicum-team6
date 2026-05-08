@@ -14,9 +14,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
       <NavLink
         to="/explore"
         className={({ isActive }) =>
-          isActive
-            ? "block py-3 text-base font-medium text-text-primary"
-            : "block py-3 text-base font-medium text-text-secondary"
+          `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
         }
       >
         Explore
@@ -26,9 +24,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           <NavLink
             to="/my-visuals"
             className={({ isActive }) =>
-              isActive
-                ? "block py-3 text-base font-medium text-text-primary"
-                : "block py-3 text-base font-medium text-text-secondary"
+              `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
             }
           >
             My Visuals
