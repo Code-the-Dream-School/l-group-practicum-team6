@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import logoFull from "../../assets/logo-full.svg";
 import { useAuth } from "../../context/useAuth";
+import { Routes } from "../../routes/paths";
 
 import { AuthLinks } from "./AuthLinks";
 import { HamburgerIcon } from "./HamburgerIcon";
@@ -15,7 +16,7 @@ const NavBar = () => {
   const { user, logout } = useAuth();
 
   const isMinimal =
-    location.pathname === "/login" || location.pathname === "/signup";
+    location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
@@ -35,7 +36,7 @@ const NavBar = () => {
   if (isMinimal) {
     return (
       <div className="flex h-16 items-center bg-surface px-6 md:px-20">
-        <Link to="/">
+        <Link to={Routes.HOME}>
           <img src={logoFull} alt="Sonix" />
         </Link>
       </div>
@@ -46,12 +47,12 @@ const NavBar = () => {
     <header className="bg-surface">
       <div className="flex h-16 items-center justify-between px-6 md:px-20">
         <div className="flex items-center gap-10">
-          <Link to="/" aria-label="Sonix home">
+          <Link to={Routes.HOME} aria-label="Sonix home">
             <img src={logoFull} alt="Sonix" />
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <NavLink
-              to="/explore"
+              to={Routes.EXPLORE}
               className={({ isActive }) =>
                 isActive
                   ? "text-sm font-medium text-text-primary border-b-2 border-primary pb-1"
@@ -62,7 +63,7 @@ const NavBar = () => {
             </NavLink>
             {user && (
               <NavLink
-                to="/my-visuals"
+                to={Routes.MY_VISUALS}
                 className={({ isActive }) =>
                   isActive
                     ? "text-sm font-medium text-text-primary border-b-2 border-primary pb-1"

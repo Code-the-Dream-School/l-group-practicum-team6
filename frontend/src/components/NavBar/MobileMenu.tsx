@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import type { User } from "@sonix/shared";
 
+import { Routes } from "../../routes/paths";
 import { Avatar } from "./Avatar";
 
 interface MobileMenuProps {
@@ -12,7 +13,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
   return (
     <div className="md:hidden border-t border-primary-border bg-surface px-6 py-4">
       <NavLink
-        to="/explore"
+        to={Routes.EXPLORE}
         className={({ isActive }) =>
           `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
         }
@@ -22,7 +23,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
       {user ? (
         <>
           <NavLink
-            to="/my-visuals"
+            to={Routes.MY_VISUALS}
             className={({ isActive }) =>
               `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
             }
@@ -50,10 +51,10 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
         </>
       ) : (
         <div className="mt-3 flex flex-col gap-3 border-t border-primary-border pt-3">
-          <Link to="/login" className="btn-ghost justify-center">
+          <Link to={Routes.LOGIN} className="btn-ghost justify-center">
             Log In
           </Link>
-          <Link to="/signup" className="btn-primary justify-center">
+          <Link to={Routes.SIGNUP} className="btn-primary justify-center">
             Sign Up
           </Link>
         </div>
