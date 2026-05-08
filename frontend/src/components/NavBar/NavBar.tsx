@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import logoFull from "../../assets/logo-full.svg";
 import { useAuth } from "../../context/useAuth";
 
-import { GuestActions } from "./GuestActions";
+import { AuthLinks } from "./AuthLinks";
 import { HamburgerIcon } from "./HamburgerIcon";
 import { MobileMenu } from "./MobileMenu";
 import { UserMenu } from "./UserMenu";
@@ -79,7 +79,7 @@ const NavBar = () => {
           {user ? (
             <UserMenu user={user} onLogout={handleLogout} />
           ) : (
-            <GuestActions />
+            <AuthLinks />
           )}
         </div>
 

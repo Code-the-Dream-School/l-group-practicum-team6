@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export function GuestActions() {
+export function AuthLinks() {
   return (
     <>
       <Link to="/login" className="btn-ghost">
