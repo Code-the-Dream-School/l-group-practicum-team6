@@ -11,15 +11,16 @@ import NotFoundPage from './pages/NotFoundPage';
 
 import ProtectedRoute from './routes/ProtectedRoute';
 import GuestRoute from './routes/GuestRoute';
+import { Routes as RoutePaths } from './routes/paths';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path={RoutePaths.HOME} element={<LandingPage />} />
 
         <Route
-          path="/login"
+          path={RoutePaths.LOGIN}
           element={
             <GuestRoute>
               <LoginPage />
@@ -28,7 +29,7 @@ function App() {
         />
 
         <Route
-          path="/signup"
+          path={RoutePaths.SIGNUP}
           element={
             <GuestRoute>
               <SignUpPage />
@@ -36,12 +37,19 @@ function App() {
           }
         />
 
-        <Route path="/explore" element={<ExplorePage />} />
+        <Route
+          path={RoutePaths.EXPLORE}
+          element={
+            <ProtectedRoute>
+              <ExplorePage />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
+        <Route path={RoutePaths.VISUALIZER_DEMO} element={<DemoPlayerPage />} />
 
         <Route
-          path="/visualizer/:id"
+          path={RoutePaths.VISUALIZER}
           element={
             <ProtectedRoute>
               <PlayerPage />
@@ -50,7 +58,7 @@ function App() {
         />
 
         <Route
-          path="/my-visuals"
+          path={RoutePaths.MY_VISUALS}
           element={
             <ProtectedRoute>
               <MyVisualsPage />
@@ -58,7 +66,7 @@ function App() {
           }
         />
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path={RoutePaths.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -13,6 +13,7 @@ const config: Config = {
         secondary: '#00E5FF',
         error: '#FF4D6D',
         success: '#00D68F',
+        'primary-border': '#2A2A3D',
         'text-primary': '#F0F0FF',
         'text-secondary': '#8888AA',
       },
