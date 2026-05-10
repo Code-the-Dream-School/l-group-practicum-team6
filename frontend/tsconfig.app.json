@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["node", "vitest/globals"],
     "paths": {
       "@sonix/shared": ["../shared/src/index.ts"]
     }

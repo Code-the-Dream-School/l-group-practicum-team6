@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ExplorePage from "./pages/ExplorePage";
-import DemoPlayerPage from "./pages/DemoPlayerPage";
-import PlayerPage from "./pages/PlayerPage";
-import MyVisualsPage from "./pages/MyVisualsPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import ExplorePage from './pages/ExplorePage';
+import DemoPlayerPage from './pages/DemoPlayerPage';
+import PlayerPage from './pages/PlayerPage';
+import MyVisualsPage from './pages/MyVisualsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-import ProtectedRoute from "./routes/ProtectedRoute";
-import GuestRoute from "./routes/GuestRoute";
-import { Routes as RoutePaths } from "./routes/paths";
+import ProtectedRoute from './routes/ProtectedRoute';
+import GuestRoute from './routes/GuestRoute';
+import { Routes as RoutePaths } from './routes/paths';
 
 function App() {
   return (
@@ -20,22 +20,21 @@ function App() {
         <Route path={RoutePaths.HOME} element={<LandingPage />} />
 
         <Route
-        path={RoutePaths.LOGIN}
-        element={
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        }
+          path={RoutePaths.LOGIN}
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
         />
 
         <Route
-        path={RoutePaths.SIGNUP}
-        element={
-          <GuestRoute>
-            <SignUpPage />
-          </GuestRoute>
-
-        }
+          path={RoutePaths.SIGNUP}
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
         />
 
         <Route
@@ -50,21 +49,21 @@ function App() {
         <Route path={RoutePaths.VISUALIZER_DEMO} element={<DemoPlayerPage />} />
 
         <Route
-        path={RoutePaths.VISUALIZER}
-        element={
-          <ProtectedRoute>
-            <PlayerPage />
-          </ProtectedRoute>
-        }
+          path={RoutePaths.VISUALIZER}
+          element={
+            <ProtectedRoute>
+              <PlayerPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route
-        path={RoutePaths.MY_VISUALS}
-        element={
-          <ProtectedRoute>
-            <MyVisualsPage />
-          </ProtectedRoute>
-        }
+          path={RoutePaths.MY_VISUALS}
+          element={
+            <ProtectedRoute>
+              <MyVisualsPage />
+            </ProtectedRoute>
+          }
         />
 
         <Route path={RoutePaths.NOT_FOUND} element={<NotFoundPage />} />

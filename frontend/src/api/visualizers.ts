@@ -12,13 +12,11 @@ type ListVisualizersData = {
   visualizers: Visualizer[];
 };
 
-function buildQuery(
-  params?: ListVisualizersParams
-): string {
+function buildQuery(params?: ListVisualizersParams): string {
   if (!params) return '';
 
   const query = new URLSearchParams();
-  
+
   Object.entries(params).forEach(([key, value]) => {
     if (value != null) {
       query.set(key, String(value));
@@ -26,7 +24,7 @@ function buildQuery(
   });
 
   const queryString = query.toString();
-  return queryString ? `?${queryString}` : '';  
+  return queryString ? `?${queryString}` : '';
 }
 
 export function listVisualizers(

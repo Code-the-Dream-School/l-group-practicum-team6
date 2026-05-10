@@ -12,8 +12,8 @@ vi.mock('../../src/models/User', () => ({
   },
 }));
 
-vi.mock('../../src/utils/jwt', () => ({ 
-  attachCookiesToResponse: vi.fn()
+vi.mock('../../src/utils/jwt', () => ({
+  attachCookiesToResponse: vi.fn(),
 }));
 
 const mockedUser = vi.mocked(User);
@@ -32,24 +32,24 @@ describe('Auth Controller', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-  
+
   describe('register', () => {
     it('should return 201 and user data when all fields are provided', async () => {
       const req = {
-        body: { name: 'John', email: 'john@example.com', password: 'password123' }
+        body: { name: 'John', email: 'john@example.com', password: 'password123' },
       } as Request;
-      
+
       const res = {
         status: vi.fn().mockReturnThis(),
         json: vi.fn(),
-        cookie: vi.fn()
+        cookie: vi.fn(),
       } as unknown as Response;
 
       mockedUser.findOne.mockResolvedValue(null);
-      mockedUser.create.mockResolvedValue({ 
-        name: 'John', 
+      mockedUser.create.mockResolvedValue({
+        name: 'John',
         email: 'john@example.com',
-        createJWT: vi.fn().mockReturnValue('fake_jwt_token')
+        createJWT: vi.fn().mockReturnValue('fake_jwt_token'),
       } as any);
 
       await register(req, res);
@@ -58,17 +58,17 @@ describe('Auth Controller', () => {
 
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.objectContaining({ 
-            name: 'John', 
-            email: 'john@example.com' 
-          })
+          data: expect.objectContaining({
+            name: 'John',
+            email: 'john@example.com',
+          }),
         })
       );
     });
 
     it('should throw BadRequestError if name is missing', async () => {
       const req = {
-        body: { email: 'john@example.com', password: 'password123' }
+        body: { email: 'john@example.com', password: 'password123' },
       } as Request;
       const res = {} as unknown as Response;
 
@@ -79,16 +79,16 @@ describe('Auth Controller', () => {
   describe('login', () => {
     it('should return 200 and user data when credentials are correct', async () => {
       const req = {
-        body: { email: 'test@test.com', password: 'password123' }
+        body: { email: 'test@test.com', password: 'password123' },
       } as Request;
-      
+
       const res = {
         status: vi.fn().mockReturnThis(),
         json: vi.fn(),
-        cookie: vi.fn()
+        cookie: vi.fn(),
       } as unknown as Response;
 
-      const fakeUser = { 
+      const fakeUser = {
         name: 'Test User',
         email: 'test@test.com',
         comparePassword: vi.fn().mockResolvedValue(true),
@@ -100,14 +100,16 @@ describe('Auth Controller', () => {
       await login(req, res);
 
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({ email: 'test@test.com' })
-      }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ email: 'test@test.com' }),
+        })
+      );
     });
 
     it('should throw BadRequestError if email or password is missing', async () => {
       const req = {
-        body: { email: 'test@test.com' }
+        body: { email: 'test@test.com' },
       } as Request;
       const res = {} as unknown as Response;
 

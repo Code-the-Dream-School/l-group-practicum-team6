@@ -56,13 +56,13 @@ Instead of writing CSS, you compose utility classes:
 
 Tailwind uses a scale where `1 = 4px`:
 
-| Class | Size |
-| --- | --- |
-| `p-2` | padding 8px |
-| `p-4` | padding 16px |
-| `px-4` | horizontal padding |
-| `py-2` | vertical padding |
-| `mt-4` | margin-top 16px |
+| Class   | Size                           |
+| ------- | ------------------------------ |
+| `p-2`   | padding 8px                    |
+| `p-4`   | padding 16px                   |
+| `px-4`  | horizontal padding             |
+| `py-2`  | vertical padding               |
+| `mt-4`  | margin-top 16px                |
 | `gap-4` | gap between flex/grid children |
 
 Prefer the built-in spacing scale before reaching for arbitrary values like `mt-[18px]`. Repeated one-off values usually make the UI harder to keep consistent.
@@ -89,12 +89,12 @@ Colors follow a `color-shade` pattern, from `50` (lightest) to `950` (darkest):
 
 Tailwind is mobile-first. Unprefixed classes apply to all sizes; prefixed classes kick in at that breakpoint and up.
 
-| Prefix | Breakpoint |
-| --- | --- |
+| Prefix | Breakpoint  |
+| ------ | ----------- |
 | (none) | all screens |
-| `sm:` | 640px+ |
-| `md:` | 768px+ |
-| `lg:` | 1024px+ |
+| `sm:`  | 640px+      |
+| `md:`  | 768px+      |
+| `lg:`  | 1024px+     |
 
 ```tsx
 <div className="text-sm md:text-base lg:text-lg">
@@ -130,7 +130,7 @@ import clsx from 'clsx';
   )}
 >
   {isLoading ? 'Saving...' : 'Save'}
-</button>
+</button>;
 ```
 
 Never do this — Tailwind will not include the class in the build:

@@ -42,9 +42,7 @@ export function deleteAccount(password: string): Promise<ApiResponse<null>> {
 }
 
 export function getSavedVisuals(): Promise<ApiResponse<SavedVisualsData>> {
-  return apiFetch<ApiResponse<SavedVisualsData>>(
-    ApiEndpoints.USERS_SAVED_VISUALS
-  );
+  return apiFetch<ApiResponse<SavedVisualsData>>(ApiEndpoints.USERS_SAVED_VISUALS);
 }
 
 export function saveVisual(id: string): Promise<ApiResponse<SavedVisualsData>> {

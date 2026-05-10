@@ -1,7 +1,10 @@
 import type { ApiError as ApiErrorResponse } from '@sonix/shared';
 
 export class ApiError extends Error {
-  constructor(message: string, public status: number) {
+  constructor(
+    message: string,
+    public status: number
+  ) {
     super(message);
     this.name = this.constructor.name;
 
@@ -9,10 +12,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiFetch<T>(
-  url: string, 
-  options: RequestInit = {}
-): Promise<T> {
+export async function apiFetch<T>(url: string, options: RequestInit = {}): Promise<T> {
   const isFormData = options.body instanceof FormData;
 
   const headers = new Headers(options.headers);
@@ -20,11 +20,11 @@ export async function apiFetch<T>(
   if (!isFormData && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-  
-  const response = await fetch(url, { 
-    ...options, 
+
+  const response = await fetch(url, {
+    ...options,
     credentials: 'include',
-    headers 
+    headers,
   });
 
   if (!response.ok) {
@@ -33,16 +33,14 @@ export async function apiFetch<T>(
     try {
       const errorData: ApiErrorResponse = await response.json();
 
-      message = 
-        errorData.error?.message || 
-        message;
+      message = errorData.error?.message || message;
     } catch (error) {
       console.error(
-        `Failed to parse error response as JSON`, 
-        { 
-          status: response.status, 
-          url, 
-          method: options.method ?? 'GET' 
+        `Failed to parse error response as JSON`,
+        {
+          status: response.status,
+          url,
+          method: options.method ?? 'GET',
         },
         error
       );

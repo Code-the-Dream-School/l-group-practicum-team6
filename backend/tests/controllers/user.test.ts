@@ -28,13 +28,13 @@ interface AuthRequest extends Request {
 }
 
 const FAKE_USER_ID = new mongoose.Types.ObjectId().toString();
-const FAKE_VIS_ID  = new mongoose.Types.ObjectId().toString();
+const FAKE_VIS_ID = new mongoose.Types.ObjectId().toString();
 
 function makeRes() {
   return {
     status: vi.fn().mockReturnThis(),
-    json:   vi.fn(),
-    send:   vi.fn(),
+    json: vi.fn(),
+    send: vi.fn(),
     cookie: vi.fn(),
   } as unknown as Response;
 }
@@ -141,14 +141,18 @@ describe('updateUserPassword', () => {
     const req = makeReq({ body: { currentPassword: 'old' } });
     const res = makeRes();
 
-    await expect(updateUserPassword(req, res)).rejects.toThrow('Please provide all password fields');
+    await expect(updateUserPassword(req, res)).rejects.toThrow(
+      'Please provide all password fields'
+    );
   });
 
   it('throws BadRequestError when new password is same as current', async () => {
     const req = makeReq({ body: { currentPassword: 'samepass1', newPassword: 'samepass1' } });
     const res = makeRes();
 
-    await expect(updateUserPassword(req, res)).rejects.toThrow('New password must be different from current password');
+    await expect(updateUserPassword(req, res)).rejects.toThrow(
+      'New password must be different from current password'
+    );
   });
 
   it('throws NotFoundError when user does not exist', async () => {
@@ -162,7 +166,9 @@ describe('updateUserPassword', () => {
 
   it('throws BadRequestError when current password is incorrect', async () => {
     const fakeUser = { comparePassword: vi.fn().mockResolvedValue(false) };
-    vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(fakeUser) } as any);
+    vi.mocked(User.findById).mockReturnValue({
+      select: vi.fn().mockResolvedValue(fakeUser),
+    } as any);
 
     const req = makeReq({ body: { currentPassword: 'wrong', newPassword: 'newpass1' } });
     const res = makeRes();
@@ -172,12 +178,16 @@ describe('updateUserPassword', () => {
 
   it('throws BadRequestError when new password is too short', async () => {
     const fakeUser = { comparePassword: vi.fn().mockResolvedValue(true) };
-    vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(fakeUser) } as any);
+    vi.mocked(User.findById).mockReturnValue({
+      select: vi.fn().mockResolvedValue(fakeUser),
+    } as any);
 
     const req = makeReq({ body: { currentPassword: 'correct', newPassword: 'short' } });
     const res = makeRes();
 
-    await expect(updateUserPassword(req, res)).rejects.toThrow('Password must be at least 8 characters');
+    await expect(updateUserPassword(req, res)).rejects.toThrow(
+      'Password must be at least 8 characters'
+    );
   });
 
   it('updates password and returns 200', async () => {
@@ -186,7 +196,9 @@ describe('updateUserPassword', () => {
       comparePassword: vi.fn().mockResolvedValue(true),
       save: vi.fn().mockResolvedValue(undefined),
     };
-    vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(fakeUser) } as any);
+    vi.mocked(User.findById).mockReturnValue({
+      select: vi.fn().mockResolvedValue(fakeUser),
+    } as any);
 
     const req = makeReq({ body: { currentPassword: 'correct', newPassword: 'newpassword1' } });
     const res = makeRes();
@@ -221,7 +233,9 @@ describe('deleteUser', () => {
 
   it('throws BadRequestError when password is incorrect', async () => {
     const fakeUser = { _id: FAKE_USER_ID, comparePassword: vi.fn().mockResolvedValue(false) };
-    vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(fakeUser) } as any);
+    vi.mocked(User.findById).mockReturnValue({
+      select: vi.fn().mockResolvedValue(fakeUser),
+    } as any);
 
     const req = makeReq({ body: { password: 'wrong' } });
     const res = makeRes();
@@ -231,7 +245,9 @@ describe('deleteUser', () => {
 
   it('deletes user and visuals then returns 204', async () => {
     const fakeUser = { _id: FAKE_USER_ID, comparePassword: vi.fn().mockResolvedValue(true) };
-    vi.mocked(User.findById).mockReturnValue({ select: vi.fn().mockResolvedValue(fakeUser) } as any);
+    vi.mocked(User.findById).mockReturnValue({
+      select: vi.fn().mockResolvedValue(fakeUser),
+    } as any);
     vi.mocked(UserVisual.deleteMany).mockResolvedValue({ deletedCount: 1 } as any);
     vi.mocked(User.findByIdAndDelete).mockResolvedValue(fakeUser as any);
 
@@ -293,7 +309,9 @@ describe('addVisualToCollection', () => {
     const req = makeReq({ params: { id: FAKE_VIS_ID } });
     const res = makeRes();
 
-    await expect(addVisualToCollection(req, res)).rejects.toThrow('Visualizer already in collection');
+    await expect(addVisualToCollection(req, res)).rejects.toThrow(
+      'Visualizer already in collection'
+    );
   });
 
   it('adds visualizer to collection and returns 201', async () => {
@@ -329,7 +347,9 @@ describe('removeVisualFromCollection', () => {
     const req = makeReq({ params: { id: FAKE_VIS_ID } });
     const res = makeRes();
 
-    await expect(removeVisualFromCollection(req, res)).rejects.toThrow('Visualizer not found in collection');
+    await expect(removeVisualFromCollection(req, res)).rejects.toThrow(
+      'Visualizer not found in collection'
+    );
   });
 
   it('removes visualizer and returns 200', async () => {

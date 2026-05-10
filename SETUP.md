@@ -44,17 +44,17 @@ cp backend/.env.example backend/.env
 
 **Frontend** (`frontend/.env`):
 
-| Variable | Description |
-| --- | --- |
-| `VITE_API_BASE_URL` | Backend URL the browser calls (e.g. `http://localhost:8080`) |
-| `VITE_PUBLIC_APP_NAME` | App name shown in the UI |
+| Variable               | Description                                                  |
+| ---------------------- | ------------------------------------------------------------ |
+| `VITE_API_BASE_URL`    | Backend URL the browser calls (e.g. `http://localhost:8080`) |
+| `VITE_PUBLIC_APP_NAME` | App name shown in the UI                                     |
 
 **Backend** (`backend/.env`):
 
-| Variable | Description |
-| --- | --- |
-| `PORT` | Backend port (default `8080`) |
-| `MONGO_URI` | MongoDB connection string |
+| Variable     | Description                    |
+| ------------ | ------------------------------ |
+| `PORT`       | Backend port (default `8080`)  |
+| `MONGO_URI`  | MongoDB connection string      |
 | `JWT_SECRET` | Secret used to sign JWT tokens |
 
 Never commit `.env`.

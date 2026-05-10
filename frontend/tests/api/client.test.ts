@@ -10,13 +10,10 @@ describe('apiFetch', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
-        new Response(
-          JSON.stringify({ error: { message: 'Unauthenticated' } }),
-          {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        )
+        new Response(JSON.stringify({ error: { message: 'Unauthenticated' } }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        })
       )
     );
 
@@ -80,9 +77,7 @@ describe('apiFetch', () => {
   });
 
   it('uses fallback message when error response is not JSON', async () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {});
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const fetchMock = vi.fn().mockResolvedValue(
       new Response('Not JSON', {
@@ -122,9 +117,9 @@ describe('apiFetch', () => {
     const result = await apiFetch<void>('/api/logout');
 
     expect(result).toBeUndefined();
-    });
+  });
 
-    it('uses default message when JSON error has no message', async () => {
+  it('uses default message when JSON error has no message', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(

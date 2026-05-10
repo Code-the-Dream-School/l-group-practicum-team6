@@ -8,8 +8,8 @@ A full-stack web application with a React frontend and a Node/Express backend th
 
 ## 🚀 Live Demo
 
-- **Frontend Live Site:** https://your-frontend-url.com  
-- **Frontend Repo:** /frontend  
+- **Frontend Live Site:** https://your-frontend-url.com
+- **Frontend Repo:** /frontend
 - **Backend Repo:** /backend
 
 ## 🧠 Problem Statement
@@ -35,11 +35,10 @@ Focus on the **user problem**, not the technology.
 
 Add screenshots or GIFs of key features here.
 
-
-
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - React
 - JavaScript (ES6+)
 - HTML5
@@ -47,15 +46,18 @@ Add screenshots or GIFs of key features here.
 - Vite or Create React App
 
 ### Backend
+
 - Node.js
 - Express.js
 - REST API
 
 ### Database
+
 - MongoDB (Mongoose) **or**
 - PostgreSQL (Prisma / Knex / Sequelize)
 
 ### Tooling
+
 - Git & GitHub
 - dotenv (environment variables)
 - ESLint / Prettier
@@ -69,7 +71,7 @@ project-root/
 │   │   ├── components/
 │   │   ├── pages/
 │   │   ├── hooks/
-│   │   ├── services/        
+│   │   ├── services/
 │   │   ├── styles/
 │   │   ├── utils/
 │   │   ├── App.jsx
@@ -93,9 +95,12 @@ project-root/
 ## ⚙️ Setup & Installation
 
 ### Prerequisites
+
 - Node.js 24 LTS (recommended)
 - npm or yarn
 - MongoDB or PostgreSQL (local or cloud)
+
+> **Monorepo install**: always run `npm install` from the **repo root**, not from inside `frontend/`, `backend/`, or `shared/`. Husky's `prepare` script and the workspace symlinks only resolve correctly at root.
 
 ### Backend Setup
 
@@ -129,7 +134,21 @@ http://localhost:5173
 
 ## 🧪 Available Scripts
 
+### Root (run from repo root)
+
+```bash
+npm run dev          # backend + frontend in parallel
+npm run build        # build all workspaces
+npm test             # run all tests
+npm run lint         # ESLint across all 3 workspaces
+npm run typecheck    # tsc --noEmit across all 3 workspaces
+npm run format       # Prettier write across the repo
+npm run format:check # Prettier check (no write)
+npm run release -- patch|minor|major
+```
+
 ### Frontend
+
 ```bash
 npm run dev
 npm run build
@@ -137,10 +156,36 @@ npm run preview
 ```
 
 ### Backend
+
 ```bash
 npm run dev
 npm start
 ```
+
+## 🪝 Pre-commit hooks
+
+Husky + lint-staged run on every `git commit`, scoped to **staged files only**:
+
+1. Prettier auto-fix (re-staged)
+2. ESLint auto-fix (commit blocked on remaining errors)
+3. `tsc --noEmit` for each touched workspace
+4. `vitest related --run` for each touched workspace
+
+Hooks install automatically after `npm install` at the repo root.
+
+**To bypass in emergencies** (use sparingly):
+
+```bash
+git commit --no-verify -m "msg"
+```
+
+## 🚢 Release
+
+```bash
+npm run release -- patch   # or minor, major
+```
+
+Verifies clean tree → runs full lint + tests → bumps version → updates `CHANGELOG.md` → creates and pushes tag.
 
 ## 🔐 API Overview
 
@@ -158,16 +203,17 @@ DELETE /api/items/:id
 ## 🤝 Team & Collaboration
 
 ### Team Members
+
 - Name — Role
 - Name — Role
 - Name — Role
 
 ### Workflow
+
 - GitHub Issues for task tracking
 - Feature branches for development
 - Pull Requests required for all merges
 - Code reviews before merging to `main`
-
 
 ## 🧩 Development Process
 
