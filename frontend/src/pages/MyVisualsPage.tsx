@@ -1,4 +1,4 @@
-import VisualCard from "../components/VisualCard";
+import VisualizerCard from "../components/VisualizerCard";
 import { useAuth } from "../context/AuthContext";
 
 const savedVisuals = [
@@ -32,7 +32,7 @@ export default function MyVisualsPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {savedVisuals.map((visual) => (
-            <VisualCard
+            <VisualizerCard
               key={visual.id}
               id={visual.id}
               name={visual.name}

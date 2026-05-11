@@ -1,4 +1,4 @@
-import VisualCard from "../components/VisualCard";
+import VisualizerCard from "../components/VisualizerCard";
 import { useAuth } from "../context/AuthContext";
 
 const visuals = [
@@ -36,7 +36,7 @@ export default function ExplorePage() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {visuals.map((visual) => (
-            <VisualCard
+            <VisualizerCard
               key={visual.id}
               id={visual.id}
               name={visual.name}

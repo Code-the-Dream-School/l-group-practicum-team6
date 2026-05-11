@@ -7,7 +7,7 @@ import {
   startVisualPreview,
 } from "../utils/visualPreview";
 
-interface VisualCardProps {
+interface VisualizerCardProps {
   id: string;
   name: string;
   tags: string[];
@@ -18,7 +18,7 @@ interface VisualCardProps {
   onToggleSave?: (id: string) => void;
 }
 
-export default function VisualCard({
+export default function VisualizerCard({
   id,
   name,
   tags,
@@ -27,7 +27,7 @@ export default function VisualCard({
   isSaved = false,
   isAuthenticated = false,
   onToggleSave,
-}: VisualCardProps) {
+}: VisualizerCardProps) {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [isPreviewActive, setIsPreviewActive] = useState(false);
 
