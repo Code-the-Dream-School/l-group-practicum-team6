@@ -24,8 +24,8 @@ describe("App", () => {
   test("renders feature cards", () => {
     render(<App />);
 
-    expect(screen.getByText(/Audio-reactive shaders/i)).toBeInTheDocument();
-    expect(screen.getByText(/No-setup mic access/i)).toBeInTheDocument();
-    expect(screen.getByText(/Growing visualizer library/i)).toBeInTheDocument();
+    expect(screen.getByText(/Real-time Visuals/i)).toBeInTheDocument();
+    expect(screen.getByText(/Microphone Input/i)).toBeInTheDocument();
+    expect(screen.getByText(/Playlist Collections/i)).toBeInTheDocument();
   });
 });
