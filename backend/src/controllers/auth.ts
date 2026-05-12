@@ -4,7 +4,7 @@ import { UnauthenticatedError, BadRequestError } from '../errors';
 import { attachCookiesToResponse } from '../utils/jwt';
 import User from '../models/User';
 
-// Register a new user 
+// Register a new user
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
@@ -24,7 +24,7 @@ export const register = async (req: Request, res: Response) => {
   res.status(StatusCodes.CREATED).json({ data: user });
 };
 
-// Login user 
+// Login user
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
@@ -48,7 +48,7 @@ export const login = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ data: user });
 };
 
-// Logout user 
+// Logout user
 export const logout = async (req: Request, res: Response) => {
   res.cookie('token', 'logout', {
     httpOnly: true,

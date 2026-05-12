@@ -26,7 +26,7 @@ describe('notFound', () => {
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({
-      error: { message: 'Not found' }
+      error: { message: 'Not found' },
     });
   });
 });

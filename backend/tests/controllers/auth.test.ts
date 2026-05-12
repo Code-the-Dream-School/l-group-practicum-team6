@@ -1,39 +1,76 @@
-import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
 import { register, login, logout } from '../../src/controllers/auth';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import User from '../../src/models/User';
+import { attachCookiesToResponse } from '../../src/utils/jwt';
+
+vi.mock('../../src/models/User', () => ({
+  default: {
+    findOne: vi.fn(),
+    create: vi.fn(),
+  },
+}));
+
+vi.mock('../../src/utils/jwt', () => ({
+  attachCookiesToResponse: vi.fn(),
+}));
+
+const mockedUser = vi.mocked(User);
 
 describe('Auth Controller', () => {
   beforeAll(() => {
     process.env.JWT_SECRET = 'test_secret';
     process.env.JWT_LIFETIME = '1d';
   });
-  
+
+  afterAll(() => {
+    delete process.env.JWT_SECRET;
+    delete process.env.JWT_LIFETIME;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('register', () => {
     it('should return 201 and user data when all fields are provided', async () => {
       const req = {
-        body: { name: 'John', email: 'john@example.com', password: 'password123' }
+        body: { name: 'John', email: 'john@example.com', password: 'password123' },
       } as Request;
-      
+
       const res = {
         status: vi.fn().mockReturnThis(),
         json: vi.fn(),
-        cookie: vi.fn()
+        cookie: vi.fn(),
       } as unknown as Response;
+
+      mockedUser.findOne.mockResolvedValue(null);
+      mockedUser.create.mockResolvedValue({
+        name: 'John',
+        email: 'john@example.com',
+        createJWT: vi.fn().mockReturnValue('fake_jwt_token'),
+      } as any);
 
       await register(req, res);
 
       expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({ name: 'John', email: 'john@example.com' })
-      }));
+
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            name: 'John',
+            email: 'john@example.com',
+          }),
+        })
+      );
     });
 
     it('should throw BadRequestError if name is missing', async () => {
       const req = {
-        body: { email: 'john@example.com', password: 'password123' }
+        body: { email: 'john@example.com', password: 'password123' },
       } as Request;
-      const res = {} as Response;
+      const res = {} as unknown as Response;
 
       await expect(register(req, res)).rejects.toThrow('Please provide name, email and password');
     });
@@ -42,28 +79,39 @@ describe('Auth Controller', () => {
   describe('login', () => {
     it('should return 200 and user data when credentials are correct', async () => {
       const req = {
-        body: { email: 'test@test.com', password: 'password123' }
+        body: { email: 'test@test.com', password: 'password123' },
       } as Request;
-      
+
       const res = {
         status: vi.fn().mockReturnThis(),
         json: vi.fn(),
-        cookie: vi.fn()
+        cookie: vi.fn(),
       } as unknown as Response;
+
+      const fakeUser = {
+        name: 'Test User',
+        email: 'test@test.com',
+        comparePassword: vi.fn().mockResolvedValue(true),
+        createJWT: vi.fn().mockReturnValue('fake_jwt_token'),
+      };
+
+      mockedUser.findOne.mockResolvedValue(fakeUser as any);
 
       await login(req, res);
 
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({ email: 'test@test.com' })
-      }));
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ email: 'test@test.com' }),
+        })
+      );
     });
 
     it('should throw BadRequestError if email or password is missing', async () => {
       const req = {
-        body: { email: 'test@test.com' }
+        body: { email: 'test@test.com' },
       } as Request;
-      const res = {} as Response;
+      const res = {} as unknown as Response;
 
       await expect(login(req, res)).rejects.toThrow('Please provide email and password');
     });

@@ -1,65 +1,72 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ExplorePage from "./pages/ExplorePage";
-import DemoPlayerPage from "./pages/DemoPlayerPage";
-import PlayerPage from "./pages/PlayerPage";
-import MyVisualsPage from "./pages/MyVisualsPage";
-import NotFoundPage from "./pages/NotFoundPage";
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import ExplorePage from './pages/ExplorePage';
+import DemoPlayerPage from './pages/DemoPlayerPage';
+import PlayerPage from './pages/PlayerPage';
+import MyVisualsPage from './pages/MyVisualsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-import ProtectedRoute from "./routes/ProtectedRoute";
-import GuestRoute from "./routes/GuestRoute";
+import ProtectedRoute from './routes/ProtectedRoute';
+import GuestRoute from './routes/GuestRoute';
+import { Routes as RoutePaths } from './routes/paths';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path={RoutePaths.HOME} element={<LandingPage />} />
 
         <Route
-        path="/login"
-        element={
-          <GuestRoute>
-            <LoginPage />
-          </GuestRoute>
-        }
+          path={RoutePaths.LOGIN}
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
         />
 
         <Route
-        path="/signup"
-        element={
-          <GuestRoute>
-            <SignUpPage />
-          </GuestRoute>
-
-        }
-        />
-
-        <Route path="/explore" element={<ExplorePage />} />
-
-        <Route path="/visualizer/demo" element={<DemoPlayerPage />} />
-
-        <Route
-        path="/visualizer/:id"
-        element={
-          <ProtectedRoute>
-            <PlayerPage />
-          </ProtectedRoute>
-        }
+          path={RoutePaths.SIGNUP}
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
         />
 
         <Route
-        path="/my-visuals"
-        element={
-          <ProtectedRoute>
-            <MyVisualsPage />
-          </ProtectedRoute>
-        }
+          path={RoutePaths.EXPLORE}
+          element={
+            <ProtectedRoute>
+              <ExplorePage />
+            </ProtectedRoute>
+          }
         />
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path={RoutePaths.VISUALIZER_DEMO} element={<DemoPlayerPage />} />
+
+        <Route
+          path={RoutePaths.VISUALIZER}
+          element={
+            <ProtectedRoute>
+              <PlayerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.MY_VISUALS}
+          element={
+            <ProtectedRoute>
+              <MyVisualsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path={RoutePaths.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

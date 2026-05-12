@@ -19,11 +19,11 @@ Our goals are simple:
 
 ## Branches
 
-| Branch | Purpose |
-| --- | --- |
-| `main` | Protected production branch. Only release PRs from `dev` go here. |
-| `dev` | Protected integration branch. Feature PRs merge here first. |
-| `feature/*`, `fix/*`, `chore/*`, `refactor/*`, `docs/*`, `test/*` | The only branches used for day-to-day work. |
+| Branch                                                            | Purpose                                                           |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `main`                                                            | Protected production branch. Only release PRs from `dev` go here. |
+| `dev`                                                             | Protected integration branch. Feature PRs merge here first.       |
+| `feature/*`, `fix/*`, `chore/*`, `refactor/*`, `docs/*`, `test/*` | The only branches used for day-to-day work.                       |
 
 ## Standard Workflow
 
