@@ -1,28 +1,38 @@
 {
-    "name": "sonix",
-    "version": "1.0.0",
-    "private": true,
-    "workspaces": [
-        "shared",
-        "backend",
-        "frontend"
-    ],
-    "engines": {
-        "node": ">=24.0.0"
-    },
-    "scripts": {
-        "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
-        "build": "npm run build -w shared && npm run build -w frontend && npm run build -w backend",
-        "test": "npm run test -w backend && npm run test -w frontend",
-        "coverage": "npm run test -w backend && npm run coverage -w frontend",
-        "start:frontend": "npm run dev -w frontend",
-        "start:backend": "npm run start -w backend"
-    },
-    "devDependencies": {
-        "@types/cookie-parser": "^1.4.10",
-        "concurrently": "^9.2.1"
-    },
-    "dependencies": {
-        "cookie-parser": "^1.4.7"
-    }
+  "name": "sonix",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w shared && npm run build -w frontend && npm run build -w backend",
+    "test": "npm run test -w backend && npm run test -w frontend",
+    "coverage": "npm run test -w backend && npm run coverage -w frontend",
+    "start:frontend": "npm run dev -w frontend",
+    "start:backend": "npm run start -w backend",
+    "start": "npm run start:backend",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run lint -w shared && npm run lint -w backend && npm run lint -w frontend",
+    "typecheck": "npm run build -w shared && npm run typecheck -w shared && npm run typecheck -w backend && npm run typecheck -w frontend",
+    "release": "node scripts/release.mjs",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.2",
+    "prettier": "3.8.3"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7"
+  }
 }

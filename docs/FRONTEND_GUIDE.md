@@ -131,9 +131,7 @@ See `TAILWIND_GUIDE.md` for more Tailwind examples and class-name patterns.
 Example:
 
 ```jsx
-<button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-  Submit
-</button>
+<button className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Submit</button>
 ```
 
 ## Keeping It Responsive

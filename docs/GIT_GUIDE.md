@@ -14,15 +14,15 @@ type/short-description
 
 ### Recommended Types
 
-| Type | Use for |
-| --- | --- |
-| `feature` | New user-facing work |
-| `fix` | Bug fixes |
-| `chore` | Small maintenance tasks |
+| Type       | Use for                              |
+| ---------- | ------------------------------------ |
+| `feature`  | New user-facing work                 |
+| `fix`      | Bug fixes                            |
+| `chore`    | Small maintenance tasks              |
 | `refactor` | Code cleanup without behavior change |
-| `docs` | Documentation updates |
-| `test` | Adding or updating tests |
-| `hotfix` | Urgent production fixes |
+| `docs`     | Documentation updates                |
+| `test`     | Adding or updating tests             |
+| `hotfix`   | Urgent production fixes              |
 
 ### Branch Naming Rules
 
@@ -65,15 +65,15 @@ type: short description
 
 ### Common Types
 
-| Type | Use for |
-| --- | --- |
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `chore` | Maintenance or tooling |
+| Type       | Use for                              |
+| ---------- | ------------------------------------ |
+| `feat`     | New feature                          |
+| `fix`      | Bug fix                              |
+| `chore`    | Maintenance or tooling               |
 | `refactor` | Code cleanup without behavior change |
-| `docs` | Documentation only |
-| `test` | Tests |
-| `style` | Formatting-only changes |
+| `docs`     | Documentation only                   |
+| `test`     | Tests                                |
+| `style`    | Formatting-only changes              |
 
 ### Commit Message Tips
 

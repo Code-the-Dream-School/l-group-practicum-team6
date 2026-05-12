@@ -36,3 +36,24 @@ export interface ApiError {
     message: string;
   };
 }
+
+export enum ApiEndpoints {
+  // Auth
+  AUTH_REGISTER = '/api/v1/auth/register',
+  AUTH_LOGIN = '/api/v1/auth/login',
+  AUTH_LOGOUT = '/api/v1/auth/logout',
+
+  // User Profile
+  USER_ME = '/api/v1/users/me',
+  USER_ME_PASSWORD = '/api/v1/users/me/password',
+
+  // User Visuals Collection
+  USER_VISUALS = '/api/v1/users/me/visuals',
+  USER_VISUALS_BY_ID = '/api/v1/users/me/visuals/:id',
+
+  // Visualizer Catalog
+  VISUALIZERS = '/api/v1/visualizers',
+  VISUALIZERS_DEMO = '/api/v1/visualizers/demo',
+  VISUALIZERS_TAGS = '/api/v1/visualizers/tags',
+  VISUALIZERS_BY_ID = '/api/v1/visualizers/:id',
+}

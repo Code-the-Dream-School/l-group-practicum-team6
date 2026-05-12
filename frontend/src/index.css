@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @config "../tailwind.config.ts";
 
 @layer base {
@@ -8,17 +8,19 @@
 }
 
 @layer components {
-  /* Placeholders for a future design-system */
-  .btn-primary {
-    @apply inline-flex items-center;
+  .btn-primary, .btn-ghost {
+    @apply inline-flex items-center bg-primary text-text-primary font-medium;
+    @apply rounded-[8px] px-[16px] py-[8px];
   }
 
   .btn-ghost {
-    @apply inline-flex items-center;
+    @apply bg-transparent border border-text-primary;
   }
 
   .input-field {
-    @apply inline-flex items-center;
+    @apply w-full border text-sm focus-visible:outline-none selection:bg-transparent;
+    @apply border-primary-border bg-surface text-text-primary placeholder:text-text-secondary;
+    @apply h-10 rounded-lg px-[13px];
   }
 
   .glass-card {

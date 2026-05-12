@@ -1,3 +1,14 @@
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
+
 export default function NotFoundPage() {
-    return <div>404 - Page Not Found</div>;
+  return (
+    <div className="flex h-screen flex-col justify-between">
+      <NavBar />
+      <div className="flex items-center justify-center bg-void flex-1">
+        <h1 className="text-xl text-text-primary">404 - Page Not Found</h1>
+      </div>
+      <Footer />
+    </div>
+  );
 }

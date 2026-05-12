@@ -34,20 +34,20 @@ Sonix is a curated audio visualizer app. The MVP should let users sign in, conne
 
 The app contains the following routes:
 
-| Route | Type | Description |
-| --- | --- | --- |
-| `/` | Public | Landing page |
-| `/signup` | Public | Sign up |
-| `/login` | Public | Log in |
-| `/about` | Public | About Sonix |
-| `/demo` | Public | Live visualizer demo _(not confirmed — may be added)_ |
-| `/privacy` | Public | Privacy policy _(not confirmed — may be deferred)_ |
-| `/terms` | Public | Terms of service _(not confirmed — may be deferred)_ |
-| `/visualizer` | Authenticated | Main visualizer |
-| `/explore` | Authenticated | Explore visuals / global library |
-| `/favorites` | Authenticated | My favorited visuals |
-| `/settings` | Authenticated | User settings |
-| `/404` | Public | Error / not found |
+| Route         | Type          | Description                                           |
+| ------------- | ------------- | ----------------------------------------------------- |
+| `/`           | Public        | Landing page                                          |
+| `/signup`     | Public        | Sign up                                               |
+| `/login`      | Public        | Log in                                                |
+| `/about`      | Public        | About Sonix                                           |
+| `/demo`       | Public        | Live visualizer demo _(not confirmed — may be added)_ |
+| `/privacy`    | Public        | Privacy policy _(not confirmed — may be deferred)_    |
+| `/terms`      | Public        | Terms of service _(not confirmed — may be deferred)_  |
+| `/visualizer` | Authenticated | Main visualizer                                       |
+| `/explore`    | Authenticated | Explore visuals / global library                      |
+| `/favorites`  | Authenticated | My favorited visuals                                  |
+| `/settings`   | Authenticated | User settings                                         |
+| `/404`        | Public        | Error / not found                                     |
 
 - If `/privacy` and `/terms` are confirmed, public site pages should expose them in the footer so the legal pages are always reachable.
 - `About` should remain part of the public marketing navigation rather than footer-only.
@@ -65,12 +65,12 @@ The app contains the following routes:
 
 The navbar stays as consistent as possible across all pages. Variants exist only where layout context strictly requires a difference (e.g., the visualizer canvas needs maximum space). For a fully distraction-free experience, users can enter fullscreen mode.
 
-| Variant | Pages | Content |
-| --- | --- | --- |
-| A — Public marketing | `/`, `/about` | Logo lockup · center nav links (Features / About) · Log In ghost + Sign Up primary |
-| B — Public minimal | `/signup`, `/login` | Logo lockup only — no secondary nav |
+| Variant                    | Pages                                 | Content                                                                                |
+| -------------------------- | ------------------------------------- | -------------------------------------------------------------------------------------- |
+| A — Public marketing       | `/`, `/about`                         | Logo lockup · center nav links (Features / About) · Log In ghost + Sign Up primary     |
+| B — Public minimal         | `/signup`, `/login`                   | Logo lockup only — no secondary nav                                                    |
 | C — Authenticated standard | `/explore`, `/favorites`, `/settings` | Logo lockup (links to `/visualizer`) · user avatar + name + chevron (opens user modal) |
-| D — Visualizer minimal | `/visualizer` | Logo icon only (no wordmark) · hamburger (opens side drawer) · user avatar icon only |
+| D — Visualizer minimal     | `/visualizer`                         | Logo icon only (no wordmark) · hamburger (opens side drawer) · user avatar icon only   |
 
 - Variant D is 48px tall; all others are 64px.
 - User modal (all authenticated variants): avatar, name, Settings, Log Out. _(Keyboard Shortcuts entry not confirmed.)_
@@ -82,12 +82,12 @@ The navbar stays as consistent as possible across all pages. Variants exist only
 
 Footer behavior is also context-aware and can vary by page type. Do not use a single shared footer across all routes.
 
-| Variant | Pages | Content |
-| --- | --- | --- |
-| A — Public site footer | `/`, `/about`, `/404` | Optional legal links (`Privacy`, `Terms`) if those pages are confirmed · optional lightweight product links |
-| B — Public auth / legal footer | `/signup`, `/login`, `/privacy`\*, `/terms`\* | Minimal footer; legal links can remain visible where useful, but should not compete with the main form or legal content |
-| C — Authenticated app footer | `/explore`, `/favorites`, `/settings` | Optional compact app footer or no footer, depending on screen density |
-| D — Visualizer immersive | `/visualizer` | No persistent marketing-style footer; preserve maximum canvas space and place secondary links inside drawers, menus, or overlays instead |
+| Variant                        | Pages                                         | Content                                                                                                                                  |
+| ------------------------------ | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| A — Public site footer         | `/`, `/about`, `/404`                         | Optional legal links (`Privacy`, `Terms`) if those pages are confirmed · optional lightweight product links                              |
+| B — Public auth / legal footer | `/signup`, `/login`, `/privacy`\*, `/terms`\* | Minimal footer; legal links can remain visible where useful, but should not compete with the main form or legal content                  |
+| C — Authenticated app footer   | `/explore`, `/favorites`, `/settings`         | Optional compact app footer or no footer, depending on screen density                                                                    |
+| D — Visualizer immersive       | `/visualizer`                                 | No persistent marketing-style footer; preserve maximum canvas space and place secondary links inside drawers, menus, or overlays instead |
 
 ### Onboarding Tour _(not confirmed — may be deferred)_
 
@@ -120,18 +120,18 @@ Footer behavior is also context-aware and can vary by page type. Do not use a si
 
 Keyboard shortcuts are only active on `/visualizer` in the MVP. Other pages may expose a "Keyboard Shortcuts" help entry, but should not bind the playback or visualizer control keys globally.
 
-| Key | Action |
-| --- | --- |
-| Space | Play / Pause |
-| F | Toggle fullscreen |
-| S | Toggle shuffle |
-| ← | Previous visual |
-| → | Next visual |
-| H | Toggle favorite |
-| D | Open device selector |
+| Key    | Action                          |
+| ------ | ------------------------------- |
+| Space  | Play / Pause                    |
+| F      | Toggle fullscreen               |
+| S      | Toggle shuffle                  |
+| ←      | Previous visual                 |
+| →      | Next visual                     |
+| H      | Toggle favorite                 |
+| D      | Open device selector            |
 | ? or K | Open keyboard shortcuts overlay |
 
-- Every control bar button tooltip shows the hotkey inline: e.g. "Play  [Space]".
+- Every control bar button tooltip shows the hotkey inline: e.g. "Play [Space]".
 - Hotkey badge style: monospace 11px, surface bg, 2px border, 4px radius.
 - `?` opens a keyboard shortcuts modal on `/visualizer` (two-column grid, grouped by category).
 - The authenticated user modal can include a "Keyboard Shortcuts" item that opens the same reference modal, but only the visualizer route should register the actual shortcut bindings.
@@ -199,16 +199,16 @@ The goal is to give maximum viewport area to the visualizer canvas. Remove all s
 
 ### Device Capability Matrix
 
-| Feature | Desktop/Laptop | Tablet | Phone | Notes |
-| --- | --- | --- | --- | --- |
-| Auth and account management | Full | Full | Full | Same core flow everywhere |
-| Visual library browsing | Full | Full | Full | Filters can collapse on smaller screens |
-| Favorites (view/toggle) | Full | Full | Full | Simple heart toggle, no complex interactions |
-| Live visualizer playback | Full | Limited | Limited | Keep controls simpler on smaller screens |
-| Microphone input | Full | TBD | TBD | Needs browser and device testing |
-| Virtual/system audio input | Desktop-preferred | Not in MVP | Not in MVP | Browser and OS dependent |
-| Fullscreen immersive mode | Full | Limited | Limited | Device and browser behavior will vary |
-| Keyboard shortcuts | Not confirmed | Not in MVP | Not in MVP | Desktop convenience only — feature not confirmed |
+| Feature                     | Desktop/Laptop    | Tablet     | Phone      | Notes                                            |
+| --------------------------- | ----------------- | ---------- | ---------- | ------------------------------------------------ |
+| Auth and account management | Full              | Full       | Full       | Same core flow everywhere                        |
+| Visual library browsing     | Full              | Full       | Full       | Filters can collapse on smaller screens          |
+| Favorites (view/toggle)     | Full              | Full       | Full       | Simple heart toggle, no complex interactions     |
+| Live visualizer playback    | Full              | Limited    | Limited    | Keep controls simpler on smaller screens         |
+| Microphone input            | Full              | TBD        | TBD        | Needs browser and device testing                 |
+| Virtual/system audio input  | Desktop-preferred | Not in MVP | Not in MVP | Browser and OS dependent                         |
+| Fullscreen immersive mode   | Full              | Limited    | Limited    | Device and browser behavior will vary            |
+| Keyboard shortcuts          | Not confirmed     | Not in MVP | Not in MVP | Desktop convenience only — feature not confirmed |
 
 ### Required UI States
 

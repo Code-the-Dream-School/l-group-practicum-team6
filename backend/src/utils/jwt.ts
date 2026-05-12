@@ -27,7 +27,7 @@ export const attachCookiesToResponse = (res: Response, token: string) => {
     httpOnly: true,
     expires: new Date(Date.now() + sevenDays),
     secure: process.env.NODE_ENV === 'production',
-    signed: true, 
+    signed: true,
     sameSite: 'strict',
   });
 };

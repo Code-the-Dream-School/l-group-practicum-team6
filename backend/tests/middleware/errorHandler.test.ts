@@ -39,7 +39,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(400);
     expect(res.body).toEqual({
-      error: { message: 'Invalid input' }
+      error: { message: 'Invalid input' },
     });
   });
 
@@ -50,7 +50,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual({
-      error: { message: 'Missing' }
+      error: { message: 'Missing' },
     });
   });
 
@@ -61,7 +61,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toEqual({
-      error: { message: 'Authentication Invalid' }
+      error: { message: 'Authentication Invalid' },
     });
   });
 
@@ -72,7 +72,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(403);
     expect(res.body).toEqual({
-      error: { message: 'No access' }
+      error: { message: 'No access' },
     });
   });
 
@@ -84,7 +84,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(500);
     expect(res.body).toEqual({
-      error: { message: 'Database exploded' }
+      error: { message: 'Database exploded' },
     });
   });
 
@@ -96,7 +96,7 @@ describe('errorHandler', () => {
 
     expect(res.status).toBe(500);
     expect(res.body).toEqual({
-      error: { message: 'Internal server error' }
+      error: { message: 'Internal server error' },
     });
   });
 
