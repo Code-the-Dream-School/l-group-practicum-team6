@@ -8,7 +8,6 @@ export interface IImage extends Document{
   filename: string;
   contentType: string;
   size: number;
-  url: string;
 }
 
 const ImageSchema = new mongoose.Schema<IImage>(
