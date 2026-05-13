@@ -48,8 +48,8 @@ export enum ApiEndpoints {
   USER_ME_PASSWORD = '/api/v1/users/me/password',
 
   // User Visuals Collection
-  USER_VISUALS = '/api/v1/users/me/visuals',
-  USER_VISUALS_BY_ID = '/api/v1/users/me/visuals/:id',
+  USER_VISUALS = '/api/v1/users/current/visuals',
+  USER_VISUALS_BY_ID = '/api/v1/users/current/visuals/:id',
 
   // Visualizer Catalog
   VISUALIZERS = '/api/v1/visualizers',
