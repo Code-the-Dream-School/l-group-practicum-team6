@@ -9,7 +9,7 @@ export enum ApiEndpoints {
   USERS_PROFILE = '/api/users/profile',
   USERS_PASSWORD = '/api/users/password',
   USERS_ACCOUNT = '/api/users/account',
-  USERS_SAVED_VISUALS = '/api/users/saved-visuals',
+  USERS_SAVED_VISUALS = '/api/v1/users/current/visuals',
 
   // Visualizers
   VISUALIZERS = '/api/visualizers',

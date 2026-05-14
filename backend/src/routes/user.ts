@@ -22,9 +22,9 @@ router.route('/me').get(showCurrentUser).patch(updateUser).delete(deleteUser);
 router.route('/me/password').patch(updateUserPassword);
 
 // List of visuals
-router.route('/me/visuals').get(getUserVisuals);
+router.route('/current/visuals').get(getUserVisuals);
 
 // Manage with particular visual, remove , add
-router.route('/me/visuals/:id').post(addVisualToCollection).delete(removeVisualFromCollection);
+router.route('/current/visuals/:id').post(addVisualToCollection).delete(removeVisualFromCollection);
 
 export default router;
