@@ -64,17 +64,11 @@ export default function MyVisualsPage() {
     <div className="flex min-h-screen flex-col justify-between bg-void">
       <NavBar />
 
-      <main className="flex-1 px-6 py-12 text-text-primary">
-        <div className="mx-auto max-w-6xl">
+      <main className="flex flex-1 justify-center px-6 py-10 text-text-primary">
+        <div className="w-full max-w-4xl">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300/80">
-                Personal Collection
-              </p>
-              <h1 className="mt-3 text-4xl font-bold tracking-tight">My Visuals</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-text-secondary">
-                Your saved visualizers are collected here for quick playback and easy removal.
-              </p>
+              <h1 className="text-xl font-semibold tracking-tight">My Favorites</h1>
             </div>
 
             <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
@@ -102,19 +96,17 @@ export default function MyVisualsPage() {
               Loading your saved visualizers...
             </div>
           ) : sortedVisuals.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-16 text-center shadow-[0_0_40px_rgba(124,92,252,0.12)]">
-              <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl border border-cyan-300/20 bg-cyan-300/10 text-4xl">
-                *
-              </div>
-              <h2 className="text-2xl font-semibold">You haven't saved any visualizers yet.</h2>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-text-secondary">
-                Explore the visual library and save your favorite audio-reactive effects.
+            <div className="flex min-h-[360px] flex-col items-center justify-center text-center">
+              <div className="mb-4 text-2xl text-text-secondary">♡</div>
+              <h2 className="text-sm font-semibold">No favorites yet</h2>
+              <p className="mt-2 max-w-xs text-xs leading-5 text-text-secondary">
+                Browse visualizers and save your favorites to build your personal collection.
               </p>
               <a
                 href="/explore"
-                className="mt-6 inline-flex rounded-full border border-cyan-300/40 bg-cyan-300/10 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/20"
+                className="mt-5 inline-flex rounded-md bg-[#8b5cf6] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#7c3aed]"
               >
-                Explore Visualizers
+                Explore Visuals
               </a>
             </div>
           ) : (

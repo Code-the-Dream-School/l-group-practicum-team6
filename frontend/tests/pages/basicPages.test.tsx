@@ -48,8 +48,8 @@ describe('basic pages', () => {
 
   it('renders MyVisualsPage', async () => {
     render(<MyVisualsPage />);
-    expect(screen.getByText('My Visuals')).toBeInTheDocument();
-    expect(await screen.findByText("You haven't saved any visualizers yet.")).toBeInTheDocument();
+    expect(screen.getByText('My Favorites')).toBeInTheDocument();
+    expect(await screen.findByText('No favorites yet')).toBeInTheDocument();
   });
 
   it('renders NotFoundPage', () => {
