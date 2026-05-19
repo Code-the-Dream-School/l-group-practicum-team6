@@ -8,6 +8,7 @@ import DemoPlayerPage from './pages/DemoPlayerPage';
 import PlayerPage from './pages/PlayerPage';
 import MyVisualsPage from './pages/MyVisualsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import SettingsPage from './pages/SettingsPage';
 
 import ProtectedRoute from './routes/ProtectedRoute';
 import GuestRoute from './routes/GuestRoute';
@@ -55,6 +56,15 @@ function App() {
           element={
             <ProtectedRoute>
               <MyVisualsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.SETTINGS}
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

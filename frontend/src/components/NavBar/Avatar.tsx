@@ -1,9 +1,10 @@
-import type { User } from "@sonix/shared";
+import type { User } from '@sonix/shared';
 
-import { pickGradient } from "../../utils/avatarGradient";
+import { pickGradient } from '../../utils/avatarGradient';
+import { getInitial } from '../../utils/getInitial';
 
 export function Avatar({ user }: { user: User }) {
-  const initial = user.name.trim()[0]?.toUpperCase() ?? "?";
+  const initial = getInitial(user.name);
   const [from, to] = pickGradient(user._id);
   return (
     <span

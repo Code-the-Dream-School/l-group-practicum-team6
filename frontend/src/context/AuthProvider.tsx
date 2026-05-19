@@ -1,9 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { ApiResponse, User } from '@sonix/shared';
 import type { AuthContextValue } from './auth-context';
@@ -67,23 +62,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(body.data);
   }, []);
 
-  const register = useCallback(
-    async (name: string, email: string, password: string) => {
-      const res = await fetch(ApiEndpoints.AUTH_REGISTER, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ name, email, password }),
-      });
-      if (!res.ok) {
-        throw new Error(await readApiError(res, 'Registration failed'));
-      }
-      const body = (await res.json()) as ApiResponse<User>;
-      if (!body.data) throw new Error('Invalid registration response');
-      setUser(body.data);
-    },
-    [],
-  );
+  const register = useCallback(async (name: string, email: string, password: string) => {
+    const res = await fetch(ApiEndpoints.AUTH_REGISTER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ name, email, password }),
+    });
+    if (!res.ok) {
+      throw new Error(await readApiError(res, 'Registration failed'));
+    }
+    const body = (await res.json()) as ApiResponse<User>;
+    if (!body.data) throw new Error('Invalid registration response');
+    setUser(body.data);
+  }, []);
+
+  const updateProfile = useCallback(async (payload: { name?: string; email?: string }) => {
+    const res = await fetch(ApiEndpoints.USER_ME, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error(await readApiError(res, 'Profile update failed'));
+    }
+
+    const body = (await res.json()) as ApiResponse<User>;
+    if (!body.data) throw new Error('Invalid profile update response');
+    setUser(body.data);
+  }, []);
 
   const logout = useCallback(async () => {
     try {
@@ -91,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: 'POST',
         credentials: 'include',
       });
-    } catch (e){
+    } catch (e) {
       console.error('Failed to logout', e);
     } finally {
       setUser(null);
@@ -104,9 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       login,
       register,
+      updateProfile,
       logout,
     }),
-    [user, loading, login, register, logout],
+    [user, loading, login, register, updateProfile, logout]
   );
 
   if (loading) {
@@ -117,7 +127,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

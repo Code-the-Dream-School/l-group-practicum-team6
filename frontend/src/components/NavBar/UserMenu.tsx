@@ -1,7 +1,9 @@
-import { useState } from "react";
-import type { User } from "@sonix/shared";
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import type { User } from '@sonix/shared';
 
-import { Avatar } from "./Avatar";
+import { Routes } from '../../routes/paths';
+import { Avatar } from './Avatar';
 
 interface UserMenuProps {
   user: User;
@@ -35,14 +37,14 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             role="menu"
             className="absolute right-0 mt-2 w-48 rounded-lg border border-primary-border bg-elevated py-1 shadow-lg z-20"
           >
-            <button
-              type="button"
+            <Link
+              to={Routes.SETTINGS}
               role="menuitem"
-              disabled
-              className="block w-full px-4 py-2 text-left text-sm text-text-secondary opacity-50 cursor-not-allowed"
+              onClick={() => setOpen(false)}
+              className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface"
             >
               Settings
-            </button>
+            </Link>
             <button
               type="button"
               role="menuitem"
