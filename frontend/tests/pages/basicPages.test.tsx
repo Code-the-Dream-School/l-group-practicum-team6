@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../src/components/NavBar', () => ({
@@ -7,6 +8,16 @@ vi.mock('../../src/components/NavBar', () => ({
 
 vi.mock('../../src/components/Footer', () => ({
   default: () => <div>Footer</div>,
+}));
+
+vi.mock('../../src/context/useAuth', () => ({
+  useAuth: () => ({
+    user: null,
+    isLoading: false,
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+  }),
 }));
 
 vi.mock('../../src/api', () => ({
@@ -23,16 +34,24 @@ import PlayerPage from '../../src/pages/PlayerPage';
 
 describe('basic pages', () => {
   it('renders LandingPage', () => {
-    render(<LandingPage />);
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
-    expect(screen.getByText('Landing Page')).toBeInTheDocument();
-    expect(screen.getByText('Footer')).toBeInTheDocument();
+    render(
+      <MemoryRouter>
+        <LandingPage />
+      </MemoryRouter>
+    );
+    expect(screen.getByText('SONIX')).toBeInTheDocument();
+    expect(screen.getByText('Transform Music Into Living Art')).toBeInTheDocument();
+    expect(screen.getByText('Try the Demo')).toBeInTheDocument();
   });
 
   it('renders ExplorePage', () => {
-    render(<ExplorePage />);
+    render(
+      <MemoryRouter>
+        <ExplorePage />
+      </MemoryRouter>
+    );
     expect(screen.getByText('NavBar')).toBeInTheDocument();
-    expect(screen.getByText('Explore Page')).toBeInTheDocument();
+    expect(screen.getByText('Explore Visuals')).toBeInTheDocument();
     expect(screen.getByText('Footer')).toBeInTheDocument();
   });
 
