@@ -41,7 +41,9 @@ export default function MyVisualsPage() {
       return visuals.sort((a, b) => b.visualizerId.name.localeCompare(a.visualizerId.name));
     }
 
-    return visuals.sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+    return visuals.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }, [savedVisuals, sortOption]);
 
   async function handleRemoveVisual(visualizerId: string) {

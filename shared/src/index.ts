@@ -26,7 +26,8 @@ export interface UserVisual {
   _id: string;
   userId: string;
   visualizerId: string;
-  savedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type ApiResponse<T> = { data: T };

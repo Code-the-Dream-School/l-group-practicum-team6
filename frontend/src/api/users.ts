@@ -20,7 +20,8 @@ export type SavedVisual = {
   _id: string;
   userId: string;
   visualizerId: Visualizer;
-  savedAt: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
