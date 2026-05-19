@@ -37,14 +37,7 @@ function App() {
           }
         />
 
-        <Route
-          path={RoutePaths.EXPLORE}
-          element={
-            <ProtectedRoute>
-              <ExplorePage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path={RoutePaths.EXPLORE} element={<ExplorePage />} />
 
         <Route path={RoutePaths.VISUALIZER_DEMO} element={<DemoPlayerPage />} />
 

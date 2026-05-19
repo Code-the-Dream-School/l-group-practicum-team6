@@ -19,6 +19,7 @@ export default function MyVisualsPage() {
       try {
         const response = await getSavedVisuals();
         setSavedVisuals(response.data);
+        setErrorMessage('');
       } catch {
         setErrorMessage('Unable to load your saved visualizers.');
       } finally {
@@ -85,19 +86,18 @@ export default function MyVisualsPage() {
             </label>
           </div>
 
-          {errorMessage && (
-            <div className="mb-6 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {errorMessage}
-            </div>
-          )}
-
           {isLoading ? (
             <div className="rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-12 text-center text-text-secondary">
               Loading your saved visualizers...
             </div>
+          ) : errorMessage ? (
+            <div className="rounded-3xl border border-red-400/30 bg-red-500/10 px-6 py-12 text-center text-red-100">
+              <h2 className="text-sm font-semibold">Could not load favorites</h2>
+              <p className="mt-2 text-xs text-red-100/80">{errorMessage}</p>
+            </div>
           ) : sortedVisuals.length === 0 ? (
             <div className="flex min-h-[360px] flex-col items-center justify-center text-center">
-              <div className="mb-4 text-2xl text-text-secondary">♡</div>
+              <div className="mb-4 text-2xl text-text-secondary">&#9825;</div>
               <h2 className="text-sm font-semibold">No favorites yet</h2>
               <p className="mt-2 max-w-xs text-xs leading-5 text-text-secondary">
                 Browse visualizers and save your favorites to build your personal collection.

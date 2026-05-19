@@ -57,6 +57,13 @@ cp backend/.env.example backend/.env
 | `MONGO_URI`  | MongoDB connection string      |
 | `JWT_SECRET` | Secret used to sign JWT tokens |
 
+| `MONGO_URI_TEST` | MongoDB connection string for test |
+
+For running backend tests, please set:
+| `MONGO_URI_TEST=mongodb+srv://.../<db-name>-test-<your-github-username>
+Replace <db-name> with working data base name.
+Replace <your-github-username> with your github username to avoid conflicts with other developers.
+
 Never commit `.env`.
 
 ## 4. Start the Apps
