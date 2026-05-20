@@ -1,6 +1,7 @@
 import type { ApiResponse, Visualizer } from '@sonix/shared';
+import { ApiEndpoints } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints, buildVisualizerDetailEndpoint } from './endpoints';
+import { buildVisualizerDetailEndpoint } from './endpoints';
 
 type ListVisualizersParams = {
   search?: string;

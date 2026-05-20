@@ -56,4 +56,8 @@ export enum ApiEndpoints {
   VISUALIZERS_DEMO = '/api/v1/visualizers/demo',
   VISUALIZERS_TAGS = '/api/v1/visualizers/tags',
   VISUALIZERS_BY_ID = '/api/v1/visualizers/:id',
+
+  // Images
+  IMAGES_AVATAR = '/api/v1/images/avatar',
+  IMAGES_VISUALIZER = '/api/v1/images/visualizers/{id}',
 }

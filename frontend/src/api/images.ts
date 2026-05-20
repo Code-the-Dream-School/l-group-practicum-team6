@@ -1,6 +1,6 @@
-import type { ApiResponse, User, Visualizer } from '@sonix/shared';
+import { ApiEndpoints, type ApiResponse, type User, type Visualizer } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints, buildVisualizerImageEndpoint } from './endpoints';
+import { buildVisualizerImageEndpoint } from './endpoints';
 
 export function uploadAvatar(file: File): Promise<ApiResponse<User>> {
   const formData = new FormData();

@@ -3,6 +3,8 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
+const tsconfigRootDir = import.meta.dirname;
+
 export default defineConfig([
   globalIgnores(['dist', 'node_modules', 'coverage']),
   {
@@ -13,6 +15,9 @@ export default defineConfig([
       sourceType: 'module',
       globals: {
         ...globals.node,
+      },
+      parserOptions: {
+        tsconfigRootDir,
       },
     },
     rules: {

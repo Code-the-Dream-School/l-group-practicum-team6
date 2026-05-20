@@ -1,6 +1,9 @@
+import { useEffect } from 'react';
+
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
+import { listVisualizers } from '../api/visualizers';
 import { useAuth } from '../context/useAuth';
 import { getPreviewShaderById } from '../utils/previewShaders';
 
@@ -26,6 +29,16 @@ const visuals = [
 export default function ExplorePage() {
   const { user } = useAuth();
   const canSave = Boolean(user);
+
+  useEffect(() => {
+    listVisualizers()
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-void">

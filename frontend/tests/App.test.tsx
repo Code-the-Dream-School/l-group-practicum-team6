@@ -1,30 +1,56 @@
-import { render, screen } from "@testing-library/react";
-import App from "../src/App";
+import { render, screen, waitFor } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe("App", () => {
-  test("renders landing page", () => {
-    render(<App />);
+import App from '../src/App';
+import { AuthProvider } from '../src/context/AuthProvider';
 
-    expect(screen.getByText(/See Your Sound/i)).toBeInTheDocument();
+beforeEach(() => {
+  vi.spyOn(global, 'fetch').mockResolvedValue({
+    ok: false,
+    json: async () => ({}),
+  } as Response);
+});
+
+function renderApp() {
+  return render(
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+}
+
+describe('App', () => {
+  it('renders landing page', async () => {
+    renderApp();
+
+    await waitFor(() => {
+      expect(screen.getByText(/Transform Music Into Living Art/i)).toBeInTheDocument();
+    });
   });
 
-  test("renders CTA links with correct routes", () => {
-    render(<App />);
+  it('renders CTA links with correct routes', async () => {
+    renderApp();
 
-    expect(screen.getByRole("link", { name: /Try the Demo/i })).toHaveAttribute(
-      "href",
-      "/visualizer/demo"
+    await waitFor(() => {
+      expect(screen.getByRole('link', { name: /Try the Demo/i })).toHaveAttribute(
+        'href',
+        '/visualizer/demo'
+      );
+    });
+
+    expect(screen.getByRole('link', { name: /Get Started Free/i })).toHaveAttribute(
+      'href',
+      '/signup'
     );
-
-    expect(
-      screen.getByRole("link", { name: /Get Started Free/i })
-    ).toHaveAttribute("href", "/signup");
   });
 
-  test("renders feature cards", () => {
-    render(<App />);
+  it('renders feature cards', async () => {
+    renderApp();
 
-    expect(screen.getByText(/Real-time Visuals/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Real-time Visuals/i)).toBeInTheDocument();
+    });
+
     expect(screen.getByText(/Microphone Input/i)).toBeInTheDocument();
     expect(screen.getByText(/Playlist Collections/i)).toBeInTheDocument();
   });
