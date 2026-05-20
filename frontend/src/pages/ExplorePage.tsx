@@ -19,7 +19,7 @@ export default function ExplorePage() {
     async function loadVisualizers() {
       try {
         const response = await listVisualizers();
-        setVisuals(response.data.visualizers);
+        setVisuals(response.data);
       } catch {
         setErrorMessage('Unable to load visualizers.');
       } finally {
@@ -75,7 +75,7 @@ export default function ExplorePage() {
                   id={visual._id}
                   name={visual.name}
                   tags={[visual.isDemo ? 'Demo' : 'Visualizer']}
-                  thumbnailUrl={visual.image}
+                  thumbnailUrl={visual.imageUrl}
                   playPath={visual.isDemo ? '/visualizer/demo' : `/visualizer/${visual._id}`}
                   previewGlsl={visual.glsl || getPreviewShaderById(visual._id)}
                   canSave={canSave && !visual.isDemo}

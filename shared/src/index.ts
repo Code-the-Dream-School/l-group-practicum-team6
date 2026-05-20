@@ -11,14 +11,14 @@ export interface Visualizer {
   name: string;
   source: string;
   glsl: string;
-  image?: string;
+  imageUrl?: string;
   isDemo: boolean;
 }
 
 export interface VisualizerListItem {
   _id: string;
   name: string;
-  image: string;
+  imageUrl?: string;
   isDemo: boolean;
 }
 
