@@ -26,6 +26,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@rolldown/binding-darwin-arm64": "^1.0.2",
     "@types/cookie-parser": "^1.4.10",
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",

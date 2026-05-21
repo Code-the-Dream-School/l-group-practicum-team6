@@ -57,4 +57,27 @@ export enum ApiEndpoints {
   VISUALIZERS_DEMO = '/api/v1/visualizers/demo',
   VISUALIZERS_TAGS = '/api/v1/visualizers/tags',
   VISUALIZERS_BY_ID = '/api/v1/visualizers/:id',
+
+  // Images
+  IMAGES_USER = '/api/v1/images/users/user',
+  IMAGES_USER_BY_ID = '/api/v1/images/users/:id',
+  IMAGES_VISUALIZER_BY_ID = '/api/v1/images/visualizers/:id',
+}
+
+// Dynamic endpoint builders
+
+export function buildUserVisualEndpoint(id: string): string {
+  return ApiEndpoints.USER_VISUALS_BY_ID.replace(':id', encodeURIComponent(id));
+}
+
+export function buildVisualizerEndpoint(id: string): string {
+  return ApiEndpoints.VISUALIZERS_BY_ID.replace(':id', encodeURIComponent(id));
+}
+
+export function buildUserImageEndpoint(id: string): string {
+  return ApiEndpoints.IMAGES_USER_BY_ID.replace(':id', encodeURIComponent(id));
+}
+
+export function buildVisualizerImageEndpoint(id: string): string {
+  return ApiEndpoints.IMAGES_VISUALIZER_BY_ID.replace(':id', encodeURIComponent(id));
 }

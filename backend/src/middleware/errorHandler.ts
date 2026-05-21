@@ -1,4 +1,6 @@
+import multer from 'multer';
 import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { CustomAPIError } from '../errors/CustomAPIError';
 
 export const errorHandler = (
@@ -15,6 +17,22 @@ export const errorHandler = (
     message: err.message,
     stack: isProduction ? undefined : err.stack,
   });
+
+  // Multer errors
+  if (err instanceof multer.MulterError) {
+    let message = 'File upload error';
+
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      message = 'File too large';
+    }
+
+    res.status(StatusCodes.BAD_REQUEST).json({
+      error: {
+        message,
+      },
+    });
+    return;
+  }
 
   // Known errors
   if (err instanceof CustomAPIError) {
