@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ApiEndpoints } from '@sonix/shared';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { getInitial } from './../utils/getInitial';
@@ -11,6 +12,12 @@ export default function SettingsPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSaved, setProfileSaved] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
 
   useEffect(() => {
     const currentName = user?.name ?? '';
@@ -20,6 +27,12 @@ export default function SettingsPage() {
 
   const email = user?.email ?? '';
   const initial = getInitial(displayName);
+  const disableUpdatePassword =
+    savingPassword ||
+    !currentPassword ||
+    !newPassword ||
+    !confirmPassword ||
+    Boolean(passwordError);
 
   async function handleSaveProfile() {
     const trimmedName = draftDisplayName.trim();
@@ -45,6 +58,67 @@ export default function SettingsPage() {
       setProfileError(err instanceof Error ? err.message : 'Failed to save changes');
     } finally {
       setSavingProfile(false);
+    }
+  }
+
+  function validatePasswordMatch() {
+    if (!newPassword || !confirmPassword) {
+      setPasswordError(null);
+      setPasswordSaved(false);
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New password and Confirm Password do not match');
+      setPasswordSaved(false);
+      return;
+    }
+
+    setPasswordError(null);
+  }
+
+  async function handleUpdatePassword() {
+    setPasswordSaved(false);
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New password and Confirm Password do not match');
+      return;
+    }
+
+    setPasswordError(null);
+    setSavingPassword(true);
+
+    try {
+      const response = await fetch(ApiEndpoints.USER_ME_PASSWORD, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      if (!response.ok) {
+        let message = 'Failed to update password';
+
+        try {
+          const body = (await response.json()) as { error?: { message?: string } };
+          if (body.error?.message) {
+            message = body.error.message;
+          }
+        } catch {
+          message = 'Unable to read server error. Please try again.';
+        }
+
+        throw new Error(message);
+      }
+
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordSaved(true);
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : 'Failed to update password');
+    } finally {
+      setSavingPassword(false);
     }
   }
 
@@ -84,7 +158,7 @@ export default function SettingsPage() {
                     type="text"
                     value={draftDisplayName}
                     onChange={(ev) => setDraftDisplayName(ev.target.value)}
-                    className="input-field"
+                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
                   />
                 </div>
 
@@ -100,7 +174,7 @@ export default function SettingsPage() {
                     type="email"
                     value={email}
                     readOnly
-                    className="input-field cursor-not-allowed"
+                    className="h-10 w-full cursor-not-allowed rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] opacity-70 outline-none"
                   />
                 </div>
               </div>
@@ -115,7 +189,7 @@ export default function SettingsPage() {
               </button>
 
               {profileError ? (
-                <p className="text-sm text-error" role="alert">
+                <p className="text-sm text-[#FF4D6D]" role="alert">
                   {profileError}
                 </p>
               ) : null}
@@ -140,7 +214,16 @@ export default function SettingsPage() {
                   >
                     Current Password
                   </label>
-                  <input id="current-password" type="password" className="input-field" />
+                  <input
+                    id="current-password"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(ev) => {
+                      setCurrentPassword(ev.target.value);
+                      setPasswordError(null);
+                    }}
+                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
@@ -150,7 +233,14 @@ export default function SettingsPage() {
                   >
                     New Password
                   </label>
-                  <input id="new-password" type="password" className="input-field" />
+                  <input
+                    id="new-password"
+                    type="password"
+                    value={newPassword}
+                    onChange={(ev) => setNewPassword(ev.target.value)}
+                    onBlur={validatePasswordMatch}
+                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                  />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
@@ -160,15 +250,34 @@ export default function SettingsPage() {
                   >
                     Confirm Password
                   </label>
-                  <input id="confirm-password" type="password" className="input-field" />
+                  <input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(ev) => setConfirmPassword(ev.target.value)}
+                    onBlur={validatePasswordMatch}
+                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                  />
                 </div>
               </div>
 
+              {passwordError ? (
+                <p className="text-sm text-[#FF4D6D]" role="alert">
+                  {passwordError}
+                </p>
+              ) : null}
+
+              {passwordSaved && !passwordError ? (
+                <p className="text-sm text-[#00E5FF]">Password updated successfully.</p>
+              ) : null}
+
               <button
                 type="button"
-                className="inline-flex h-10 w-full max-w-[240px] cursor-pointer items-center justify-center rounded-lg bg-[#7C5CFC] px-4 text-sm font-medium text-[#F0F0FF] transition hover:brightness-110"
+                onClick={handleUpdatePassword}
+                disabled={disableUpdatePassword}
+                className="inline-flex h-10 w-full max-w-[240px] cursor-pointer items-center justify-center rounded-lg bg-[#7C5CFC] px-4 text-sm font-medium text-[#F0F0FF] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Update Password
+                {savingPassword ? 'Updating...' : 'Update Password'}
               </button>
 
               <div className="pt-8">

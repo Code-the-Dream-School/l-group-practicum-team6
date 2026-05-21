@@ -207,6 +207,7 @@ describe('updateUserPassword', () => {
 
     expect(fakeUser.password).toBe('newpassword1');
     expect(fakeUser.save).toHaveBeenCalled();
+    expect(res.cookie).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
     expect(res.json).toHaveBeenCalledWith({ msg: 'Password updated' });
   });

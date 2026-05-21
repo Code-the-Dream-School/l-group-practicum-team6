@@ -44,8 +44,8 @@ export enum ApiEndpoints {
   AUTH_LOGOUT = '/api/v1/auth/logout',
 
   // User Profile
-  USER_ME = '/api/v1/users/me',
-  USER_ME_PASSWORD = '/api/v1/users/me/password',
+  USER = '/api/v1/users/user',
+  USER_ME_PASSWORD = '/api/v1/users/user/password',
 
   // User Visuals Collection
   USER_VISUALS = '/api/v1/users/current/visuals',

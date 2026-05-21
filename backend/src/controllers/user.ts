@@ -72,7 +72,6 @@ export const updateUserPassword = async (req: AuthRequest, res: Response) => {
   await user.save();
 
   // Respond
-  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()), signed: true });
   res.status(StatusCodes.OK).json({ msg: 'Password updated' });
 };
 
