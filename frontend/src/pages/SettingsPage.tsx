@@ -123,24 +123,24 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0F] text-[#F0F0FF]">
+    <div className="min-h-screen bg-void text-text-primary">
       <NavBar />
 
       <main className="mx-auto flex w-full max-w-[720px] flex-col gap-8 px-6 pb-24 pt-16">
         <section className="w-full">
-          <h1 className="text-[32px] font-semibold leading-[51.2px] text-[#F0F0FF]">Settings</h1>
+          <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">Settings</h1>
         </section>
 
-        <section className="w-full rounded-xl border border-[#2A2A3D] bg-[#12121A] p-12">
+        <section className="w-full rounded-xl border border-primary-border bg-surface p-12">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-[#F0F0FF]">Profile</h2>
+              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">Profile</h2>
 
               <div className="flex flex-col gap-2">
-                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#7C5CFC] to-[#00E5FF] text-[32px] font-semibold leading-8 text-[#F0F0FF]">
+                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[32px] font-semibold leading-8 text-text-primary">
                   {initial}
                 </div>
-                <p className="text-xs leading-[19.2px] text-[#8888AA]">
+                <p className="text-xs leading-[19.2px] text-text-secondary">
                   Avatar is generated from your name and account ID.
                 </p>
               </div>
@@ -149,7 +149,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="display-name"
-                    className="text-xs font-medium leading-[19.2px] text-[#8888AA]"
+                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
                     Display Name
                   </label>
@@ -158,14 +158,14 @@ export default function SettingsPage() {
                     type="text"
                     value={draftDisplayName}
                     onChange={(ev) => setDraftDisplayName(ev.target.value)}
-                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                    className="input-field focus-visible:border-primary"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="email-address"
-                    className="text-xs font-medium leading-[19.2px] text-[#8888AA]"
+                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
                     Email Address
                   </label>
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                     type="email"
                     value={email}
                     readOnly
-                    className="h-10 w-full cursor-not-allowed rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] opacity-70 outline-none"
+                    className="input-field cursor-not-allowed opacity-70"
                   />
                 </div>
               </div>
@@ -183,26 +183,26 @@ export default function SettingsPage() {
                 type="button"
                 onClick={handleSaveProfile}
                 disabled={savingProfile}
-                className="inline-flex h-10 w-full max-w-[240px] cursor-pointer items-center justify-center rounded-lg bg-[#7C5CFC] px-4 text-sm font-medium text-[#F0F0FF] transition hover:brightness-110 disabled:cursor-not-allowed"
+                className="btn-primary h-10 w-full max-w-[240px] cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {savingProfile ? 'Saving...' : 'Save Changes'}
               </button>
 
               {profileError ? (
-                <p className="text-sm text-[#FF4D6D]" role="alert">
+                <p className="text-sm text-error" role="alert">
                   {profileError}
                 </p>
               ) : null}
 
               {profileSaved && !profileError ? (
-                <p className="text-sm text-[#00E5FF]">Profile updated successfully.</p>
+                <p className="text-sm text-secondary">Profile updated successfully.</p>
               ) : null}
             </div>
 
-            <div className="flex flex-col gap-4 border-t border-[#2A2A3D] pt-12">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-[#F0F0FF]">Account</h2>
+            <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
+              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">Account</h2>
 
-              <h3 className="pt-2 text-lg font-medium leading-[25.2px] text-[#F0F0FF]">
+              <h3 className="pt-2 text-lg font-medium leading-[25.2px] text-text-primary">
                 Change Password
               </h3>
 
@@ -210,7 +210,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="current-password"
-                    className="text-xs font-medium leading-[19.2px] text-[#8888AA]"
+                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
                     Current Password
                   </label>
@@ -222,14 +222,14 @@ export default function SettingsPage() {
                       setCurrentPassword(ev.target.value);
                       setPasswordError(null);
                     }}
-                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                    className="input-field focus-visible:border-primary"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="new-password"
-                    className="text-xs font-medium leading-[19.2px] text-[#8888AA]"
+                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
                     New Password
                   </label>
@@ -239,14 +239,14 @@ export default function SettingsPage() {
                     value={newPassword}
                     onChange={(ev) => setNewPassword(ev.target.value)}
                     onBlur={validatePasswordMatch}
-                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                    className="input-field focus-visible:border-primary"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
                   <label
                     htmlFor="confirm-password"
-                    className="text-xs font-medium leading-[19.2px] text-[#8888AA]"
+                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
                     Confirm Password
                   </label>
@@ -256,26 +256,26 @@ export default function SettingsPage() {
                     value={confirmPassword}
                     onChange={(ev) => setConfirmPassword(ev.target.value)}
                     onBlur={validatePasswordMatch}
-                    className="h-10 w-full rounded-lg border border-[#2A2A3D] bg-[#0A0A0F] px-3 text-sm text-[#F0F0FF] outline-none transition focus:border-[#7C5CFC]"
+                    className="input-field focus-visible:border-primary"
                   />
                 </div>
               </div>
 
               {passwordError ? (
-                <p className="text-sm text-[#FF4D6D]" role="alert">
+                <p className="text-sm text-error" role="alert">
                   {passwordError}
                 </p>
               ) : null}
 
               {passwordSaved && !passwordError ? (
-                <p className="text-sm text-[#00E5FF]">Password updated successfully.</p>
+                <p className="text-sm text-secondary">Password updated successfully.</p>
               ) : null}
 
               <button
                 type="button"
                 onClick={handleUpdatePassword}
                 disabled={disableUpdatePassword}
-                className="inline-flex h-10 w-full max-w-[240px] cursor-pointer items-center justify-center rounded-lg bg-[#7C5CFC] px-4 text-sm font-medium text-[#F0F0FF] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn-primary h-10 w-full max-w-[240px] cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {savingPassword ? 'Updating...' : 'Update Password'}
               </button>
@@ -283,7 +283,7 @@ export default function SettingsPage() {
               <div className="pt-8">
                 <button
                   type="button"
-                  className="inline-flex h-10 w-full max-w-[240px] cursor-pointer items-center justify-center rounded-lg border border-[#FF4D6D] px-4 text-sm font-medium text-[#FF4D6D] transition hover:bg-[#FF4D6D]/10"
+                  className="btn-ghost h-10 w-full max-w-[240px] cursor-pointer justify-center border-error text-error transition hover:bg-error/10"
                 >
                   Delete Account
                 </button>
