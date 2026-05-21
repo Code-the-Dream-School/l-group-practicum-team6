@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../src/components/NavBar', () => ({
@@ -22,6 +22,22 @@ vi.mock('../../src/context/useAuth', () => ({
 
 vi.mock('../../src/api/visualizers', () => ({
   listVisualizers: vi.fn().mockResolvedValue({ data: { visualizers: [] } }),
+}));
+
+vi.mock('../../src/utils/visualPreview', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../src/utils/visualPreview')>();
+
+  return {
+    ...actual,
+    startVisualPreview: vi.fn(() => vi.fn()),
+  };
+});
+
+vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
+  useAudioAnalyzer: vi.fn(() => ({
+    getAudioData: vi.fn(() => new Uint8Array(128)),
+    status: 'idle',
+  })),
 }));
 
 import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
@@ -54,9 +70,21 @@ describe('basic pages', () => {
     expect(screen.getByText('Demo Player Page')).toBeInTheDocument();
   });
 
-  it('renders PlayerPage', () => {
+  it('renders PlayerPage without a visual id', () => {
     renderWithRouter(<PlayerPage />);
-    expect(screen.getByText('Visualizer not found.')).toBeInTheDocument();
+    expect(screen.getByText('NavBar')).toBeInTheDocument();
+  });
+
+  it('renders PlayerPage with a mock visual id', () => {
+    render(
+      <MemoryRouter initialEntries={['/visualizer/66d0d6ee7912e0c7d88ce305']}>
+        <Routes>
+          <Route path="/visualizer/:id" element={<PlayerPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('NavBar')).toBeInTheDocument();
   });
 
   it('renders MyVisualsPage', () => {

@@ -1,44 +1,14 @@
-import { useEffect } from 'react';
-
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
-import { listVisualizers } from '../api/visualizers';
 import { useAuth } from '../context/useAuth';
-import { getPreviewShaderById } from '../utils/previewShaders';
+import { decodeGlsl, getAllShaders } from '../utils/mockShaders';
 
-const visuals = [
-  {
-    id: 'demo',
-    name: 'Demo Visualizer',
-    tags: ['Demo', 'Shader', 'Audio Reactive'],
-    isDemo: true,
-  },
-  {
-    id: 'neon-pulse',
-    name: 'Neon Pulse',
-    tags: ['Abstract', 'Reactive'],
-  },
-  {
-    id: 'cyan-grid',
-    name: 'Cyan Grid',
-    tags: ['Geometric', 'Shader'],
-  },
-];
+const visuals = getAllShaders();
 
 export default function ExplorePage() {
   const { user } = useAuth();
   const canSave = Boolean(user);
-
-  useEffect(() => {
-    listVisualizers()
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-void">
@@ -58,10 +28,10 @@ export default function ExplorePage() {
               <VisualizerCard
                 key={visual.id}
                 id={visual.id}
-                name={visual.name}
-                tags={visual.tags}
-                playPath={visual.isDemo ? '/visualizer/demo' : `/visualizer/${visual.id}`}
-                previewGlsl={getPreviewShaderById(visual.id)}
+                name={visual.title}
+                tags={visual.categories}
+                playPath={`/visualizer/${visual.id}`}
+                previewGlsl={decodeGlsl(visual.shader)}
                 canSave={canSave}
               />
             ))}

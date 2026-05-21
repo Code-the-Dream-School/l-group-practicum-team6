@@ -31,10 +31,15 @@ export function useAudioAnalyzer() {
         }
 
         const audioContext = new AudioContext();
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
         const source = audioContext.createMediaStreamSource(stream);
         const analyser = audioContext.createAnalyser();
 
         analyser.fftSize = FFT_SIZE;
+        analyser.smoothingTimeConstant = 0.8;
         source.connect(analyser);
 
         streamRef.current = stream;
