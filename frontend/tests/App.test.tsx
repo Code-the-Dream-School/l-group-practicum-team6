@@ -1,16 +1,17 @@
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
-import App from '../src/App';
+import { describe, expect, test, vi } from 'vitest';
 
 vi.mock('../src/context/useAuth', () => ({
   useAuth: () => ({
     user: null,
     isLoading: false,
     login: vi.fn(),
-    register: vi.fn(),
     logout: vi.fn(),
+    register: vi.fn(),
   }),
 }));
+
+import App from '../src/App';
 
 describe('App', () => {
   test('renders landing page', () => {
