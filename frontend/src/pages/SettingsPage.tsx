@@ -89,7 +89,7 @@ export default function SettingsPage() {
     setSavingPassword(true);
 
     try {
-      const response = await fetch(ApiEndpoints.USER_ME_PASSWORD, {
+      const response = await fetch(ApiEndpoints.USER_PASSWORD, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
