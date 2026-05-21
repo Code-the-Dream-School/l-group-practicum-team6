@@ -1,11 +1,22 @@
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import App from '../src/App';
+
+vi.mock('../src/context/useAuth', () => ({
+  useAuth: () => ({
+    user: null,
+    isLoading: false,
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+  }),
+}));
 
 describe('App', () => {
   test('renders landing page', () => {
     render(<App />);
 
-    expect(screen.getByText(/See Your Sound/i)).toBeInTheDocument();
+    expect(screen.getByText(/Music Made Visible/i)).toBeInTheDocument();
   });
 
   test('renders CTA links with correct routes', () => {

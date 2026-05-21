@@ -39,7 +39,7 @@ describe('basic pages', () => {
         <LandingPage />
       </MemoryRouter>
     );
-    expect(screen.getByText('SONIX')).toBeInTheDocument();
+    expect(screen.getByText('NavBar')).toBeInTheDocument();
     expect(screen.getByText('Transform Music Into Living Art')).toBeInTheDocument();
     expect(screen.getByText('Try the Demo')).toBeInTheDocument();
   });
