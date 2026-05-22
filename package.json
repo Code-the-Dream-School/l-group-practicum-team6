@@ -27,9 +27,11 @@
   },
   "devDependencies": {
     "@rolldown/binding-darwin-arm64": "^1.0.2",
+    "@tailwindcss/oxide-darwin-arm64": "^4.2.4",
     "@types/cookie-parser": "^1.4.10",
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
+    "lightningcss-darwin-arm64": "^1.32.0",
     "lint-staged": "^17.0.2",
     "prettier": "3.8.3"
   },
