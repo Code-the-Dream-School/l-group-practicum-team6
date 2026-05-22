@@ -6,14 +6,19 @@ GitHub Actions workflow is located at:
 
 `.github/workflows/ci.yml`
 
+The workflow runs on pull requests and pushes to `dev` and `main`.
+
 The workflow performs:
 
-- dependency installation
-- shared workspace build
-- frontend/backend typechecking
-- frontend/backend tests
-- coverage checks
-- production builds
+- dependency installation with `npm ci --include=optional`
+- shared workspace build with `npm run format:check`
+- linting with `npm run lint`
+- typechecking with `npm run typecheck`
+- test execution with `npm run test`
+- coverage reporting with `npm run coverage`
+- production builds with `npm run build`
+
+Coverage reports are generated, but coverage thresholds are not currently enforced.
 
 ---
 
