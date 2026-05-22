@@ -122,7 +122,7 @@ export default function MyVisualsPage() {
                       id={visualizer._id}
                       name={visualizer.name}
                       tags={['Saved']}
-                      thumbnailUrl={visualizer.image}
+                      thumbnailUrl={visualizer.imageUrl}
                       playPath={`/visualizer/${visualizer._id}`}
                       previewGlsl={visualizer.glsl}
                     />

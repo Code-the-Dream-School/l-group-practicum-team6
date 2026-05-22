@@ -1,19 +1,19 @@
 import type { ApiResponse, User, Visualizer } from '@sonix/shared';
+import { ApiEndpoints, buildVisualizerImageEndpoint } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints, buildVisualizerImageEndpoint } from './endpoints';
 
 export function uploadAvatar(file: File): Promise<ApiResponse<User>> {
   const formData = new FormData();
-  formData.append('avatar', file);
+  formData.append('image', file);
 
-  return apiFetch<ApiResponse<User>>(ApiEndpoints.IMAGES_AVATAR, {
+  return apiFetch<ApiResponse<User>>(ApiEndpoints.IMAGES_USER, {
     method: 'POST',
     body: formData,
   });
 }
 
 export function deleteAvatar(): Promise<ApiResponse<User>> {
-  return apiFetch<ApiResponse<User>>(ApiEndpoints.IMAGES_AVATAR, {
+  return apiFetch<ApiResponse<User>>(ApiEndpoints.IMAGES_USER, {
     method: 'DELETE',
   });
 }
