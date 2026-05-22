@@ -8,7 +8,8 @@
 }
 
 @layer components {
-  .btn-primary, .btn-ghost {
+  .btn-primary,
+  .btn-ghost {
     @apply inline-flex items-center bg-primary text-text-primary font-medium;
     @apply rounded-[8px] px-[16px] py-[8px];
   }
