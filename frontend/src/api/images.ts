@@ -4,7 +4,7 @@ import { apiFetch } from './client';
 
 export function uploadAvatar(file: File): Promise<ApiResponse<User>> {
   const formData = new FormData();
-  formData.append('avatar', file);
+  formData.append('image', file);
 
   return apiFetch<ApiResponse<User>>(ApiEndpoints.IMAGES_USER, {
     method: 'POST',

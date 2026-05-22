@@ -81,7 +81,7 @@ describe('images controller', () => {
     const req = {
       user: { userId: userId.toString() },
       file: {
-        buffer: Buffer.from('avatar'),
+        buffer: Buffer.from('image'),
         originalname: 'avatar.png',
         mimetype: 'image/png',
         size: 1024,
@@ -128,7 +128,7 @@ describe('images controller', () => {
     const req = {
       user: { userId: userId.toString() },
       file: {
-        buffer: Buffer.from('avatar'),
+        buffer: Buffer.from('image'),
         originalname: 'avatar.png',
         mimetype: 'image/png',
         size: 1024,
