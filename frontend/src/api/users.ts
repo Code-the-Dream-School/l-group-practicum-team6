@@ -16,8 +16,12 @@ type UserData = {
   user: User;
 };
 
-type SavedVisualsData = {
-  visuals: Visualizer[];
+export type SavedVisual = {
+  _id: string;
+  userId: string;
+  visualizerId: Visualizer;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
@@ -41,18 +45,18 @@ export function deleteAccount(password: string): Promise<ApiResponse<null>> {
   });
 }
 
-export function getSavedVisuals(): Promise<ApiResponse<SavedVisualsData>> {
-  return apiFetch<ApiResponse<SavedVisualsData>>(ApiEndpoints.USERS_SAVED_VISUALS);
+export function getSavedVisuals(): Promise<ApiResponse<SavedVisual[]>> {
+  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.USERS_SAVED_VISUALS);
 }
 
-export function saveVisual(id: string): Promise<ApiResponse<SavedVisualsData>> {
-  return apiFetch<ApiResponse<SavedVisualsData>>(buildSavedVisualEndpoint(id), {
+export function saveVisual(id: string): Promise<ApiResponse<SavedVisual>> {
+  return apiFetch<ApiResponse<SavedVisual>>(buildSavedVisualEndpoint(id), {
     method: 'POST',
   });
 }
 
-export function removeVisual(id: string): Promise<ApiResponse<SavedVisualsData>> {
-  return apiFetch<ApiResponse<SavedVisualsData>>(buildSavedVisualEndpoint(id), {
+export function removeVisual(id: string): Promise<{ msg: string }> {
+  return apiFetch<{ msg: string }>(buildSavedVisualEndpoint(id), {
     method: 'DELETE',
   });
 }

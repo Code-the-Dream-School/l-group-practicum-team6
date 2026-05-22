@@ -1,7 +1,7 @@
 import 'dotenv/config';
 
 import mongoose from 'mongoose';
-import { describe, it, expect, beforeAll, afterAll, beforeEach  } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import Image from '../../src/models/Image';
 import { connectDB } from '../../src/db/connect';
 
@@ -50,7 +50,7 @@ describe('Image Model', () => {
 
   it('fails when creating a second image for the same owner', async () => {
     const ownerId = new mongoose.Types.ObjectId();
-   
+
     await Image.create({
       ownerType: 'user',
       ownerId,
@@ -69,8 +69,8 @@ describe('Image Model', () => {
         contentType: 'image/png',
         size: 2048,
       })
-    ).rejects.toMatchObject({ 
-      code: 11000, 
+    ).rejects.toMatchObject({
+      code: 11000,
     });
   });
 });
