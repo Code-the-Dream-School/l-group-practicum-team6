@@ -12,9 +12,9 @@ export enum ApiEndpoints {
   USERS_SAVED_VISUALS = '/api/v1/users/current/visuals',
 
   // Visualizers
-  VISUALIZERS = '/api/visualizers',
-  VISUALIZERS_DEMO = '/api/visualizers/demo',
-  VISUALIZERS_DETAIL = '/api/visualizers/{id}',
+  VISUALIZERS = '/api/v1/visualizers',
+  VISUALIZERS_DEMO = '/api/v1/visualizers/demo',
+  VISUALIZERS_DETAIL = '/api/v1/visualizers/{id}',
 
   // Images
   IMAGES_AVATAR = '/api/images/avatar',

@@ -1,31 +1,48 @@
+import { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
+import { listVisualizers, saveVisual } from '../api';
 import { useAuth } from '../context/useAuth';
 import { getPreviewShaderById } from '../utils/previewShaders';
-
-const visuals = [
-  {
-    id: 'demo',
-    name: 'Demo Visualizer',
-    tags: ['Demo', 'Shader', 'Audio Reactive'],
-    isDemo: true,
-  },
-  {
-    id: 'neon-pulse',
-    name: 'Neon Pulse',
-    tags: ['Abstract', 'Reactive'],
-  },
-  {
-    id: 'cyan-grid',
-    name: 'Cyan Grid',
-    tags: ['Geometric', 'Shader'],
-  },
-];
+import type { Visualizer } from '@sonix/shared';
 
 export default function ExplorePage() {
   const { user } = useAuth();
   const canSave = Boolean(user);
+  const [visuals, setVisuals] = useState<Visualizer[]>([]);
+  const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadVisualizers() {
+      try {
+        const response = await listVisualizers();
+        setVisuals(response.data);
+      } catch {
+        setErrorMessage('Unable to load visualizers.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    void loadVisualizers();
+  }, []);
+
+  async function handleToggleSave(id: string) {
+    if (savedVisualIds.includes(id)) return;
+
+    setSavedVisualIds((currentIds) => [...currentIds, id]);
+    setErrorMessage('');
+
+    try {
+      await saveVisual(id);
+    } catch {
+      setSavedVisualIds((currentIds) => currentIds.filter((savedId) => savedId !== id));
+      setErrorMessage('Unable to save visualizer.');
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-void">
@@ -40,19 +57,34 @@ export default function ExplorePage() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {visuals.map((visual) => (
-              <VisualizerCard
-                key={visual.id}
-                id={visual.id}
-                name={visual.name}
-                tags={visual.tags}
-                playPath={visual.isDemo ? '/visualizer/demo' : `/visualizer/${visual.id}`}
-                previewGlsl={getPreviewShaderById(visual.id)}
-                canSave={canSave}
-              />
-            ))}
-          </div>
+          {errorMessage && (
+            <div className="rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {errorMessage}
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-12 text-center text-text-secondary">
+              Loading visualizers...
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-3">
+              {visuals.map((visual) => (
+                <VisualizerCard
+                  key={visual._id}
+                  id={visual._id}
+                  name={visual.name}
+                  tags={[visual.isDemo ? 'Demo' : 'Visualizer']}
+                  thumbnailUrl={visual.imageUrl}
+                  playPath={visual.isDemo ? '/visualizer/demo' : `/visualizer/${visual._id}`}
+                  previewGlsl={visual.glsl || getPreviewShaderById(visual._id)}
+                  canSave={canSave && !visual.isDemo}
+                  isSaved={savedVisualIds.includes(visual._id)}
+                  onToggleSave={handleToggleSave}
+                />
+              ))}
+            </div>
+          )}
         </section>
       </main>
 
