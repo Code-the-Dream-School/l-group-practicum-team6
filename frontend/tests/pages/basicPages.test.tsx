@@ -51,7 +51,7 @@ describe('basic pages', () => {
   it('renders MyVisualsPage', () => {
     renderWithRouter(<MyVisualsPage />);
 
-    expect(screen.getByRole('heading', { name: /My Visuals/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /My Favorites/i })).toBeInTheDocument();
   });
 
   it('renders NotFoundPage', () => {
