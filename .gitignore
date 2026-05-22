@@ -59,3 +59,9 @@ coverage/
 # =========================
 .cache/
 .temp/
+
+# Local preview images
+backend/public/previews/
+
+# Local seed data
+backend/src/seed/visualizers.seed.json
