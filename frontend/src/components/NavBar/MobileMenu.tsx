@@ -1,8 +1,8 @@
-import { Link, NavLink } from "react-router-dom";
-import type { User } from "@sonix/shared";
+import { Link, NavLink } from 'react-router-dom';
+import type { User } from '@sonix/shared';
 
-import { Routes } from "../../routes/paths";
-import { Avatar } from "./Avatar";
+import { Routes } from '../../routes/paths';
+import { Avatar } from './Avatar';
 
 interface MobileMenuProps {
   user: User | null;
@@ -15,7 +15,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
       <NavLink
         to={Routes.EXPLORE}
         className={({ isActive }) =>
-          `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
+          `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
         }
       >
         Explore
@@ -25,7 +25,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           <NavLink
             to={Routes.MY_VISUALS}
             className={({ isActive }) =>
-              `block py-3 text-base font-medium text-text-${isActive ? "primary" : "secondary"}`
+              `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
             }
           >
             My Visuals

@@ -1,7 +1,7 @@
-import { useState } from "react";
-import type { User } from "@sonix/shared";
+import { useState } from 'react';
+import type { User } from '@sonix/shared';
 
-import { Avatar } from "./Avatar";
+import { Avatar } from './Avatar';
 
 interface UserMenuProps {
   user: User;
