@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { ApiEndpoints } from '@sonix/shared';
+import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { getInitial } from './../utils/getInitial';
+import { Routes } from '../routes/paths';
 
 export default function SettingsPage() {
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [displayName, setDisplayName] = useState(user?.name ?? '');
   const [draftDisplayName, setDraftDisplayName] = useState(user?.name ?? '');
@@ -18,6 +21,10 @@ export default function SettingsPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSaved, setPasswordSaved] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   useEffect(() => {
     const currentName = user?.name ?? '';
@@ -33,6 +40,20 @@ export default function SettingsPage() {
     !newPassword ||
     !confirmPassword ||
     Boolean(passwordError);
+  const disableDeleteAccount = deletingAccount || !deletePassword;
+
+  async function readApiError(res: Response, fallback: string): Promise<string> {
+    try {
+      const body = (await res.json()) as { error?: { message?: string } };
+      if (body.error?.message) {
+        return body.error.message;
+      }
+
+      return fallback;
+    } catch {
+      return fallback;
+    }
+  }
 
   async function handleSaveProfile() {
     const trimmedName = draftDisplayName.trim();
@@ -119,6 +140,48 @@ export default function SettingsPage() {
       setPasswordError(err instanceof Error ? err.message : 'Failed to update password');
     } finally {
       setSavingPassword(false);
+    }
+  }
+
+  function openDeleteModal() {
+    setDeleteError(null);
+    setDeletePassword('');
+    setIsDeleteModalOpen(true);
+  }
+
+  function closeDeleteModal() {
+    if (deletingAccount) return;
+
+    setDeleteError(null);
+    setDeletePassword('');
+    setIsDeleteModalOpen(false);
+  }
+
+  async function handleDeleteAccount() {
+    if (disableDeleteAccount) return;
+
+    setDeleteError(null);
+    setDeletingAccount(true);
+
+    try {
+      const response = await fetch(ApiEndpoints.USER, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ password: deletePassword }),
+      });
+
+      if (!response.ok) {
+        throw new Error(await readApiError(response, 'Failed to delete account'));
+      }
+
+      setIsDeleteModalOpen(false);
+      await logout();
+      navigate(Routes.HOME);
+    } catch (err) {
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete account');
+    } finally {
+      setDeletingAccount(false);
     }
   }
 
@@ -277,6 +340,7 @@ export default function SettingsPage() {
               <div className="pt-8">
                 <button
                   type="button"
+                  onClick={openDeleteModal}
                   className="btn-ghost h-10 w-full max-w-[240px] cursor-pointer justify-center border-error text-error transition hover:bg-error/10"
                 >
                   Delete Account
@@ -286,6 +350,71 @@ export default function SettingsPage() {
           </div>
         </section>
       </main>
+
+      {isDeleteModalOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-account-title"
+        >
+          <div className="w-full max-w-md rounded-xl border border-primary-border bg-surface p-6">
+            <h3 id="delete-account-title" className="text-xl font-semibold text-text-primary">
+              Delete Account
+            </h3>
+            <p className="mt-2 text-sm text-text-secondary">
+              This action is permanent and cannot be undone. Enter your password to confirm.
+            </p>
+
+            <div className="mt-5 flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="delete-account-password"
+                  className="text-xs font-medium leading-[19.2px] text-text-secondary"
+                >
+                  Current Password
+                </label>
+                <input
+                  id="delete-account-password"
+                  type="password"
+                  value={deletePassword}
+                  onChange={(ev) => {
+                    setDeletePassword(ev.target.value);
+                    setDeleteError(null);
+                  }}
+                  className="input-field focus-visible:border-error"
+                />
+              </div>
+            </div>
+
+            {deleteError ? (
+              <p className="mt-4 text-sm text-error" role="alert">
+                {deleteError}
+              </p>
+            ) : null}
+
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={closeDeleteModal}
+                disabled={deletingAccount}
+                className="btn-ghost h-10 cursor-pointer px-4 text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                disabled={disableDeleteAccount}
+                className="btn-ghost h-10 cursor-pointer justify-center border-error px-4 text-sm text-error transition hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {deletingAccount ? 'Deleting...' : 'Delete Account'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
