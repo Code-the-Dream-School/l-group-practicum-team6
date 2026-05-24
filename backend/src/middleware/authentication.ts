@@ -8,7 +8,7 @@ export interface UserPayload {
   email: string;
 }
 
-interface AuthRequest extends ExpressRequest {
+export interface AuthRequest extends ExpressRequest {
   user?: UserPayload;
 }
 

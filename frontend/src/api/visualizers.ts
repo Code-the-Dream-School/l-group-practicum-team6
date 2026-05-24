@@ -9,9 +9,7 @@ type ListVisualizersParams = {
   limit?: number;
 };
 
-type ListVisualizersData = {
-  visualizers: Visualizer[];
-};
+type ListVisualizersData = Visualizer[];
 
 function buildQuery(params?: ListVisualizersParams): string {
   if (!params) return '';

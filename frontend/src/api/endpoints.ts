@@ -8,7 +8,7 @@ export function buildVisualizerDetailEndpoint(id: string): string {
 }
 
 export function buildVisualizerImageEndpoint(id: string): string {
-  return ApiEndpoints.IMAGES_VISUALIZER.replace(':id', encodeURIComponent(id));
+  return ApiEndpoints.IMAGES_VISUALIZER_BY_ID.replace(':id', encodeURIComponent(id));
 }
 
 export function buildSavedVisualEndpoint(id: string): string {

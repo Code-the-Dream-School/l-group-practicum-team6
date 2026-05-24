@@ -1,22 +1,21 @@
-import { useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
-import logoFull from "../../assets/logo-full.svg";
-import { useAuth } from "../../context/useAuth";
-import { Routes } from "../../routes/paths";
+import logoFull from '../../assets/logo-full.svg';
+import { useAuth } from '../../context/useAuth';
+import { Routes } from '../../routes/paths';
 
-import { AuthLinks } from "./AuthLinks";
-import { HamburgerIcon } from "./HamburgerIcon";
-import { MobileMenu } from "./MobileMenu";
-import { UserMenu } from "./UserMenu";
+import { AuthLinks } from './AuthLinks';
+import { HamburgerIcon } from './HamburgerIcon';
+import { MobileMenu } from './MobileMenu';
+import { UserMenu } from './UserMenu';
 
 const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const isMinimal =
-    location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
+  const isMinimal = location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
@@ -30,7 +29,7 @@ const NavBar = () => {
   async function handleLogout() {
     setMenuOpen(false);
     await logout();
-    navigate("/", { replace: true });
+    navigate('/', { replace: true });
   }
 
   if (isMinimal) {
@@ -55,8 +54,8 @@ const NavBar = () => {
               to={Routes.EXPLORE}
               className={({ isActive }) =>
                 isActive
-                  ? "text-sm font-medium text-text-primary border-b-2 border-primary pb-1"
-                  : "text-sm font-medium text-text-secondary hover:text-text-primary"
+                  ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
+                  : 'text-sm font-medium text-text-secondary hover:text-text-primary'
               }
             >
               Explore
@@ -66,8 +65,8 @@ const NavBar = () => {
                 to={Routes.MY_VISUALS}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-sm font-medium text-text-primary border-b-2 border-primary pb-1"
-                    : "text-sm font-medium text-text-secondary hover:text-text-primary"
+                    ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
+                    : 'text-sm font-medium text-text-secondary hover:text-text-primary'
                 }
               >
                 My Visuals
@@ -77,16 +76,12 @@ const NavBar = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          {user ? (
-            <UserMenu user={user} onLogout={handleLogout} />
-          ) : (
-            <AuthLinks />
-          )}
+          {user ? <UserMenu user={user} onLogout={handleLogout} /> : <AuthLinks />}
         </div>
 
         <button
           type="button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
           className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-text-primary"
           onClick={() => setMenuOpen((v) => !v)}

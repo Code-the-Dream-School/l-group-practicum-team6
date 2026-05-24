@@ -1,17 +1,15 @@
-import 'dotenv/config';
-
 import mongoose from 'mongoose';
-import { describe, it, expect, beforeAll, afterAll, beforeEach  } from 'vitest';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import Image from '../../src/models/Image';
-import { connectDB } from '../../src/db/connect';
+
+let mongoServer: MongoMemoryServer;
 
 describe('Image Model', () => {
   beforeAll(async () => {
-    if (!process.env.MONGO_URI_TEST) {
-      throw new Error('MONGO_URI_TEST environment variable is not set');
-    }
+    mongoServer = await MongoMemoryServer.create();
 
-    await connectDB(process.env.MONGO_URI_TEST as string);
+    await mongoose.connect(mongoServer.getUri());
 
     await Image.collection.dropIndexes().catch(() => {
       // ignore if indexes do not exist yet
@@ -27,6 +25,7 @@ describe('Image Model', () => {
 
   afterAll(async () => {
     await mongoose.connection.close();
+    await mongoServer.stop();
   });
 
   it('finds an image by owner type and owner ID', async () => {
@@ -50,7 +49,7 @@ describe('Image Model', () => {
 
   it('fails when creating a second image for the same owner', async () => {
     const ownerId = new mongoose.Types.ObjectId();
-   
+
     await Image.create({
       ownerType: 'user',
       ownerId,
@@ -69,8 +68,8 @@ describe('Image Model', () => {
         contentType: 'image/png',
         size: 2048,
       })
-    ).rejects.toMatchObject({ 
-      code: 11000, 
+    ).rejects.toMatchObject({
+      code: 11000,
     });
   });
 });

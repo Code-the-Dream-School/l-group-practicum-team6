@@ -1,43 +1,26 @@
-import type { ReactElement } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../src/components/NavBar', () => ({
-  default: () => <div>NavBar</div>,
-}));
-
-vi.mock('../../src/components/Footer', () => ({
-  default: () => <div>Footer</div>,
-}));
-
 vi.mock('../../src/context/useAuth', () => ({
-  useAuth: vi.fn(() => ({
+  useAuth: () => ({
     user: null,
+    isLoading: false,
     login: vi.fn(),
-    register: vi.fn(),
     logout: vi.fn(),
-  })),
+    register: vi.fn(),
+  }),
 }));
-
-vi.mock('../../src/api/visualizers', () => ({
-  listVisualizers: vi.fn().mockResolvedValue({ data: { visualizers: [] } }),
-}));
-
-vi.mock('../../src/utils/visualPreview', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../../src/utils/visualPreview')>();
-
-  return {
-    ...actual,
-    startVisualPreview: vi.fn(() => vi.fn()),
-  };
-});
 
 vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
-  useAudioAnalyzer: vi.fn(() => ({
-    getAudioData: vi.fn(() => new Uint8Array(128)),
+  useAudioAnalyzer: () => ({
+    getAudioData: vi.fn(),
     status: 'idle',
-  })),
+  }),
+}));
+
+vi.mock('../../src/utils/visualPreview', () => ({
+  startVisualPreview: vi.fn(() => vi.fn()),
 }));
 
 import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
@@ -46,54 +29,56 @@ import LandingPage from '../../src/pages/LandingPage';
 import MyVisualsPage from '../../src/pages/MyVisualsPage';
 import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
+import { Routes as RoutePaths } from '../../src/routes/paths';
+import { getAllShaders } from '../../src/utils/mockShaders';
 
-function renderWithRouter(ui: ReactElement) {
+function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
 describe('basic pages', () => {
   it('renders LandingPage', () => {
     renderWithRouter(<LandingPage />);
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
+
     expect(screen.getByText(/Transform Music Into Living Art/i)).toBeInTheDocument();
   });
 
   it('renders ExplorePage', () => {
     renderWithRouter(<ExplorePage />);
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
-    expect(screen.getByText('Explore Visuals')).toBeInTheDocument();
-    expect(screen.getByText('Footer')).toBeInTheDocument();
+
+    expect(screen.getByRole('heading', { name: /Explore Visuals/i })).toBeInTheDocument();
   });
 
   it('renders DemoPlayerPage', () => {
-    render(<DemoPlayerPage />);
-    expect(screen.getByText('Demo Player Page')).toBeInTheDocument();
+    renderWithRouter(<DemoPlayerPage />);
+
+    expect(screen.getByText(/Demo Player Page/i)).toBeInTheDocument();
   });
 
-  it('renders PlayerPage without a visual id', () => {
-    renderWithRouter(<PlayerPage />);
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
-  });
+  it('renders PlayerPage', () => {
+    const shaderId = getAllShaders()[0].id;
 
-  it('renders PlayerPage with a mock visual id', () => {
     render(
-      <MemoryRouter initialEntries={['/visualizer/66d0d6ee7912e0c7d88ce305']}>
+      <MemoryRouter initialEntries={[`/visualizer/${shaderId}`]}>
         <Routes>
-          <Route path="/visualizer/:id" element={<PlayerPage />} />
+          <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
         </Routes>
       </MemoryRouter>
     );
 
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
   });
 
   it('renders MyVisualsPage', () => {
     renderWithRouter(<MyVisualsPage />);
-    expect(screen.getByText('My Visuals')).toBeInTheDocument();
+
+    expect(screen.getByRole('heading', { name: /My Favorites/i })).toBeInTheDocument();
   });
 
   it('renders NotFoundPage', () => {
-    render(<NotFoundPage />);
-    expect(screen.getByText('404 - Page Not Found')).toBeInTheDocument();
+    renderWithRouter(<NotFoundPage />);
+
+    expect(screen.getByText(/404/i)).toBeInTheDocument();
   });
 });

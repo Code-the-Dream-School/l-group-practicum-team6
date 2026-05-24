@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 export type ImageOwnerType = 'user' | 'visualizer';
 
-export interface ImageType extends Document{
+export interface ImageType extends Document {
   ownerType: ImageOwnerType;
   ownerId: mongoose.Types.ObjectId;
   fileId: mongoose.Types.ObjectId;
@@ -37,7 +37,9 @@ const ImageSchema = new mongoose.Schema<ImageType>(
       type: Number,
       required: true,
     },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 ImageSchema.index({ ownerType: 1, ownerId: 1 }, { unique: true });
 

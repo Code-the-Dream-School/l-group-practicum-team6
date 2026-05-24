@@ -183,7 +183,7 @@ describe('images api', () => {
     uploadAvatar(file);
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      ApiEndpoints.IMAGES_AVATAR,
+      ApiEndpoints.IMAGES_USER,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(FormData),
@@ -194,7 +194,7 @@ describe('images api', () => {
   it('deleteAvatar deletes avatar', () => {
     deleteAvatar();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_AVATAR, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_USER, {
       method: 'DELETE',
     });
   });

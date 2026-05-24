@@ -14,7 +14,7 @@ function LandingPage() {
             <div className="flex justify-center pt-10 pb-6 text-center">
               <div className="max-w-5xl py-10">
                 <p className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-cyan-300">
-                  AI-powered audio visualization
+                  Music Made Visible
                 </p>
 
                 <h1 className="text-5xl font-semibold tracking-tight md:text-7xl lg:text-8xl">
