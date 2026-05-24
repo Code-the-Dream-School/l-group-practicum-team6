@@ -1,6 +1,6 @@
-import type { ApiResponse, User, Visualizer } from '@sonix/shared';
+import { ApiEndpoints, type ApiResponse, type User, type Visualizer } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints, buildSavedVisualEndpoint } from './endpoints';
+import { buildSavedVisualEndpoint } from './endpoints';
 
 type UpdateProfileData = {
   name?: string;
@@ -25,28 +25,28 @@ export type SavedVisual = {
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
-  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USERS_PROFILE, {
+  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USER_ME, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function changePassword(data: ChangePasswordData): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USERS_PASSWORD, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_ME_PASSWORD, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function deleteAccount(password: string): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USERS_ACCOUNT, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_ME, {
     method: 'DELETE',
     body: JSON.stringify({ password }),
   });
 }
 
 export function getSavedVisuals(): Promise<ApiResponse<SavedVisual[]>> {
-  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.USERS_SAVED_VISUALS);
+  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.USER_VISUALS);
 }
 
 export function saveVisual(id: string): Promise<ApiResponse<SavedVisual>> {

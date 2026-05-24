@@ -20,4 +20,9 @@ export {
 
 export { uploadAvatar, deleteAvatar, uploadVisualizerImage, deleteVisualizerImage } from './images';
 
-export { listVisualizers, getDemoVisualizer, getVisualizer } from './visualizers';
+export {
+  listVisualizers,
+  getDemoVisualizer,
+  getVisualizer,
+  getVisualizerTags,
+} from './visualizers';

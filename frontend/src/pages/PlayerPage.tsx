@@ -1,14 +1,53 @@
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+import { useParams } from 'react-router-dom';
+
+import {
+  PlayerMessage,
+  VisualizerPlayer,
+  VisualizerPlayerLayout,
+} from '../components/VisualizerPlayerShell';
+import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
+import { ApiError } from '../api/client';
+
+function getLoadErrorMessage(error: unknown): string {
+  if (error instanceof ApiError && error.status === 401) {
+    return 'Sign in to play this visualizer.';
+  }
+
+  if (error instanceof ApiError && error.status === 404) {
+    return 'Visualizer not found.';
+  }
+
+  return 'Unable to load visualizer.';
+}
+
+function PlayerPageContent({ id }: { id: string }) {
+  const { glsl, error, isLoading } = usePlayerGlsl(id);
+
+  if (isLoading) {
+    return <PlayerMessage>Loading visualizer…</PlayerMessage>;
+  }
+
+  if (error) {
+    return <PlayerMessage>{getLoadErrorMessage(error)}</PlayerMessage>;
+  }
+
+  if (!glsl) {
+    return <PlayerMessage>Unable to load visualizer.</PlayerMessage>;
+  }
+
+  return <VisualizerPlayer glsl={glsl} />;
+}
 
 export default function PlayerPage() {
+  const { id } = useParams<{ id: string }>();
+
   return (
-    <div className="flex h-screen flex-col justify-between">
-      <NavBar />
-      <div className="flex items-center justify-center bg-void flex-1">
-        <h1 className="text-xl text-text-primary">Player Page</h1>
-      </div>
-      <Footer />
-    </div>
+    <VisualizerPlayerLayout>
+      {!id ? (
+        <PlayerMessage>Visualizer not found.</PlayerMessage>
+      ) : (
+        <PlayerPageContent key={id} id={id} />
+      )}
+    </VisualizerPlayerLayout>
   );
 }

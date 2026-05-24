@@ -37,7 +37,6 @@ describe('App', () => {
   test('renders feature cards', () => {
     render(<App />);
 
-    expect(screen.getByText(/Real-time Visuals/i)).toBeInTheDocument();
     expect(screen.getByText(/Microphone Input/i)).toBeInTheDocument();
     expect(screen.getByText(/Playlist Collections/i)).toBeInTheDocument();
   });

@@ -1,14 +1,20 @@
-import type { ApiResponse, Visualizer } from '@sonix/shared';
+import type { ApiResponse, Visualizer, VisualizerListItem } from '@sonix/shared';
+import { ApiEndpoints } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints, buildVisualizerDetailEndpoint } from './endpoints';
+import { buildVisualizerDetailEndpoint } from './endpoints';
 
 type ListVisualizersParams = {
   search?: string;
+  tag?: string;
   page?: number;
   limit?: number;
 };
 
-type ListVisualizersData = Visualizer[];
+type ListVisualizersResponse = ApiResponse<VisualizerListItem[]> & {
+  total: number;
+  page: number;
+  pages: number;
+};
 
 function buildQuery(params?: ListVisualizersParams): string {
   if (!params) return '';
@@ -25,12 +31,12 @@ function buildQuery(params?: ListVisualizersParams): string {
   return queryString ? `?${queryString}` : '';
 }
 
-export function listVisualizers(
-  params?: ListVisualizersParams
-): Promise<ApiResponse<ListVisualizersData>> {
-  return apiFetch<ApiResponse<ListVisualizersData>>(
-    `${ApiEndpoints.VISUALIZERS}${buildQuery(params)}`
-  );
+export function listVisualizers(params?: ListVisualizersParams): Promise<ListVisualizersResponse> {
+  return apiFetch<ListVisualizersResponse>(`${ApiEndpoints.VISUALIZERS}${buildQuery(params)}`);
+}
+
+export function getVisualizerTags(): Promise<ApiResponse<string[]>> {
+  return apiFetch<ApiResponse<string[]>>(ApiEndpoints.VISUALIZERS_TAGS);
 }
 
 export function getDemoVisualizer(): Promise<ApiResponse<Visualizer>> {
