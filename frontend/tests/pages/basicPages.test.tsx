@@ -58,5 +58,14 @@ describe('basic pages', () => {
     renderWithRouter(<NotFoundPage />);
 
     expect(screen.getByText(/404/i)).toBeInTheDocument();
+
+    expect(screen.getByText(/The page you are looking for/i)).toBeInTheDocument();
+
+    expect(screen.getByRole('link', { name: /Go Home/i })).toHaveAttribute('href', '/');
+
+    expect(screen.getByRole('link', { name: /Explore Visuals/i })).toHaveAttribute(
+      'href',
+      '/explore'
+    );
   });
 });

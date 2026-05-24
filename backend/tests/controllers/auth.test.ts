@@ -3,7 +3,6 @@ import { register, login, logout } from '../../src/controllers/auth';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import User from '../../src/models/User';
-import { attachCookiesToResponse } from '../../src/utils/jwt';
 
 vi.mock('../../src/models/User', () => ({
   default: {
