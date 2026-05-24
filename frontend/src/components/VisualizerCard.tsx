@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { usePreviewGlsl } from '../hooks/usePreviewGlsl';
 import {
   activateVisualPreview,
   deactivateVisualPreview,
@@ -14,6 +15,7 @@ interface VisualizerCardProps {
   thumbnailUrl?: string;
   playPath: string;
   previewGlsl?: string;
+  isDemo?: boolean;
   isSaved?: boolean;
   canSave?: boolean;
   onToggleSave?: (id: string) => void;
@@ -26,22 +28,39 @@ export default function VisualizerCard({
   thumbnailUrl,
   playPath,
   previewGlsl,
+  isDemo = false,
   isSaved = false,
   canSave = false,
   onToggleSave,
 }: VisualizerCardProps) {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [isPreviewActive, setIsPreviewActive] = useState(false);
+  const [isShaderReady, setIsShaderReady] = useState(false);
+  const resolvedGlsl = usePreviewGlsl(id, { enabled: isPreviewActive, previewGlsl, isDemo });
+
+  const showLiveShader = isPreviewActive && isShaderReady;
 
   useEffect(() => {
     return listenToActiveVisualPreview(id, setIsPreviewActive);
   }, [id]);
 
   useEffect(() => {
-    if (!isPreviewActive || !previewRef.current) return;
+    if (!isPreviewActive || !resolvedGlsl || !previewRef.current) return;
 
-    return startVisualPreview(previewRef.current, previewGlsl);
-  }, [isPreviewActive, previewGlsl]);
+    let cancelled = false;
+
+    const cleanup = startVisualPreview(previewRef.current, resolvedGlsl, undefined, false, () => {
+      if (!cancelled) {
+        setIsShaderReady(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      setIsShaderReady(false);
+      cleanup?.();
+    };
+  }, [isPreviewActive, resolvedGlsl]);
 
   function activatePreview() {
     activateVisualPreview(id);
@@ -56,14 +75,24 @@ export default function VisualizerCard({
       <Link
         to={playPath}
         aria-label={`Open ${name}`}
-        className="relative block aspect-[1.35] cursor-pointer overflow-hidden bg-linear-to-br from-[#7C5CFC]/30 via-[#00D4FF]/12 to-[#050509]"
+        className="relative block aspect-[1.35] cursor-pointer overflow-hidden bg-linear-to-br from-[#7C5CFC]/30 via-[#00D4FF]/12 to-[#050509] leading-none"
         onMouseEnter={activatePreview}
         onMouseLeave={deactivatePreview}
       >
         {thumbnailUrl ? (
-          <img src={thumbnailUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={thumbnailUrl}
+            alt=""
+            className={`absolute inset-x-0 top-0 block h-[calc(100%+3px)] w-full object-cover transition-opacity duration-300 ${
+              showLiveShader ? 'opacity-0' : 'opacity-100'
+            }`}
+          />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-[11px] font-medium tracking-wide text-white/45">
+          <div
+            className={`flex h-full w-full items-center justify-center text-[11px] font-medium tracking-wide text-white/45 transition-opacity duration-300 ${
+              showLiveShader ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
             Live Preview
           </div>
         )}
@@ -71,8 +100,8 @@ export default function VisualizerCard({
         <div
           ref={previewRef}
           aria-hidden="true"
-          className={`absolute inset-0 mix-blend-screen transition-opacity duration-300 ${
-            isPreviewActive ? 'opacity-100' : 'opacity-0'
+          className={`absolute inset-0 overflow-hidden transition-opacity duration-300 ${
+            showLiveShader ? 'mix-blend-screen opacity-100' : 'opacity-0'
           }`}
         />
 
@@ -99,7 +128,7 @@ export default function VisualizerCard({
                 type="button"
                 aria-label={isSaved ? `Unsave ${name}` : `Save ${name}`}
                 onClick={() => onToggleSave?.(id)}
-                className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-white transition hover:border-[#00D4FF]/40 hover:bg-white/[0.10] focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
+                className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-white transition hover:border-[#00D4FF]/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
               >
                 {isSaved ? '\u2665' : '\u2661'}
               </button>
@@ -107,7 +136,7 @@ export default function VisualizerCard({
 
             <Link
               to={playPath}
-              className="inline-flex items-center justify-center rounded-full border border-[#7C5CFC]/45 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white/85 transition hover:border-[#00D4FF]/50 hover:bg-[#7C5CFC]/25 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
+              className="inline-flex items-center justify-center rounded-full border border-[#7C5CFC]/45 bg-white/4 px-4 py-2 text-xs font-semibold text-white/85 transition hover:border-[#00D4FF]/50 hover:bg-[#7C5CFC]/25 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
             >
               Play
             </Link>
@@ -118,7 +147,7 @@ export default function VisualizerCard({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[10px] font-medium text-white/55"
+              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium text-white/55"
             >
               {tag}
             </span>

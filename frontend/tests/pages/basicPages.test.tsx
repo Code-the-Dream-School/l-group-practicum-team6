@@ -14,6 +14,9 @@ vi.mock('../../src/context/useAuth', () => ({
 
 vi.mock('../../src/api/visualizers', () => ({
   listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
+  getVisualizerTags: vi.fn().mockResolvedValue({
+    data: ['geometric', 'audio', 'spectrum', 'fractal', 'warp'],
+  }),
   getVisualizer: vi.fn().mockResolvedValue({
     data: {
       _id: 'visual123',

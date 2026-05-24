@@ -35,6 +35,10 @@ export function listVisualizers(params?: ListVisualizersParams): Promise<ListVis
   return apiFetch<ListVisualizersResponse>(`${ApiEndpoints.VISUALIZERS}${buildQuery(params)}`);
 }
 
+export function getVisualizerTags(): Promise<ApiResponse<string[]>> {
+  return apiFetch<ApiResponse<string[]>>(ApiEndpoints.VISUALIZERS_TAGS);
+}
+
 export function getDemoVisualizer(): Promise<ApiResponse<Visualizer>> {
   return apiFetch<ApiResponse<Visualizer>>(ApiEndpoints.VISUALIZERS_DEMO);
 }

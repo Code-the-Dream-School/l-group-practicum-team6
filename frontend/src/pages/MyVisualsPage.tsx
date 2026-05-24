@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
-import { getSavedVisuals, removeVisual } from '../api';
+import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../api';
 import type { SavedVisual } from '../api/users';
 
 type SortOption = 'recent' | 'az' | 'za';
@@ -79,7 +79,7 @@ export default function MyVisualsPage() {
               <select
                 value={sortOption}
                 onChange={(event) => setSortOption(event.target.value as SortOption)}
-                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
+                className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
               >
                 <option value="recent">Recently Saved</option>
                 <option value="az">A-Z</option>
@@ -89,7 +89,7 @@ export default function MyVisualsPage() {
           </div>
 
           {isLoading ? (
-            <div className="rounded-3xl border border-white/10 bg-white/[0.04] px-6 py-12 text-center text-text-secondary">
+            <div className="rounded-3xl border border-white/10 bg-white/4 px-6 py-12 text-center text-text-secondary">
               Loading your saved visualizers...
             </div>
           ) : errorMessage ? (
@@ -122,13 +122,20 @@ export default function MyVisualsPage() {
                       id={visualizer._id}
                       name={visualizer.name}
                       tags={['Saved']}
-                      thumbnailUrl={visualizer.imageUrl}
-                      playPath={`/visualizer/${visualizer._id}`}
+                      thumbnailUrl={
+                        visualizer.imageUrl
+                          ? buildVisualizerImageEndpoint(visualizer._id)
+                          : undefined
+                      }
+                      playPath={
+                        visualizer.isDemo ? '/visualizer/demo' : `/visualizer/${visualizer._id}`
+                      }
+                      isDemo={visualizer.isDemo}
                       previewGlsl={visualizer.glsl}
                     />
 
                     {confirmRemoveId === visualizer._id ? (
-                      <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-text-secondary">
+                      <div className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-text-secondary">
                         <p>Remove from collection?</p>
                         <div className="mt-3 flex gap-3">
                           <button
@@ -141,7 +148,7 @@ export default function MyVisualsPage() {
                           <button
                             type="button"
                             onClick={() => setConfirmRemoveId(null)}
-                            className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-text-primary transition hover:bg-white/[0.10]"
+                            className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-text-primary transition hover:bg-white/10"
                           >
                             Cancel
                           </button>
@@ -151,7 +158,7 @@ export default function MyVisualsPage() {
                       <button
                         type="button"
                         onClick={() => setConfirmRemoveId(visualizer._id)}
-                        className="w-full rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-red-300/30 hover:bg-red-500/10 hover:text-red-100"
+                        className="w-full rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-red-300/30 hover:bg-red-500/10 hover:text-red-100"
                       >
                         Remove
                       </button>

@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
-
 import {
   PlayerMessage,
   VisualizerPlayer,
   VisualizerPlayerLayout,
 } from '../components/VisualizerPlayerShell';
-import { getDemoVisualizer } from '../api';
+import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
 import { ApiError } from '../api/client';
 
 function getDemoLoadErrorMessage(error: unknown): string {
@@ -17,46 +15,14 @@ function getDemoLoadErrorMessage(error: unknown): string {
 }
 
 function DemoPlayerContent() {
-  const [glsl, setGlsl] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadDemoVisualizer() {
-      try {
-        const response = await getDemoVisualizer();
-
-        if (cancelled) return;
-
-        setGlsl(response.data.glsl);
-        setErrorMessage('');
-      } catch (error) {
-        if (cancelled) return;
-
-        setGlsl(null);
-        setErrorMessage(getDemoLoadErrorMessage(error));
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadDemoVisualizer();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { glsl, error, isLoading } = usePlayerGlsl('demo', { isDemo: true });
 
   if (isLoading) {
     return <PlayerMessage>Loading visualizer…</PlayerMessage>;
   }
 
-  if (errorMessage) {
-    return <PlayerMessage>{errorMessage}</PlayerMessage>;
+  if (error) {
+    return <PlayerMessage>{getDemoLoadErrorMessage(error)}</PlayerMessage>;
   }
 
   if (!glsl) {

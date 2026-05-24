@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { DEFAULT_PREVIEW_GLSL } from './previewShaders';
 
 const ACTIVE_PREVIEW_EVENT = 'visual-card-preview-change';
 
@@ -71,9 +70,10 @@ function fillFftFromAudio(fftData: Uint8Array, audio: Uint8Array) {
 
 export function startVisualPreview(
   container: HTMLDivElement,
-  previewGlsl = DEFAULT_PREVIEW_GLSL,
+  previewGlsl: string,
   getAudioData?: () => Uint8Array,
-  immersive = false
+  immersive = false,
+  onReady?: () => void
 ) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('webgl2', {
@@ -201,6 +201,7 @@ export function startVisualPreview(
   const startTime = performance.now();
   let lastTime = startTime;
   let frame = 0;
+  let hasNotifiedReady = false;
 
   function animate(now: number) {
     if (width === 0 || height === 0) {
@@ -234,6 +235,12 @@ export function startVisualPreview(
     );
 
     renderer.render(scene, camera);
+
+    if (!hasNotifiedReady) {
+      hasNotifiedReady = true;
+      onReady?.();
+    }
+
     animationFrameId = requestAnimationFrame(animate);
   }
 
