@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -14,6 +14,24 @@ vi.mock('../../src/context/useAuth', () => ({
 
 vi.mock('../../src/api/visualizers', () => ({
   listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
+  getVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'visual123',
+      name: 'Test Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: false,
+    },
+  }),
+  getDemoVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'demo123',
+      name: 'Demo Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: true,
+    },
+  }),
 }));
 
 vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
@@ -34,7 +52,6 @@ import MyVisualsPage from '../../src/pages/MyVisualsPage';
 import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
 import { Routes as RoutePaths } from '../../src/routes/paths';
-import { getAllShaders } from '../../src/utils/mockShaders';
 
 function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
@@ -53,24 +70,29 @@ describe('basic pages', () => {
     expect(screen.getByRole('heading', { name: /Explore Visuals/i })).toBeInTheDocument();
   });
 
-  it('renders DemoPlayerPage', () => {
+  it('renders DemoPlayerPage', async () => {
     renderWithRouter(<DemoPlayerPage />);
 
-    expect(screen.getByText(/Demo Player Page/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
   });
 
-  it('renders PlayerPage', () => {
-    const shaderId = getAllShaders()[0].id;
-
+  it('renders PlayerPage', async () => {
     render(
-      <MemoryRouter initialEntries={[`/visualizer/${shaderId}`]}>
+      <MemoryRouter initialEntries={['/visualizer/visual123']}>
         <Routes>
           <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
         </Routes>
       </MemoryRouter>
     );
 
-    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    });
+
     expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
   });
 

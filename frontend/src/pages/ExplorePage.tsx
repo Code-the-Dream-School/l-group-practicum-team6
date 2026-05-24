@@ -81,7 +81,7 @@ export default function ExplorePage() {
           <div>
             <h1 className="text-3xl font-bold text-text-primary">Explore Visuals</h1>
             <p className="mt-2 max-w-2xl text-white/70">
-              Browse visualizers and choose one to play.
+              Browse visualizers and choose one to play
             </p>
           </div>
 

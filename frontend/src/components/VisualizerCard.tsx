@@ -52,9 +52,11 @@ export default function VisualizerCard({
   }
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-white/[0.08] bg-[#070711] shadow-[0_0_22px_rgba(124,92,252,0.10)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:border-[#00D4FF]/80 hover:shadow-[0_0_26px_rgba(0,212,255,0.45),0_0_70px_rgba(124,92,252,0.35)]">
-      <div
-        className="relative aspect-[1.35] overflow-hidden bg-gradient-to-br from-[#7C5CFC]/30 via-[#00D4FF]/12 to-[#050509]"
+    <article className="group overflow-hidden rounded-2xl border border-white/8 bg-[#070711] shadow-[0_0_22px_rgba(124,92,252,0.10)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:border-[#00D4FF]/80 hover:shadow-[0_0_26px_rgba(0,212,255,0.45),0_0_70px_rgba(124,92,252,0.35)]">
+      <Link
+        to={playPath}
+        aria-label={`Open ${name}`}
+        className="relative block aspect-[1.35] cursor-pointer overflow-hidden bg-linear-to-br from-[#7C5CFC]/30 via-[#00D4FF]/12 to-[#050509]"
         onMouseEnter={activatePreview}
         onMouseLeave={deactivatePreview}
       >
@@ -79,7 +81,7 @@ export default function VisualizerCard({
             {tags[0]}
           </span>
         )}
-      </div>
+      </Link>
 
       <div className="space-y-3 p-4">
         <div className="flex items-start justify-between gap-4">
