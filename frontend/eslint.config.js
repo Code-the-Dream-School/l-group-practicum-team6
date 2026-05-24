@@ -8,7 +8,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 const tsconfigRootDir = import.meta.dirname;
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'node_modules', 'coverage']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
