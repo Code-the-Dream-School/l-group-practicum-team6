@@ -1,6 +1,5 @@
-import type { ApiResponse, User } from '@sonix/shared';
+import { ApiEndpoints, type ApiResponse, type User } from '@sonix/shared';
 import { apiFetch } from './client';
-import { ApiEndpoints } from './endpoints';
 
 type AuthData = {
   user: User;
@@ -8,7 +7,7 @@ type AuthData = {
 };
 
 export function getUser(): Promise<ApiResponse<AuthData>> {
-  return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.AUTH_USER);
+  return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.USER_ME);
 }
 
 export function login(email: string, password: string): Promise<ApiResponse<AuthData>> {

@@ -1,4 +1,5 @@
 import type { User } from '@sonix/shared';
+import type { User } from '@sonix/shared';
 
 import { pickGradient } from '../../utils/avatarGradient';
 import { getInitial } from '../../utils/getInitial';

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { DEFAULT_PREVIEW_GLSL } from './previewShaders';
 
 const ACTIVE_PREVIEW_EVENT = 'visual-card-preview-change';
 
@@ -33,10 +32,49 @@ export function listenToActiveVisualPreview(id: string, callback: (isActive: boo
   };
 }
 
-export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFAULT_PREVIEW_GLSL) {
-  const width = container.clientWidth;
-  const height = container.clientHeight;
+function fillSyntheticFft(fftData: Uint8Array) {
+  for (let i = 0; i < FFT_W * FFT_H; i++) {
+    const offset = i * 4;
+    const x = i % FFT_W;
+    const bassShape = Math.max(0, 1 - x / 120);
+    const waveShape = 0.45 + 0.35 * Math.sin(x * 0.08);
 
+    const value = Math.floor(90 + 130 * bassShape + 35 * waveShape);
+
+    fftData[offset] = value;
+    fftData[offset + 1] = value;
+    fftData[offset + 2] = value;
+    fftData[offset + 3] = 255;
+  }
+}
+
+function fillFftFromAudio(fftData: Uint8Array, audio: Uint8Array) {
+  if (audio.length === 0) {
+    fftData.fill(0);
+    return;
+  }
+
+  for (let x = 0; x < FFT_W; x++) {
+    const binIndex = Math.min(audio.length - 1, Math.floor((x / FFT_W) * audio.length));
+    const value = audio[binIndex] ?? 0;
+
+    for (let y = 0; y < FFT_H; y++) {
+      const offset = (y * FFT_W + x) * 4;
+      fftData[offset] = value;
+      fftData[offset + 1] = value;
+      fftData[offset + 2] = value;
+      fftData[offset + 3] = 255;
+    }
+  }
+}
+
+export function startVisualPreview(
+  container: HTMLDivElement,
+  previewGlsl: string,
+  getAudioData?: () => Uint8Array,
+  immersive = false,
+  onReady?: () => void
+) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('webgl2', {
     antialias: true,
@@ -57,12 +95,14 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
     antialias: true,
   });
 
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.domElement.style.width = '100%';
   renderer.domElement.style.height = '100%';
   renderer.domElement.style.display = 'block';
-  renderer.domElement.style.filter = 'saturate(2.5) contrast(1.7) brightness(1.5)';
+
+  if (!immersive) {
+    renderer.domElement.style.filter = 'saturate(2.5) contrast(1.7) brightness(1.5)';
+  }
+
   if (THREE.LinearSRGBColorSpace) {
     renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
   }
@@ -80,18 +120,10 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
 
   const fftData = new Uint8Array(FFT_W * FFT_H * 4);
 
-  for (let i = 0; i < FFT_W * FFT_H; i++) {
-    const offset = i * 4;
-    const x = i % FFT_W;
-    const bassShape = Math.max(0, 1 - x / 120);
-    const waveShape = 0.45 + 0.35 * Math.sin(x * 0.08);
-
-    const value = Math.floor(90 + 130 * bassShape + 35 * waveShape);
-
-    fftData[offset] = value;
-    fftData[offset + 1] = value;
-    fftData[offset + 2] = value;
-    fftData[offset + 3] = 255;
+  if (getAudioData) {
+    fillFftFromAudio(fftData, getAudioData());
+  } else {
+    fillSyntheticFft(fftData);
   }
 
   const fftTexture = new THREE.DataTexture(fftData, FFT_W, FFT_H, THREE.RGBAFormat);
@@ -101,10 +133,13 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
   fftTexture.magFilter = THREE.LinearFilter;
   fftTexture.needsUpdate = true;
 
+  let width = 0;
+  let height = 0;
+
   const uniforms = {
     iTime: { value: 0 },
-    iResolution: { value: new THREE.Vector3(width, height, 1) },
-    iMouse: { value: new THREE.Vector4(width * 0.5, height * 0.5, 0, 0) },
+    iResolution: { value: new THREE.Vector3(1, 1, 1) },
+    iMouse: { value: new THREE.Vector4(0, 0, 0, 0) },
     iFrame: { value: 0 },
     iTimeDelta: { value: 0 },
     iFrameRate: { value: 60 },
@@ -138,12 +173,42 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
   scene.add(mesh);
   container.appendChild(renderer.domElement);
 
+  function syncShaderResolution() {
+    const canvas = renderer.domElement;
+    width = canvas.width;
+    height = canvas.height;
+
+    uniforms.iResolution.value.set(width, height, 1);
+    uniforms.iMouse.value.set(width * 0.5, height * 0.5, 0, 0);
+  }
+
+  function resize() {
+    const layoutWidth = container.clientWidth;
+    const layoutHeight = container.clientHeight;
+
+    if (layoutWidth === 0 || layoutHeight === 0) return;
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(layoutWidth, layoutHeight);
+    syncShaderResolution();
+  }
+
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(container);
+  resize();
+
   let animationFrameId = 0;
   const startTime = performance.now();
   let lastTime = startTime;
   let frame = 0;
+  let hasNotifiedReady = false;
 
   function animate(now: number) {
+    if (width === 0 || height === 0) {
+      animationFrameId = requestAnimationFrame(animate);
+      return;
+    }
+
     const deltaTime = (now - lastTime) * 0.001;
     lastTime = now;
 
@@ -151,7 +216,12 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
     uniforms.iTimeDelta.value = deltaTime;
     uniforms.iFrame.value = frame++;
     uniforms.iFrameRate.value = deltaTime > 0 ? 1 / deltaTime : 0;
-    uniforms.iResolution.value.set(width, height, 1);
+    syncShaderResolution();
+
+    if (getAudioData) {
+      fillFftFromAudio(fftData, getAudioData());
+      fftTexture.needsUpdate = true;
+    }
 
     const date = new Date();
     uniforms.iDate.value.set(
@@ -165,6 +235,12 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
     );
 
     renderer.render(scene, camera);
+
+    if (!hasNotifiedReady) {
+      hasNotifiedReady = true;
+      onReady?.();
+    }
+
     animationFrameId = requestAnimationFrame(animate);
   }
 
@@ -172,6 +248,7 @@ export function startVisualPreview(container: HTMLDivElement, previewGlsl = DEFA
 
   return () => {
     cancelAnimationFrame(animationFrameId);
+    resizeObserver.disconnect();
     geometry.dispose();
     material.dispose();
     fftTexture.dispose();

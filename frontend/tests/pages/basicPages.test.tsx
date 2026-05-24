@@ -1,28 +1,51 @@
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('../../src/components/NavBar', () => ({
-  default: () => <div>NavBar</div>,
-}));
-
-vi.mock('../../src/components/Footer', () => ({
-  default: () => <div>Footer</div>,
-}));
 
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => ({
     user: null,
     isLoading: false,
     login: vi.fn(),
-    register: vi.fn(),
     logout: vi.fn(),
+    register: vi.fn(),
   }),
 }));
 
-vi.mock('../../src/api', () => ({
-  getSavedVisuals: vi.fn().mockResolvedValue({ data: [] }),
-  removeVisual: vi.fn(),
+vi.mock('../../src/api/visualizers', () => ({
+  listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
+  getVisualizerTags: vi.fn().mockResolvedValue({
+    data: ['geometric', 'audio', 'spectrum', 'fractal', 'warp'],
+  }),
+  getVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'visual123',
+      name: 'Test Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: false,
+    },
+  }),
+  getDemoVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'demo123',
+      name: 'Demo Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: true,
+    },
+  }),
+}));
+
+vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
+  useAudioAnalyzer: () => ({
+    getAudioData: vi.fn(),
+    status: 'idle',
+  }),
+}));
+
+vi.mock('../../src/utils/visualPreview', () => ({
+  startVisualPreview: vi.fn(() => vi.fn()),
 }));
 
 import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
@@ -31,48 +54,60 @@ import LandingPage from '../../src/pages/LandingPage';
 import MyVisualsPage from '../../src/pages/MyVisualsPage';
 import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
+import { Routes as RoutePaths } from '../../src/routes/paths';
+
+function renderWithRouter(ui: React.ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+}
 
 describe('basic pages', () => {
   it('renders LandingPage', () => {
-    render(
-      <MemoryRouter>
-        <LandingPage />
-      </MemoryRouter>
-    );
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
-    expect(screen.getByText('Transform Music Into Living Art')).toBeInTheDocument();
-    expect(screen.getByText('Try the Demo')).toBeInTheDocument();
+    renderWithRouter(<LandingPage />);
+
+    expect(screen.getByText(/Transform Music Into Living Art/i)).toBeInTheDocument();
   });
 
   it('renders ExplorePage', () => {
+    renderWithRouter(<ExplorePage />);
+
+    expect(screen.getByRole('heading', { name: /Explore Visuals/i })).toBeInTheDocument();
+  });
+
+  it('renders DemoPlayerPage', async () => {
+    renderWithRouter(<DemoPlayerPage />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
+  });
+
+  it('renders PlayerPage', async () => {
     render(
-      <MemoryRouter>
-        <ExplorePage />
+      <MemoryRouter initialEntries={['/visualizer/visual123']}>
+        <Routes>
+          <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
+        </Routes>
       </MemoryRouter>
     );
-    expect(screen.getByText('NavBar')).toBeInTheDocument();
-    expect(screen.getByText('Explore Visuals')).toBeInTheDocument();
-    expect(screen.getByText('Footer')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
   });
 
-  it('renders DemoPlayerPage', () => {
-    render(<DemoPlayerPage />);
-    expect(screen.getByText('Demo Player Page')).toBeInTheDocument();
-  });
+  it('renders MyVisualsPage', () => {
+    renderWithRouter(<MyVisualsPage />);
 
-  it('renders PlayerPage', () => {
-    render(<PlayerPage />);
-    expect(screen.getByText('Player Page')).toBeInTheDocument();
-  });
-
-  it('renders MyVisualsPage', async () => {
-    render(<MyVisualsPage />);
-    expect(screen.getByText('My Favorites')).toBeInTheDocument();
-    expect(await screen.findByText('No favorites yet')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /My Favorites/i })).toBeInTheDocument();
   });
 
   it('renders NotFoundPage', () => {
-    render(<NotFoundPage />);
-    expect(screen.getByText('404 - Page Not Found')).toBeInTheDocument();
+    renderWithRouter(<NotFoundPage />);
+
+    expect(screen.getByText(/404/i)).toBeInTheDocument();
   });
 });

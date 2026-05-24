@@ -22,11 +22,11 @@ import {
   deleteVisualizerImage,
 } from '../../src/api/images';
 import {
-  ApiEndpoints,
   buildVisualizerDetailEndpoint,
   buildSavedVisualEndpoint,
   buildVisualizerImageEndpoint,
 } from '../../src/api';
+import { ApiEndpoints } from '@sonix/shared';
 
 const mockedApiFetch = vi.mocked(apiFetch);
 
@@ -38,7 +38,7 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_USER);
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME);
   });
 
   it('login posts credentials', () => {
@@ -123,7 +123,7 @@ describe('users api', () => {
   it('updateProfile patches profile data', () => {
     updateProfile({ name: 'Bob' });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_PROFILE, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME, {
       method: 'PATCH',
       body: JSON.stringify({ name: 'Bob' }),
     });
@@ -135,7 +135,7 @@ describe('users api', () => {
       newPassword: 'newpass',
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_PASSWORD, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME_PASSWORD, {
       method: 'PATCH',
       body: JSON.stringify({
         currentPassword: 'oldpass',
@@ -147,7 +147,7 @@ describe('users api', () => {
   it('deleteAccount deletes account with password confirmation', () => {
     deleteAccount('password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_ACCOUNT, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME, {
       method: 'DELETE',
       body: JSON.stringify({ password: 'password123' }),
     });
@@ -156,7 +156,7 @@ describe('users api', () => {
   it('getSavedVisuals calls saved visuals endpoint', () => {
     getSavedVisuals();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USERS_SAVED_VISUALS);
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_VISUALS);
   });
 
   it('saveVisual posts visual id', () => {
@@ -183,7 +183,7 @@ describe('images api', () => {
     uploadAvatar(file);
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      ApiEndpoints.IMAGES_AVATAR,
+      ApiEndpoints.IMAGES_USER,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(FormData),
@@ -194,7 +194,7 @@ describe('images api', () => {
   it('deleteAvatar deletes avatar', () => {
     deleteAvatar();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_AVATAR, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_USER, {
       method: 'DELETE',
     });
   });

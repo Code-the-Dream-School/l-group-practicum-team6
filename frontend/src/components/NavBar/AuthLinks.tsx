@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-import { Routes } from "../../routes/paths";
+import { Routes } from '../../routes/paths';
 
 export function AuthLinks() {
   return (
