@@ -158,6 +158,7 @@ export default function SettingsPage() {
                     type="text"
                     value={draftDisplayName}
                     onChange={(ev) => setDraftDisplayName(ev.target.value)}
+                    onBlur={handleSaveProfile}
                     className="input-field focus-visible:border-primary"
                   />
                 </div>
@@ -179,20 +180,13 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleSaveProfile}
-                disabled={savingProfile}
-                className="btn-primary h-10 w-full max-w-[240px] cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {savingProfile ? 'Saving...' : 'Save Changes'}
-              </button>
-
               {profileError ? (
                 <p className="text-sm text-error" role="alert">
                   {profileError}
                 </p>
               ) : null}
+
+              {savingProfile ? <p className="text-sm text-text-secondary">Saving...</p> : null}
 
               {profileSaved && !profileError ? (
                 <p className="text-sm text-secondary">Profile updated successfully.</p>
