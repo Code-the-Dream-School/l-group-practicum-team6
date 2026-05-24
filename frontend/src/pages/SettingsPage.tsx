@@ -200,7 +200,7 @@ export default function SettingsPage() {
               <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">Profile</h2>
 
               <div className="flex flex-col gap-2">
-                <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[32px] font-semibold leading-8 text-text-primary">
+                <div className="glass-card h-20 w-20 justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[32px] font-semibold leading-8 text-text-primary">
                   {initial}
                 </div>
                 <p className="text-xs leading-[19.2px] text-text-secondary">
