@@ -12,6 +12,10 @@ vi.mock('../../src/context/useAuth', () => ({
   }),
 }));
 
+vi.mock('../../src/api/visualizers', () => ({
+  listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
+}));
+
 vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
   useAudioAnalyzer: () => ({
     getAudioData: vi.fn(),
