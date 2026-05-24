@@ -45,9 +45,9 @@ describe('NavBar', () => {
       mockUseAuth.mockReturnValue({ user: null, logout: vi.fn() });
     });
 
-    it('shows Explore + Log In + Sign Up', () => {
+    it('shows Log In + Sign Up without Explore', () => {
       renderAt('/');
-      expect(screen.getByRole('link', { name: 'Explore' })).toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Explore' })).not.toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Log In' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Sign Up' })).toBeInTheDocument();
     });
@@ -55,6 +55,23 @@ describe('NavBar', () => {
     it('does not show My Visuals', () => {
       renderAt('/');
       expect(screen.queryByRole('link', { name: 'My Visuals' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('demo player variant — guest', () => {
+    beforeEach(() => {
+      mockUseAuth.mockReturnValue({ user: null, logout: vi.fn() });
+    });
+
+    it('shows signup CTA instead of Log In and Sign Up', () => {
+      renderAt('/visualizer/demo');
+
+      expect(
+        screen.getByRole('link', { name: 'Sign Up to unlock all visualizers' })
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Log In' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('link', { name: 'Sign Up' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Open menu' })).not.toBeInTheDocument();
     });
   });
 

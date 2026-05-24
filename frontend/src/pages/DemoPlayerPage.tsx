@@ -1,3 +1,4 @@
+import LoaderSpinner from '../components/LoaderSpinner';
 import {
   PlayerMessage,
   VisualizerPlayer,
@@ -18,7 +19,11 @@ function DemoPlayerContent() {
   const { glsl, error, isLoading } = usePlayerGlsl('demo', { isDemo: true });
 
   if (isLoading) {
-    return <PlayerMessage>Loading visualizer…</PlayerMessage>;
+    return (
+      <div className="flex h-full items-center justify-center px-6">
+        <LoaderSpinner label="Loading visualizer…" labelClassName="text-lg text-white/70 pt-2" />
+      </div>
+    );
   }
 
   if (error) {

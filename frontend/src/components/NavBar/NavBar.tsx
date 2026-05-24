@@ -16,6 +16,7 @@ const NavBar = () => {
   const { user, logout } = useAuth();
 
   const isMinimal = location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
+  const isDemoPlayer = location.pathname === Routes.VISUALIZER_DEMO;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
@@ -49,18 +50,18 @@ const NavBar = () => {
           <Link to={Routes.HOME} aria-label="Sonix home">
             <img src={logoFull} alt="Sonix" />
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <NavLink
-              to={Routes.EXPLORE}
-              className={({ isActive }) =>
-                isActive
-                  ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
-                  : 'text-sm font-medium text-text-secondary hover:text-text-primary'
-              }
-            >
-              Explore
-            </NavLink>
-            {user && (
+          {user && (
+            <nav className="hidden md:flex items-center gap-6">
+              <NavLink
+                to={Routes.EXPLORE}
+                className={({ isActive }) =>
+                  isActive
+                    ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
+                    : 'text-sm font-medium text-text-secondary hover:text-text-primary'
+                }
+              >
+                Explore
+              </NavLink>
               <NavLink
                 to={Routes.MY_VISUALS}
                 className={({ isActive }) =>
@@ -71,26 +72,38 @@ const NavBar = () => {
               >
                 My Visuals
               </NavLink>
-            )}
-          </nav>
+            </nav>
+          )}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          {user ? <UserMenu user={user} onLogout={handleLogout} /> : <AuthLinks />}
+        <div className="flex items-center gap-4">
+          {user ? (
+            <div className="hidden md:block">
+              <UserMenu user={user} onLogout={handleLogout} />
+            </div>
+          ) : isDemoPlayer ? (
+            <AuthLinks variant="demo-player" />
+          ) : (
+            <div className="hidden md:flex items-center gap-4">
+              <AuthLinks />
+            </div>
+          )}
         </div>
 
-        <button
-          type="button"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-text-primary"
-          onClick={() => setMenuOpen((v) => !v)}
-        >
-          <HamburgerIcon open={menuOpen} />
-        </button>
+        {(user || !isDemoPlayer) && (
+          <button
+            type="button"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-text-primary"
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <HamburgerIcon open={menuOpen} />
+          </button>
+        )}
       </div>
 
-      {menuOpen && <MobileMenu user={user} onLogout={handleLogout} />}
+      {menuOpen && (user || !isDemoPlayer) && <MobileMenu user={user} onLogout={handleLogout} />}
     </header>
   );
 };

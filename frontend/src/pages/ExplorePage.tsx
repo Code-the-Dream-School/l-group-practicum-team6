@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
@@ -195,8 +196,11 @@ export default function ExplorePage() {
           )}
 
           {isLoading ? (
-            <div className="rounded-3xl border border-white/10 bg-white/4 px-6 py-12 text-center text-text-secondary">
-              Loading visualizers...
+            <div className="pt-35">
+              <LoaderSpinner
+                label="Loading visuals..."
+                labelClassName="text-lg text-white/70 pt-4"
+              />
             </div>
           ) : showEmptyState ? (
             <div className="rounded-3xl border border-white/10 bg-white/4 px-6 py-12 text-center text-text-secondary">
