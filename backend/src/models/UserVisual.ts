@@ -3,6 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IUserVisual extends Document {
   userId: mongoose.Types.ObjectId; // ref
   visualizerId: mongoose.Types.ObjectId; // ref to Visualizer
+  savedAt: Date;
 }
 
 //
@@ -17,6 +18,10 @@ const UserVisualSchema = new Schema<IUserVisual>(
       type: Schema.Types.ObjectId,
       ref: 'Visualizer',
       required: true,
+    },
+    savedAt: {
+      type: Date,
+      default: Date.now,
     },
   },
   { timestamps: true }
