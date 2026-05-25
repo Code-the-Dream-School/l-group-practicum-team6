@@ -9,6 +9,7 @@ vi.mock('../../src/context/useAuth', () => ({
     login: vi.fn(),
     logout: vi.fn(),
     register: vi.fn(),
+    updateProfile: vi.fn(),
   })),
 }));
 
@@ -67,6 +68,7 @@ const guestAuth = {
   login: vi.fn(),
   logout: vi.fn(),
   register: vi.fn(),
+  updateProfile: vi.fn(),
 };
 
 describe('basic pages', () => {
@@ -91,6 +93,7 @@ describe('basic pages', () => {
       login: vi.fn(),
       logout: vi.fn(),
       register: vi.fn(),
+      updateProfile: vi.fn(),
     });
 
     renderWithRouter(<ExplorePage />);
@@ -127,6 +130,7 @@ describe('basic pages', () => {
       login: vi.fn(),
       logout: vi.fn(),
       register: vi.fn(),
+      updateProfile: vi.fn(),
     });
 
     render(

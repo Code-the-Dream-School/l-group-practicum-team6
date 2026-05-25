@@ -38,7 +38,7 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME);
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER);
   });
 
   it('login posts credentials', () => {
@@ -123,7 +123,7 @@ describe('users api', () => {
   it('updateProfile patches profile data', () => {
     updateProfile({ name: 'Bob' });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
       method: 'PATCH',
       body: JSON.stringify({ name: 'Bob' }),
     });
@@ -135,7 +135,7 @@ describe('users api', () => {
       newPassword: 'newpass',
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME_PASSWORD, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_PASSWORD, {
       method: 'PATCH',
       body: JSON.stringify({
         currentPassword: 'oldpass',
@@ -147,7 +147,7 @@ describe('users api', () => {
   it('deleteAccount deletes account with password confirmation', () => {
     deleteAccount('password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_ME, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
       method: 'DELETE',
       body: JSON.stringify({ password: 'password123' }),
     });

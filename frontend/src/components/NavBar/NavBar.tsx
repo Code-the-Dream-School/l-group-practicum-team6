@@ -95,7 +95,7 @@ const NavBar = () => {
             type="button"
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-text-primary"
+            className="glass-card md:hidden h-10 w-10 justify-center rounded-md text-text-primary"
             onClick={() => setMenuOpen((v) => !v)}
           >
             <HamburgerIcon open={menuOpen} />

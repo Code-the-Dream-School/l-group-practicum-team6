@@ -25,21 +25,21 @@ export type SavedVisual = {
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
-  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USER_ME, {
+  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USER, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function changePassword(data: ChangePasswordData): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_ME_PASSWORD, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_PASSWORD, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function deleteAccount(password: string): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_ME, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER, {
     method: 'DELETE',
     body: JSON.stringify({ password }),
   });

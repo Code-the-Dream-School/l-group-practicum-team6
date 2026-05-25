@@ -84,12 +84,12 @@ describe('NavBar', () => {
       expect(screen.getByRole('button', { name: 'User menu' })).toBeInTheDocument();
     });
 
-    it('opens dropdown with Settings (disabled) and Log Out', () => {
+    it('opens dropdown with Settings link and Log Out', () => {
       mockUseAuth.mockReturnValue({ user: authedUser, logout: vi.fn() });
       renderAt('/');
       fireEvent.click(screen.getByRole('button', { name: 'User menu' }));
       const settings = screen.getByRole('menuitem', { name: 'Settings' });
-      expect(settings).toBeDisabled();
+      expect(settings).toHaveAttribute('href', '/settings');
       expect(screen.getByRole('menuitem', { name: 'Log Out' })).toBeInTheDocument();
     });
 

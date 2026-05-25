@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function fetchUser() {
       try {
-        const res = await fetch(ApiEndpoints.USER_ME, {
+        const res = await fetch(ApiEndpoints.USER, {
           credentials: 'include',
         });
         if (!res.ok) {
@@ -77,6 +77,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(body.data);
   }, []);
 
+  const updateProfile = useCallback(async (payload: { name?: string; email?: string }) => {
+    const res = await fetch(ApiEndpoints.USER, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      throw new Error(await readApiError(res, 'Profile update failed'));
+    }
+
+    const body = (await res.json()) as ApiResponse<User>;
+    if (!body.data) throw new Error('Invalid profile update response');
+    setUser(body.data);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await fetch(ApiEndpoints.AUTH_LOGOUT, {
@@ -96,9 +113,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loading,
       login,
       register,
+      updateProfile,
       logout,
     }),
-    [user, loading, login, register, logout]
+    [user, loading, login, register, updateProfile, logout]
   );
 
   if (loading) {

@@ -7,4 +7,5 @@ export enum Routes {
   VISUALIZER = '/visualizer/:id',
   MY_VISUALS = '/my-visuals',
   NOT_FOUND = '*',
+  SETTINGS = '/settings',
 }

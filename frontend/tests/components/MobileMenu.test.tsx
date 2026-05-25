@@ -71,10 +71,10 @@ describe('MobileMenu', () => {
       expect(screen.getByText('Alex Doe')).toBeInTheDocument();
     });
 
-    it('renders disabled settings button', () => {
+    it('renders settings link', () => {
       renderMenu({ user: authedUser });
 
-      expect(screen.getByRole('button', { name: 'Settings' })).toBeDisabled();
+      expect(screen.getByRole('link', { name: 'Settings' })).toHaveAttribute('href', '/settings');
     });
 
     it('calls onLogout when log out is clicked', async () => {

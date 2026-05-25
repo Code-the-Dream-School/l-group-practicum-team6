@@ -35,13 +35,12 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
             <Avatar user={user} />
             <span className="text-sm text-text-primary">{user.name}</span>
           </div>
-          <button
-            type="button"
-            disabled
-            className="block w-full text-left py-3 text-base text-text-secondary opacity-50 cursor-not-allowed"
+          <NavLink
+            to={Routes.SETTINGS}
+            className="block w-full text-left py-3 text-base text-text-primary"
           >
             Settings
-          </button>
+          </NavLink>
           <button
             type="button"
             onClick={() => onLogout()}
