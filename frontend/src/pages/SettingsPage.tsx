@@ -10,127 +10,163 @@ export default function SettingsPage() {
   const { user, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileSaved, setProfileSaved] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSaved, setPasswordSaved] = useState(false);
-  const [savingPassword, setSavingPassword] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [profileState, setProfileState] = useState({
+    saving: false,
+    error: null as string | null,
+    saved: false,
+  });
+  const [passwordForm, setPasswordForm] = useState({
+    current: '',
+    new: '',
+    confirm: '',
+    error: null as string | null,
+    saved: false,
+    saving: false,
+  });
+  const [deleteState, setDeleteState] = useState({
+    isOpen: false,
+    password: '',
+    error: null as string | null,
+    deleting: false,
+  });
 
   const email = user?.email ?? '';
   const initial = getInitial(user?.name ?? '');
   const disableUpdatePassword =
-    savingPassword ||
-    !currentPassword ||
-    !newPassword ||
-    !confirmPassword ||
-    Boolean(passwordError);
-  const disableDeleteAccount = deletingAccount || !deletePassword;
+    passwordForm.saving ||
+    !passwordForm.current ||
+    !passwordForm.new ||
+    !passwordForm.confirm ||
+    Boolean(passwordForm.error);
+  const disableDeleteAccount = deleteState.deleting || !deleteState.password;
 
   async function handleSaveProfile(nextDisplayName: string) {
     const trimmedName = nextDisplayName.trim();
-    setProfileError(null);
-    setProfileSaved(false);
+    setProfileState((prev) => ({ ...prev, error: null, saved: false }));
 
     if (!trimmedName) {
-      setProfileError('Display name cannot be empty');
+      setProfileState((prev) => ({ ...prev, error: 'Display name cannot be empty' }));
       return;
     }
 
     if (trimmedName === (user?.name ?? '')) {
-      setProfileSaved(true);
+      setProfileState((prev) => ({ ...prev, saved: true }));
       return;
     }
 
-    setSavingProfile(true);
+    setProfileState((prev) => ({ ...prev, saving: true }));
     try {
       await updateProfile({ name: trimmedName });
-      setProfileSaved(true);
+      setProfileState((prev) => ({ ...prev, saved: true }));
     } catch (err) {
-      setProfileError(err instanceof Error ? err.message : 'Failed to save changes');
+      setProfileState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Failed to save changes',
+      }));
     } finally {
-      setSavingProfile(false);
+      setProfileState((prev) => ({ ...prev, saving: false }));
     }
   }
 
   function validatePasswordMatch() {
-    if (!newPassword || !confirmPassword) {
-      setPasswordError(null);
-      setPasswordSaved(false);
+    if (!passwordForm.new || !passwordForm.confirm) {
+      setPasswordForm((prev) => ({ ...prev, error: null, saved: false }));
       return;
     }
 
-    if (newPassword !== confirmPassword) {
-      setPasswordError('New password and Confirm Password do not match');
-      setPasswordSaved(false);
+    if (passwordForm.new !== passwordForm.confirm) {
+      setPasswordForm((prev) => ({
+        ...prev,
+        error: 'New password and Confirm Password do not match',
+        saved: false,
+      }));
       return;
     }
 
-    setPasswordError(null);
+    setPasswordForm((prev) => ({ ...prev, error: null }));
   }
 
   async function handleUpdatePassword() {
-    setPasswordSaved(false);
+    setPasswordForm((prev) => ({ ...prev, saved: false }));
 
-    if (newPassword !== confirmPassword) {
-      setPasswordError('New password and Confirm Password do not match');
+    if (passwordForm.new !== passwordForm.confirm) {
+      setPasswordForm((prev) => ({
+        ...prev,
+        error: 'New password and Confirm Password do not match',
+      }));
       return;
     }
 
-    setPasswordError(null);
-    setSavingPassword(true);
+    setPasswordForm((prev) => ({ ...prev, error: null, saving: true }));
 
     try {
-      await changePassword({ currentPassword, newPassword });
+      await changePassword({
+        currentPassword: passwordForm.current,
+        newPassword: passwordForm.new,
+      });
 
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      setPasswordSaved(true);
+      setPasswordForm({
+        current: '',
+        new: '',
+        confirm: '',
+        error: null,
+        saved: true,
+        saving: false,
+      });
     } catch (err) {
-      setPasswordError(err instanceof Error ? err.message : 'Failed to update password');
+      setPasswordForm((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Failed to update password',
+        saving: false,
+      }));
     } finally {
-      setSavingPassword(false);
+      setPasswordForm((prev) => ({ ...prev, saving: false }));
     }
   }
 
   function openDeleteModal() {
-    setDeleteError(null);
-    setDeletePassword('');
-    setIsDeleteModalOpen(true);
+    setDeleteState({
+      isOpen: true,
+      password: '',
+      error: null,
+      deleting: false,
+    });
   }
 
   function closeDeleteModal() {
-    if (deletingAccount) return;
+    if (deleteState.deleting) return;
 
-    setDeleteError(null);
-    setDeletePassword('');
-    setIsDeleteModalOpen(false);
+    setDeleteState({
+      isOpen: false,
+      password: '',
+      error: null,
+      deleting: false,
+    });
   }
 
   async function handleDeleteAccount() {
     if (disableDeleteAccount) return;
 
-    setDeleteError(null);
-    setDeletingAccount(true);
+    setDeleteState((prev) => ({ ...prev, error: null, deleting: true }));
 
     try {
-      await deleteAccount(deletePassword);
+      await deleteAccount(deleteState.password);
 
-      setIsDeleteModalOpen(false);
+      setDeleteState({
+        isOpen: false,
+        password: '',
+        error: null,
+        deleting: false,
+      });
       await logout();
       navigate(Routes.HOME);
     } catch (err) {
-      setDeleteError(err instanceof Error ? err.message : 'Failed to delete account');
+      setDeleteState((prev) => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Failed to delete account',
+      }));
     } finally {
-      setDeletingAccount(false);
+      setDeleteState((prev) => ({ ...prev, deleting: false }));
     }
   }
 
@@ -213,15 +249,17 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {profileError ? (
+              {profileState.error ? (
                 <p className="text-sm text-error" role="alert">
-                  {profileError}
+                  {profileState.error}
                 </p>
               ) : null}
 
-              {savingProfile ? <p className="text-sm text-text-secondary">Saving...</p> : null}
+              {profileState.saving ? (
+                <p className="text-sm text-text-secondary">Saving...</p>
+              ) : null}
 
-              {profileSaved && !profileError ? (
+              {profileState.saved && !profileState.error ? (
                 <p className="text-sm text-secondary">Profile updated successfully.</p>
               ) : null}
             </div>
@@ -244,10 +282,13 @@ export default function SettingsPage() {
                   <input
                     id="current-password"
                     type="password"
-                    value={currentPassword}
+                    value={passwordForm.current}
                     onChange={(ev) => {
-                      setCurrentPassword(ev.target.value);
-                      setPasswordError(null);
+                      setPasswordForm((prev) => ({
+                        ...prev,
+                        current: ev.target.value,
+                        error: null,
+                      }));
                     }}
                     className="input-field focus-visible:border-primary"
                   />
@@ -263,8 +304,10 @@ export default function SettingsPage() {
                   <input
                     id="new-password"
                     type="password"
-                    value={newPassword}
-                    onChange={(ev) => setNewPassword(ev.target.value)}
+                    value={passwordForm.new}
+                    onChange={(ev) => {
+                      setPasswordForm((prev) => ({ ...prev, new: ev.target.value }));
+                    }}
                     onBlur={validatePasswordMatch}
                     className="input-field focus-visible:border-primary"
                   />
@@ -280,21 +323,23 @@ export default function SettingsPage() {
                   <input
                     id="confirm-password"
                     type="password"
-                    value={confirmPassword}
-                    onChange={(ev) => setConfirmPassword(ev.target.value)}
+                    value={passwordForm.confirm}
+                    onChange={(ev) => {
+                      setPasswordForm((prev) => ({ ...prev, confirm: ev.target.value }));
+                    }}
                     onBlur={validatePasswordMatch}
                     className="input-field focus-visible:border-primary"
                   />
                 </div>
               </div>
 
-              {passwordError ? (
+              {passwordForm.error ? (
                 <p className="text-sm text-error" role="alert">
-                  {passwordError}
+                  {passwordForm.error}
                 </p>
               ) : null}
 
-              {passwordSaved && !passwordError ? (
+              {passwordForm.saved && !passwordForm.error ? (
                 <p className="text-sm text-secondary">Password updated successfully.</p>
               ) : null}
 
@@ -304,7 +349,7 @@ export default function SettingsPage() {
                 disabled={disableUpdatePassword}
                 className="btn-primary h-10 w-full max-w-[240px] cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {savingPassword ? 'Updating...' : 'Update Password'}
+                {passwordForm.saving ? 'Updating...' : 'Update Password'}
               </button>
 
               <div className="pt-8">
@@ -321,7 +366,7 @@ export default function SettingsPage() {
         </section>
       </main>
 
-      {isDeleteModalOpen ? (
+      {deleteState.isOpen ? (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
           role="dialog"
@@ -347,19 +392,22 @@ export default function SettingsPage() {
                 <input
                   id="delete-account-password"
                   type="password"
-                  value={deletePassword}
+                  value={deleteState.password}
                   onChange={(ev) => {
-                    setDeletePassword(ev.target.value);
-                    setDeleteError(null);
+                    setDeleteState((prev) => ({
+                      ...prev,
+                      password: ev.target.value,
+                      error: null,
+                    }));
                   }}
                   className="input-field focus-visible:border-error"
                 />
               </div>
             </div>
 
-            {deleteError ? (
+            {deleteState.error ? (
               <p className="mt-4 text-sm text-error" role="alert">
-                {deleteError}
+                {deleteState.error}
               </p>
             ) : null}
 
@@ -367,7 +415,7 @@ export default function SettingsPage() {
               <button
                 type="button"
                 onClick={closeDeleteModal}
-                disabled={deletingAccount}
+                disabled={deleteState.deleting}
                 className="btn-ghost h-10 cursor-pointer px-4 text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
@@ -379,7 +427,7 @@ export default function SettingsPage() {
                 disabled={disableDeleteAccount}
                 className="btn-ghost h-10 cursor-pointer justify-center border-error px-4 text-sm text-error transition hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {deletingAccount ? 'Deleting...' : 'Delete Account'}
+                {deleteState.deleting ? 'Deleting...' : 'Delete Account'}
               </button>
             </div>
           </div>
