@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ApiEndpoints } from '@sonix/shared';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import { changePassword, deleteAccount } from '../api/users';
 import { useAuth } from '../context/useAuth';
 import { getInitial } from './../utils/getInitial';
 import { Routes } from '../routes/paths';
@@ -33,19 +33,6 @@ export default function SettingsPage() {
     !confirmPassword ||
     Boolean(passwordError);
   const disableDeleteAccount = deletingAccount || !deletePassword;
-
-  async function readApiError(res: Response, fallback: string): Promise<string> {
-    try {
-      const body = (await res.json()) as { error?: { message?: string } };
-      if (body.error?.message) {
-        return body.error.message;
-      }
-
-      return fallback;
-    } catch {
-      return fallback;
-    }
-  }
 
   async function handleSaveProfile(nextDisplayName: string) {
     const trimmedName = nextDisplayName.trim();
@@ -101,27 +88,7 @@ export default function SettingsPage() {
     setSavingPassword(true);
 
     try {
-      const response = await fetch(ApiEndpoints.USER_PASSWORD, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ currentPassword, newPassword }),
-      });
-
-      if (!response.ok) {
-        let message = 'Failed to update password';
-
-        try {
-          const body = (await response.json()) as { error?: { message?: string } };
-          if (body.error?.message) {
-            message = body.error.message;
-          }
-        } catch {
-          message = 'Unable to read server error. Please try again.';
-        }
-
-        throw new Error(message);
-      }
+      await changePassword({ currentPassword, newPassword });
 
       setCurrentPassword('');
       setNewPassword('');
@@ -155,16 +122,7 @@ export default function SettingsPage() {
     setDeletingAccount(true);
 
     try {
-      const response = await fetch(ApiEndpoints.USER, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ password: deletePassword }),
-      });
-
-      if (!response.ok) {
-        throw new Error(await readApiError(response, 'Failed to delete account'));
-      }
+      await deleteAccount(deletePassword);
 
       setIsDeleteModalOpen(false);
       await logout();
@@ -201,12 +159,31 @@ export default function SettingsPage() {
 
               <div className="flex w-full max-w-[480px] flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="display-name"
-                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                  >
-                    Display Name
-                  </label>
+                  <div className="inline-flex items-center gap-1">
+                    <label
+                      htmlFor="display-name"
+                      className="text-xs font-medium leading-[19.2px] text-text-secondary"
+                    >
+                      Display Name
+                    </label>
+                    <span className="group relative inline-flex items-center">
+                      <button
+                        type="button"
+                        aria-describedby="display-name-tooltip"
+                        aria-label="Display name auto-save info"
+                        className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-primary-border bg-surface text-[10px] leading-none text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                      >
+                        i
+                      </button>
+                      <span
+                        id="display-name-tooltip"
+                        role="tooltip"
+                        className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 hidden w-56 -translate-x-1/2 rounded-lg border border-primary-border bg-surface px-3 py-2 text-xs leading-5 text-text-secondary shadow-lg group-hover:block group-focus-within:block"
+                      >
+                        Your display name is auto-saved when you leave this field.
+                      </span>
+                    </span>
+                  </div>
                   <input
                     id="display-name"
                     type="text"
