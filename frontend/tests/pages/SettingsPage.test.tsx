@@ -117,13 +117,24 @@ describe('SettingsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Update Password' }));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(ApiEndpoints.USER_PASSWORD, {
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    const [passwordUrl, passwordRequest] = vi.mocked(global.fetch).mock.calls[0] as [
+      string,
+      RequestInit,
+    ];
+
+    expect(passwordUrl).toBe(ApiEndpoints.USER_PASSWORD);
+    expect(passwordRequest).toEqual(
+      expect.objectContaining({
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ currentPassword: 'current-pass', newPassword: 'new-pass' }),
-      });
-    });
+      })
+    );
+    expect(passwordRequest.headers).toBeInstanceOf(Headers);
+    expect((passwordRequest.headers as Headers).get('Content-Type')).toBe('application/json');
 
     expect(await screen.findByText('Password updated successfully.')).toBeInTheDocument();
     expect(screen.getByLabelText('Current Password')).toHaveValue('');
@@ -148,13 +159,24 @@ describe('SettingsPage', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Delete Account' }));
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    const [deleteUrl, deleteRequest] = vi.mocked(global.fetch).mock.calls[0] as [
+      string,
+      RequestInit,
+    ];
+
+    expect(deleteUrl).toBe(ApiEndpoints.USER);
+    expect(deleteRequest).toEqual(
+      expect.objectContaining({
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ password: 'secret-pass' }),
-      });
-    });
+      })
+    );
+    expect(deleteRequest.headers).toBeInstanceOf(Headers);
+    expect((deleteRequest.headers as Headers).get('Content-Type')).toBe('application/json');
 
     await waitFor(() => expect(mockLogout).toHaveBeenCalled());
     expect(mockNavigate).toHaveBeenCalledWith('/');
