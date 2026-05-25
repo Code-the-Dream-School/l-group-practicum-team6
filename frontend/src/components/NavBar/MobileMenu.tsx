@@ -1,7 +1,8 @@
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import type { User } from '@sonix/shared';
 
 import { Routes } from '../../routes/paths';
+import { AuthLinks } from './AuthLinks';
 import { Avatar } from './Avatar';
 
 interface MobileMenuProps {
@@ -12,16 +13,16 @@ interface MobileMenuProps {
 export function MobileMenu({ user, onLogout }: MobileMenuProps) {
   return (
     <div className="md:hidden border-t border-primary-border bg-surface px-6 py-4">
-      <NavLink
-        to={Routes.EXPLORE}
-        className={({ isActive }) =>
-          `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
-        }
-      >
-        Explore
-      </NavLink>
       {user ? (
         <>
+          <NavLink
+            to={Routes.EXPLORE}
+            className={({ isActive }) =>
+              `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
+            }
+          >
+            Explore
+          </NavLink>
           <NavLink
             to={Routes.MY_VISUALS}
             className={({ isActive }) =>
@@ -50,13 +51,8 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           </button>
         </>
       ) : (
-        <div className="mt-3 flex flex-col gap-3 border-t border-primary-border pt-3">
-          <Link to={Routes.LOGIN} className="btn-ghost justify-center">
-            Log In
-          </Link>
-          <Link to={Routes.SIGNUP} className="btn-primary justify-center">
-            Sign Up
-          </Link>
+        <div className="flex flex-col gap-3 pt-3">
+          <AuthLinks stacked />
         </div>
       )}
     </div>

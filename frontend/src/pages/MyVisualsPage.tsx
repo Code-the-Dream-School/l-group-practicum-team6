@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
 import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../api';
 import type { SavedVisual } from '../api/users';
+import LoaderSpinner from '../components/LoaderSpinner';
 
 type SortOption = 'recent' | 'az' | 'za';
 
@@ -89,8 +89,11 @@ export default function MyVisualsPage() {
           </div>
 
           {isLoading ? (
-            <div className="rounded-3xl border border-white/10 bg-white/4 px-6 py-12 text-center text-text-secondary">
-              Loading your saved visualizers...
+            <div className="pt-35">
+              <LoaderSpinner
+                label="Loading your saved visualizers..."
+                labelClassName="text-lg text-white/70 pt-4"
+              />
             </div>
           ) : errorMessage ? (
             <div className="rounded-3xl border border-red-400/30 bg-red-500/10 px-6 py-12 text-center text-red-100">
@@ -170,8 +173,6 @@ export default function MyVisualsPage() {
           )}
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

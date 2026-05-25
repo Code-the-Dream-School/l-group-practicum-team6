@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
 
+import LoaderSpinner from '../components/LoaderSpinner';
 import {
   PlayerMessage,
   VisualizerPlayer,
@@ -10,21 +11,25 @@ import { ApiError } from '../api/client';
 
 function getLoadErrorMessage(error: unknown): string {
   if (error instanceof ApiError && error.status === 401) {
-    return 'Sign in to play this visualizer.';
+    return 'Sign in to play this visualizer';
   }
 
   if (error instanceof ApiError && error.status === 404) {
-    return 'Visualizer not found.';
+    return 'Visualizer not found';
   }
 
-  return 'Unable to load visualizer.';
+  return 'Unable to load visualizer';
 }
 
 function PlayerPageContent({ id }: { id: string }) {
   const { glsl, error, isLoading } = usePlayerGlsl(id);
 
   if (isLoading) {
-    return <PlayerMessage>Loading visualizer…</PlayerMessage>;
+    return (
+      <div className="flex h-full items-center justify-center px-6">
+        <LoaderSpinner label="Loading visualizer…" labelClassName="text-sm text-white/70 pt-2" />
+      </div>
+    );
   }
 
   if (error) {
@@ -32,7 +37,7 @@ function PlayerPageContent({ id }: { id: string }) {
   }
 
   if (!glsl) {
-    return <PlayerMessage>Unable to load visualizer.</PlayerMessage>;
+    return <PlayerMessage>Unable to load visualizer</PlayerMessage>;
   }
 
   return <VisualizerPlayer glsl={glsl} />;
@@ -44,7 +49,7 @@ export default function PlayerPage() {
   return (
     <VisualizerPlayerLayout>
       {!id ? (
-        <PlayerMessage>Visualizer not found.</PlayerMessage>
+        <PlayerMessage>Visualizer not found</PlayerMessage>
       ) : (
         <PlayerPageContent key={id} id={id} />
       )}

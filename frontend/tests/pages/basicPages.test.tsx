@@ -1,15 +1,15 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../src/context/useAuth', () => ({
-  useAuth: () => ({
+  useAuth: vi.fn(() => ({
     user: null,
-    isLoading: false,
+    loading: false,
     login: vi.fn(),
     logout: vi.fn(),
     register: vi.fn(),
-  }),
+  })),
 }));
 
 vi.mock('../../src/api/visualizers', () => ({
@@ -55,35 +55,80 @@ import MyVisualsPage from '../../src/pages/MyVisualsPage';
 import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
 import { Routes as RoutePaths } from '../../src/routes/paths';
+import { useAuth } from '../../src/context/useAuth';
 
 function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
+const guestAuth = {
+  user: null,
+  loading: false,
+  login: vi.fn(),
+  logout: vi.fn(),
+  register: vi.fn(),
+};
+
 describe('basic pages', () => {
+  beforeEach(() => {
+    vi.mocked(useAuth).mockReturnValue(guestAuth);
+  });
   it('renders LandingPage', () => {
     renderWithRouter(<LandingPage />);
 
     expect(screen.getByText(/Transform Music Into Living Art/i)).toBeInTheDocument();
   });
 
-  it('renders ExplorePage', () => {
+  it('renders ExplorePage for authenticated users', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: {
+        _id: 'u1',
+        name: 'Alex',
+        email: 'alex@example.com',
+        createdAt: '2026-01-01',
+      },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+    });
+
     renderWithRouter(<ExplorePage />);
 
     expect(screen.getByRole('heading', { name: /Explore Visuals/i })).toBeInTheDocument();
   });
 
   it('renders DemoPlayerPage', async () => {
-    renderWithRouter(<DemoPlayerPage />);
+    render(
+      <MemoryRouter initialEntries={['/visualizer/demo']}>
+        <DemoPlayerPage />
+      </MemoryRouter>
+    );
 
     await waitFor(() => {
       expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
     });
 
-    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /Sign Up to unlock all visualizers/i })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^Explore$/i })).not.toBeInTheDocument();
   });
 
   it('renders PlayerPage', async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: {
+        _id: 'u1',
+        name: 'Alex',
+        email: 'alex@example.com',
+        createdAt: '2026-01-01',
+      },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+    });
+
     render(
       <MemoryRouter initialEntries={['/visualizer/visual123']}>
         <Routes>
@@ -113,10 +158,5 @@ describe('basic pages', () => {
     expect(screen.getByText(/The page you are looking for/i)).toBeInTheDocument();
 
     expect(screen.getByRole('link', { name: /Go Home/i })).toHaveAttribute('href', '/');
-
-    expect(screen.getByRole('link', { name: /Explore Visuals/i })).toHaveAttribute(
-      'href',
-      '/explore'
-    );
   });
 });
