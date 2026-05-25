@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ApiEndpoints } from '@sonix/shared';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
@@ -10,8 +10,6 @@ export default function SettingsPage() {
   const { user, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
 
-  const [displayName, setDisplayName] = useState(user?.name ?? '');
-  const [draftDisplayName, setDraftDisplayName] = useState(user?.name ?? '');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [profileSaved, setProfileSaved] = useState(false);
@@ -26,14 +24,8 @@ export default function SettingsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  useEffect(() => {
-    const currentName = user?.name ?? '';
-    setDisplayName(currentName);
-    setDraftDisplayName(currentName);
-  }, [user?.name]);
-
   const email = user?.email ?? '';
-  const initial = getInitial(displayName);
+  const initial = getInitial(user?.name ?? '');
   const disableUpdatePassword =
     savingPassword ||
     !currentPassword ||
@@ -55,8 +47,8 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleSaveProfile() {
-    const trimmedName = draftDisplayName.trim();
+  async function handleSaveProfile(nextDisplayName: string) {
+    const trimmedName = nextDisplayName.trim();
     setProfileError(null);
     setProfileSaved(false);
 
@@ -73,7 +65,6 @@ export default function SettingsPage() {
     setSavingProfile(true);
     try {
       await updateProfile({ name: trimmedName });
-      setDisplayName(trimmedName);
       setProfileSaved(true);
     } catch (err) {
       setProfileError(err instanceof Error ? err.message : 'Failed to save changes');
@@ -219,9 +210,11 @@ export default function SettingsPage() {
                   <input
                     id="display-name"
                     type="text"
-                    value={draftDisplayName}
-                    onChange={(ev) => setDraftDisplayName(ev.target.value)}
-                    onBlur={handleSaveProfile}
+                    key={user?.name ?? ''}
+                    defaultValue={user?.name ?? ''}
+                    onBlur={(ev) => {
+                      void handleSaveProfile(ev.target.value);
+                    }}
                     className="input-field focus-visible:border-primary"
                   />
                 </div>
