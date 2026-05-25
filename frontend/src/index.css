@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import './styles/loader-spinner.css';
+
 @config "../tailwind.config.ts";
 
 @layer base {

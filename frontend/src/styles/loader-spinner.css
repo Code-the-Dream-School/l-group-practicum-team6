@@ -1,0 +1,123 @@
+@layer components {
+  .dance-morph-loader {
+    --dance-morph-speed: 1s;
+    --dance-morph-color: rgb(139 92 246 / 0.45);
+    position: relative;
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .dance-morph-loader__content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dance-morph-loader__content div {
+    width: var(--dance-morph-size);
+    height: var(--dance-morph-size);
+    box-shadow:
+      0 0 6px 0 var(--dance-morph-color),
+      -2px 2px 6px 0 rgb(0 0 0 / 0.35);
+    background: var(--dance-morph-color);
+    position: absolute;
+    animation: dance-morph-twist var(--dance-morph-speed) ease-in-out 0s infinite alternate;
+  }
+
+  .dance-morph-loader__content div:nth-child(1) {
+    --dance-morph-size: 100%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.07);
+    filter: hue-rotate(15deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(2) {
+    --dance-morph-size: 92.86%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.14);
+    filter: hue-rotate(30deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(3) {
+    --dance-morph-size: 85.71%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.21);
+    filter: hue-rotate(45deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(4) {
+    --dance-morph-size: 78.57%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.28);
+    filter: hue-rotate(60deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(5) {
+    --dance-morph-size: 71.43%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.35);
+    filter: hue-rotate(75deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(6) {
+    --dance-morph-size: 64.29%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.42);
+    filter: hue-rotate(90deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(7) {
+    --dance-morph-size: 57.14%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.49);
+    filter: hue-rotate(105deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(8) {
+    --dance-morph-size: 50%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.56);
+    filter: hue-rotate(120deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(9) {
+    --dance-morph-size: 42.86%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.63);
+    filter: hue-rotate(135deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(10) {
+    --dance-morph-size: 35.71%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.7);
+    filter: hue-rotate(150deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(11) {
+    --dance-morph-size: 28.57%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.77);
+    filter: hue-rotate(165deg);
+  }
+
+  .dance-morph-loader__content div:nth-child(12) {
+    --dance-morph-size: 21.43%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.84);
+    filter: hue-rotate(180deg) brightness(1.5);
+  }
+
+  .dance-morph-loader__content div:nth-child(13) {
+    --dance-morph-size: 14.29%;
+    animation-delay: calc(var(--dance-morph-speed) * 0.91);
+    filter: hue-rotate(195deg) brightness(2);
+    box-shadow:
+      0 0 6px 0 var(--dance-morph-color),
+      -2px 2px 6px 0 rgb(0 0 0 / 0.35),
+      0 0 16px 0 rgb(255 255 255 / 0.85) inset;
+  }
+
+  @keyframes dance-morph-twist {
+    0% {
+      border-radius: 1%;
+      transform: rotate(-90deg);
+    }
+
+    100% {
+      border-radius: 50%;
+      transform: rotate(0deg);
+    }
+  }
+}
