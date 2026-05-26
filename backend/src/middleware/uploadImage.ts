@@ -1,18 +1,17 @@
 import multer from 'multer';
-import { BadRequestError } from '../errors';
-
-const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+import { MAX_IMAGE_SIZE_BYTES, validateImageType } from '../utils/imageValidation';
 
 export const uploadImage = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: MAX_IMAGE_SIZE_BYTES,
   }, // 5MB limit
   fileFilter: (_req, file, cb) => {
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      cb(new BadRequestError('Unsupported file type. Only JPEG, PNG, WEBP, and GIF are allowed.'));
-      return;
+    try {
+      validateImageType(file.mimetype);
+      cb(null, true);
+    } catch (error) {
+      cb(error instanceof Error ? error : new Error('Invalid file type'));
     }
-    cb(null, true);
   },
 });
