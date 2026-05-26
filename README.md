@@ -160,7 +160,33 @@ npm run preview
 ```bash
 npm run dev
 npm start
+npm run seed              # idempotent: safe to run multiple times
+npm run seed -- --reset   # drops collections + GridFS bucket, then seeds
 ```
+
+## Database Seed
+
+Run from repo root:
+
+```bash
+npm run seed -w backend              # idempotent — re-runs produce the same state
+npm run seed -w backend -- --reset   # wipes users/visualizers/userVisuals/images + GridFS, then seeds
+```
+
+Seed inserts:
+
+- 20 visualizers from `backend/src/seed/visualizers.seed.json` (with PNG previews uploaded to GridFS, first one marked `isDemo: true`)
+- 12 extra visualizers from `backend/src/seed/visualizers-extra.seed.ts` (plasma, Lissajous, waveform, starfield, nebula, tunnel, kaleidoscope, wave grid, Mandelbrot flow, ripples, spiral, prism)
+- 3 users from `backend/src/seed/users.seed.json`
+- 5 `UserVisual` favorites for the first regular user
+
+### Test credentials
+
+- Admin — `admin@sonix.dev` / `AdminPass123!`
+- User — `user1@sonix.dev` / `UserPass123!`
+- User — `user2@sonix.dev` / `UserPass123!`
+
+Also documented in `backend/.env.example`.
 
 ## 🪝 Pre-commit hooks
 
