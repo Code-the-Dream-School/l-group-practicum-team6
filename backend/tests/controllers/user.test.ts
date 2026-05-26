@@ -302,7 +302,7 @@ describe('addVisualToCollection', () => {
     await expect(addVisualToCollection(req, res)).rejects.toThrow('Visualizer not found');
   });
 
-  it('throws BadRequestError when visualizer already in collection', async () => {
+  it('throws ConflictError when visualizer is already saved', async () => {
     vi.mocked(Visualizer.findById).mockResolvedValue({ _id: FAKE_VIS_ID } as any);
     vi.mocked(UserVisual.findOne).mockResolvedValue({ _id: 'exists' } as any);
 
@@ -310,7 +310,23 @@ describe('addVisualToCollection', () => {
     const res = makeRes();
 
     await expect(addVisualToCollection(req, res)).rejects.toThrow(
-      'Visualizer already in collection'
+      'This visualizer is already saved.'
+    );
+  });
+
+  it('throws ConflictError when MongoDB duplicate key error occurs', async () => {
+    vi.mocked(Visualizer.findById).mockResolvedValue({ _id: FAKE_VIS_ID } as any);
+    vi.mocked(UserVisual.findOne).mockResolvedValue(null);
+    const duplicateError = new Error('Duplicate key error') as Error & { code: number };
+    duplicateError.code = 11000;
+
+    vi.mocked(UserVisual.create).mockRejectedValue(duplicateError);
+
+    const req = makeReq({ params: { id: FAKE_VIS_ID } });
+    const res = makeRes();
+
+    await expect(addVisualToCollection(req, res)).rejects.toThrow(
+      'This visualizer is already saved.'
     );
   });
 

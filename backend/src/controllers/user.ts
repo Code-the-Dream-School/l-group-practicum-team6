@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'; // Answers to client
 import { StatusCodes } from 'http-status-codes'; // Wrraped tool to show codes
 import mongoose from 'mongoose';
-import { BadRequestError, NotFoundError } from '../errors';
+import { BadRequestError, ConflictError, NotFoundError } from '../errors';
 
 import User from '../models/User';
 import UserVisual from '../models/UserVisual';
@@ -134,15 +134,23 @@ export const addVisualToCollection = async (req: AuthRequest, res: Response) => 
     visualizerId: new mongoose.Types.ObjectId(id),
   });
 
-  if (alreadySaved) throw new BadRequestError('Visualizer already in collection');
+  if (alreadySaved) throw new ConflictError('This visualizer is already saved.');
 
-  const userVisual = await UserVisual.create({
-    userId: new mongoose.Types.ObjectId(req.user?.userId ?? ''),
-    visualizerId: new mongoose.Types.ObjectId(id),
-  });
+  try {
+    const userVisual = await UserVisual.create({
+      userId: new mongoose.Types.ObjectId(req.user?.userId ?? ''),
+      visualizerId: new mongoose.Types.ObjectId(id),
+    });
 
-  // respond
-  res.status(StatusCodes.CREATED).json({ data: userVisual });
+    // respond
+    res.status(StatusCodes.CREATED).json({ data: userVisual });
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 11000) {
+      throw new ConflictError('This visualizer is already saved.');
+    }
+
+    throw error;
+  }
 };
 
 // Remove visualiser from collection
