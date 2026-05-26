@@ -207,7 +207,9 @@ describe('SettingsPage', () => {
     });
     fireEvent.click(within(dialog).getByRole('button', { name: 'Delete Account' }));
 
-    expect(mockToast.error).toHaveBeenCalledWith('Password is incorrect');
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith('Password is incorrect');
+    });
     expect(mockLogout).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
