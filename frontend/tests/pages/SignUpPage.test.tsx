@@ -4,11 +4,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockRegister = vi.fn();
 const mockNavigate = vi.fn();
+const mockToast = {
+  success: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+};
+
+const ERROR_PASSWORD_MISMATCH = 'Passwords do not match';
+const ERROR_PASSWORD_SHORT = 'Password must be at least 8 characters';
+const ERROR_EMAIL_EXISTS = 'Email already exists';
+const SUCCESS_ACCOUNT_CREATED = 'Account created successfully!';
 
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => ({
     register: mockRegister,
   }),
+}));
+
+vi.mock('../../src/context/useToast', () => ({
+  useToast: () => mockToast,
 }));
 
 vi.mock('../../src/components/NavBar', () => ({
@@ -41,6 +55,9 @@ describe('SignUpPage', () => {
   beforeEach(() => {
     mockRegister.mockReset();
     mockNavigate.mockReset();
+    mockToast.success.mockReset();
+    mockToast.error.mockReset();
+    mockToast.info.mockReset();
   });
 
   it('renders sign up form fields', () => {
@@ -52,7 +69,7 @@ describe('SignUpPage', () => {
     expect(screen.getByPlaceholderText('Re-enter your password')).toBeInTheDocument();
   });
 
-  it('shows mismatch password validation', async () => {
+  it('shows mismatch password validation toast', () => {
     renderPage();
     fireEvent.change(screen.getByPlaceholderText('Alex Rivera'), {
       target: { value: 'John' },
@@ -68,11 +85,11 @@ describe('SignUpPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }));
 
-    expect(await screen.findByText('Passwords do not match')).toBeInTheDocument();
+    expect(mockToast.error).toHaveBeenCalledWith(ERROR_PASSWORD_MISMATCH);
     expect(mockRegister).not.toHaveBeenCalled();
   });
 
-  it('shows short password validation', async () => {
+  it('shows short password validation toast', () => {
     renderPage();
     fireEvent.change(screen.getByPlaceholderText('Alex Rivera'), {
       target: { value: 'John' },
@@ -88,7 +105,7 @@ describe('SignUpPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }));
 
-    expect(await screen.findByText('Password must be at least 8 characters')).toBeInTheDocument();
+    expect(mockToast.error).toHaveBeenCalledWith(ERROR_PASSWORD_SHORT);
   });
 
   it('toggles password visibility for both password fields', () => {
@@ -128,11 +145,12 @@ describe('SignUpPage', () => {
     await waitFor(() =>
       expect(mockRegister).toHaveBeenCalledWith('John', 'john@example.com', 'password123')
     );
+    expect(mockToast.success).toHaveBeenCalledWith(SUCCESS_ACCOUNT_CREATED);
     expect(mockNavigate).toHaveBeenCalledWith('/explore', { replace: true });
   });
 
-  it('shows backend error on failed registration', async () => {
-    mockRegister.mockRejectedValueOnce(new Error('Email already exists'));
+  it('shows backend error toast on failed registration', async () => {
+    mockRegister.mockRejectedValueOnce(new Error(ERROR_EMAIL_EXISTS));
     renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Alex Rivera'), {
@@ -149,6 +167,8 @@ describe('SignUpPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Sign Up' }));
 
-    expect(await screen.findByText('Email already exists')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith(ERROR_EMAIL_EXISTS);
+    });
   });
 });
