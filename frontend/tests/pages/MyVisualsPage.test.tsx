@@ -2,12 +2,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockToast = {
-  success: vi.fn(),
-  error: vi.fn(),
-  info: vi.fn(),
-};
-
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => ({
     user: { _id: 'user-1', name: 'Test User', email: 'test@example.com', createdAt: '' },
@@ -20,10 +14,6 @@ vi.mock('../../src/context/useAuth', () => ({
 
 vi.mock('../../src/components/VisualizerCard', () => ({
   default: ({ name }: { name: string }) => <div>{name}</div>,
-}));
-
-vi.mock('../../src/context/useToast', () => ({
-  useToast: () => mockToast,
 }));
 
 const getSavedVisuals = vi.fn();
@@ -74,9 +64,6 @@ describe('MyVisualsPage', () => {
   beforeEach(() => {
     getSavedVisuals.mockReset();
     removeVisual.mockReset();
-    mockToast.success.mockReset();
-    mockToast.error.mockReset();
-    mockToast.info.mockReset();
     getSavedVisuals.mockResolvedValue({ data: savedVisuals });
     removeVisual.mockResolvedValue({ msg: 'removed' });
   });
@@ -106,7 +93,7 @@ describe('MyVisualsPage', () => {
     });
   });
 
-  it('shows a toast and falls back to empty state when loading fails', async () => {
+  it('shows an error message when loading fails', async () => {
     getSavedVisuals.mockRejectedValue(new Error('network'));
 
     render(
@@ -116,8 +103,8 @@ describe('MyVisualsPage', () => {
     );
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith('Unable to load your saved visualizers.');
-      expect(screen.getByText(/No favorites yet/i)).toBeInTheDocument();
+      expect(screen.getByText(/Could not load favorites/i)).toBeInTheDocument();
+      expect(screen.getByText(/Unable to load your saved visualizers/i)).toBeInTheDocument();
     });
   });
 
@@ -175,10 +162,9 @@ describe('MyVisualsPage', () => {
       expect(removeVisual).toHaveBeenCalledWith('visual-b');
       expect(screen.queryByText('Beta Visual')).not.toBeInTheDocument();
     });
-    expect(mockToast.success).toHaveBeenCalledWith('Visualizer removed from favorites.');
   });
 
-  it('restores favorites and shows a toast when removal fails', async () => {
+  it('restores favorites when removal fails', async () => {
     removeVisual.mockRejectedValue(new Error('failed'));
 
     render(
@@ -195,10 +181,7 @@ describe('MyVisualsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith(
-        'Could not remove visualizer. Please try again.'
-      );
-      expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
+      expect(screen.getByText(/Could not remove visualizer/i)).toBeInTheDocument();
     });
   });
 

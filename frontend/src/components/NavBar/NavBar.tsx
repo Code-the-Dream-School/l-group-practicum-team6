@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import logoFull from '../../assets/logo-full.svg';
 import { useAuth } from '../../context/useAuth';
-import { useToast } from '../../context/useToast';
 import { Routes } from '../../routes/paths';
 
 import { AuthLinks } from './AuthLinks';
@@ -15,7 +14,6 @@ const NavBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const toast = useToast();
 
   const isMinimal = location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
   const isDemoPlayer = location.pathname === Routes.VISUALIZER_DEMO;
@@ -32,7 +30,6 @@ const NavBar = () => {
   async function handleLogout() {
     setMenuOpen(false);
     await logout();
-    toast.info('You have been logged out.');
     navigate('/', { replace: true });
   }
 

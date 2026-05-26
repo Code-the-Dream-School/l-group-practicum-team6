@@ -11,9 +11,7 @@ import {
 } from '../api';
 import searchIcon from '../assets/icons/search.svg';
 import { useAuth } from '../context/useAuth';
-import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
-import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import type { VisualizerListItem } from '@sonix/shared';
 
 const PAGE_SIZE = 8;
@@ -39,11 +37,11 @@ function getVisualTags(visual: ExploreVisualizer): string[] {
 
 export default function ExplorePage() {
   const { user } = useAuth();
-  const toast = useToast();
   const canSave = Boolean(user);
   const [visuals, setVisuals] = useState<ExploreVisualizer[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -89,11 +87,12 @@ export default function ExplorePage() {
 
         setVisuals(response.data as ExploreVisualizer[]);
         setTotalPages(Math.max(response.pages, 1));
-      } catch (error) {
+        setErrorMessage('');
+      } catch {
         if (cancelled) return;
 
         setVisuals([]);
-        toast.error(getToastErrorMessage(error, 'Unable to load visualizers'));
+        setErrorMessage('Unable to load visualizers');
       } finally {
         if (!cancelled) {
           setIsLoading(false);
@@ -106,22 +105,19 @@ export default function ExplorePage() {
     return () => {
       cancelled = true;
     };
-  }, [page, debouncedSearch, selectedTag, toast]);
+  }, [page, debouncedSearch, selectedTag]);
 
   async function handleToggleSave(id: string) {
-    if (savedVisualIds.includes(id)) {
-      toast.info('This visualizer is already saved.');
-      return;
-    }
+    if (savedVisualIds.includes(id)) return;
 
     setSavedVisualIds((currentIds) => [...currentIds, id]);
+    setErrorMessage('');
 
     try {
       await saveVisual(id);
-      toast.success('Visualizer saved to favorites.');
-    } catch (error) {
+    } catch {
       setSavedVisualIds((currentIds) => currentIds.filter((savedId) => savedId !== id));
-      toast.error(getToastErrorMessage(error, 'Unable to save visualizer'));
+      setErrorMessage('Unable to save visualizer');
     }
   }
 
@@ -192,6 +188,12 @@ export default function ExplorePage() {
               ))}
             </div>
           </div>
+
+          {errorMessage && (
+            <div className="rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {errorMessage}
+            </div>
+          )}
 
           {isLoading ? (
             <div className="pt-35">

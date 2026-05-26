@@ -13,14 +13,6 @@ vi.mock('../../src/context/useAuth', () => ({
   })),
 }));
 
-vi.mock('../../src/context/useToast', () => ({
-  useToast: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-  }),
-}));
-
 vi.mock('../../src/api/visualizers', () => ({
   listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
   getVisualizerTags: vi.fn().mockResolvedValue({

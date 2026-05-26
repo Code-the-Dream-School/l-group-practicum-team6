@@ -6,11 +6,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mockUpdateProfile = vi.fn();
 const mockLogout = vi.fn();
 const mockNavigate = vi.fn();
-const mockToast = {
-  success: vi.fn(),
-  error: vi.fn(),
-  info: vi.fn(),
-};
 
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => ({
@@ -23,10 +18,6 @@ vi.mock('../../src/context/useAuth', () => ({
     updateProfile: mockUpdateProfile,
     logout: mockLogout,
   }),
-}));
-
-vi.mock('../../src/context/useToast', () => ({
-  useToast: () => mockToast,
 }));
 
 vi.mock('../../src/components/NavBar', () => ({
@@ -56,9 +47,6 @@ describe('SettingsPage', () => {
     mockUpdateProfile.mockReset();
     mockLogout.mockReset();
     mockNavigate.mockReset();
-    mockToast.success.mockReset();
-    mockToast.error.mockReset();
-    mockToast.info.mockReset();
     vi.restoreAllMocks();
     vi.spyOn(global, 'fetch');
   });
@@ -73,13 +61,13 @@ describe('SettingsPage', () => {
     expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
   });
 
-  it('shows a toast error when display name is empty on blur', async () => {
+  it('shows an error when display name is empty on blur', async () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('Display Name'), { target: { value: '   ' } });
     fireEvent.blur(screen.getByLabelText('Display Name'));
 
-    expect(mockToast.error).toHaveBeenCalledWith('Display name cannot be empty');
+    expect(await screen.findByText('Display name cannot be empty')).toBeInTheDocument();
     expect(mockUpdateProfile).not.toHaveBeenCalled();
   });
 
@@ -91,10 +79,10 @@ describe('SettingsPage', () => {
     fireEvent.blur(screen.getByLabelText('Display Name'));
 
     await waitFor(() => expect(mockUpdateProfile).toHaveBeenCalledWith({ name: 'New Name' }));
-    expect(mockToast.success).toHaveBeenCalledWith('Profile updated successfully.');
+    expect(await screen.findByText('Profile updated successfully.')).toBeInTheDocument();
   });
 
-  it('shows password mismatch toast and blocks submit', async () => {
+  it('shows password mismatch error and blocks submit', async () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('Current Password'), {
@@ -106,7 +94,9 @@ describe('SettingsPage', () => {
     });
     fireEvent.blur(screen.getByLabelText('Confirm Password'));
 
-    expect(mockToast.error).toHaveBeenCalledWith('New password and Confirm Password do not match');
+    expect(
+      await screen.findByText('New password and Confirm Password do not match')
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Update Password' })).toBeDisabled();
     expect(global.fetch).not.toHaveBeenCalled();
   });
@@ -146,7 +136,7 @@ describe('SettingsPage', () => {
     expect(passwordRequest.headers).toBeInstanceOf(Headers);
     expect((passwordRequest.headers as Headers).get('Content-Type')).toBe('application/json');
 
-    expect(mockToast.success).toHaveBeenCalledWith('Password updated successfully.');
+    expect(await screen.findByText('Password updated successfully.')).toBeInTheDocument();
     expect(screen.getByLabelText('Current Password')).toHaveValue('');
     expect(screen.getByLabelText('New Password')).toHaveValue('');
     expect(screen.getByLabelText('Confirm Password')).toHaveValue('');
@@ -207,7 +197,7 @@ describe('SettingsPage', () => {
     });
     fireEvent.click(within(dialog).getByRole('button', { name: 'Delete Account' }));
 
-    expect(mockToast.error).toHaveBeenCalledWith('Password is incorrect');
+    expect(await screen.findByText('Password is incorrect')).toBeInTheDocument();
     expect(mockLogout).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });

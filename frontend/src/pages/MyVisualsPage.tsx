@@ -1,19 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
 import VisualizerCard from '../components/VisualizerCard';
-import { useToast } from '../context/useToast';
 import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../api';
 import type { SavedVisual } from '../api/users';
 import LoaderSpinner from '../components/LoaderSpinner';
-import { getToastErrorMessage } from '../utils/toastErrorMessage';
 
 type SortOption = 'recent' | 'az' | 'za';
 
 export default function MyVisualsPage() {
-  const toast = useToast();
   const [savedVisuals, setSavedVisuals] = useState<SavedVisual[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,15 +19,16 @@ export default function MyVisualsPage() {
       try {
         const response = await getSavedVisuals();
         setSavedVisuals(response.data);
-      } catch (error) {
-        toast.error(getToastErrorMessage(error, 'Unable to load your saved visualizers.'));
+        setErrorMessage('');
+      } catch {
+        setErrorMessage('Unable to load your saved visualizers.');
       } finally {
         setIsLoading(false);
       }
     }
 
     void loadSavedVisuals();
-  }, [toast]);
+  }, []);
 
   const sortedVisuals = useMemo(() => {
     const visuals = [...savedVisuals];
@@ -54,13 +53,13 @@ export default function MyVisualsPage() {
       currentVisuals.filter((savedVisual) => savedVisual.visualizerId._id !== visualizerId)
     );
     setConfirmRemoveId(null);
+    setErrorMessage('');
 
     try {
       await removeVisual(visualizerId);
-      toast.success('Visualizer removed from favorites.');
-    } catch (error) {
+    } catch {
       setSavedVisuals(previousVisuals);
-      toast.error(getToastErrorMessage(error, 'Could not remove visualizer. Please try again.'));
+      setErrorMessage('Could not remove visualizer. Please try again.');
     }
   }
 
@@ -95,6 +94,11 @@ export default function MyVisualsPage() {
                 label="Loading your saved visualizers..."
                 labelClassName="text-lg text-white/70 pt-4"
               />
+            </div>
+          ) : errorMessage ? (
+            <div className="rounded-3xl border border-red-400/30 bg-red-500/10 px-6 py-12 text-center text-red-100">
+              <h2 className="text-sm font-semibold">Could not load favorites</h2>
+              <p className="mt-2 text-xs text-red-100/80">{errorMessage}</p>
             </div>
           ) : sortedVisuals.length === 0 ? (
             <div className="flex min-h-[360px] flex-col items-center justify-center text-center">

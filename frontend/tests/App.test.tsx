@@ -11,14 +11,6 @@ vi.mock('../src/context/useAuth', () => ({
   }),
 }));
 
-vi.mock('../src/context/useToast', () => ({
-  useToast: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
-    info: vi.fn(),
-  }),
-}));
-
 import App from '../src/App';
 
 describe('App', () => {
