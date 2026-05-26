@@ -1,63 +1,102 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ToastProvider } from '../../src/context/ToastProvider';
 import { useToast } from '../../src/context/useToast';
 
-function DemoActions() {
+function ToastProbe() {
   const toast = useToast();
 
   return (
     <div>
-      <button type="button" onClick={() => toast.success('Saved successfully')}>
-        Success
-      </button>
       <button type="button" onClick={() => toast.error('Something went wrong')}>
-        Error
+        error
       </button>
-      <button type="button" onClick={() => toast.info('Heads up')}>
-        Info
+      <button type="button" onClick={() => toast.success('Saved!')}>
+        success
+      </button>
+      <button type="button" onClick={() => toast.info('Info #1')}>
+        info-1
+      </button>
+      <button type="button" onClick={() => toast.info('Info #2')}>
+        info-2
+      </button>
+      <button type="button" onClick={() => toast.info('Info #3')}>
+        info-3
+      </button>
+      <button type="button" onClick={() => toast.info('Info #4')}>
+        info-4
       </button>
     </div>
   );
 }
 
 describe('ToastProvider', () => {
-  it('shows toasts when context actions are called', async () => {
-    render(
-      <ToastProvider>
-        <DemoActions />
-      </ToastProvider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Success' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Error' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Info' }));
-
-    expect(await screen.findByText('Saved successfully')).toBeInTheDocument();
-    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
-    expect(screen.getByText('Heads up')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.useFakeTimers();
   });
 
-  it('queues toasts beyond max visible and shows next after dismiss', async () => {
+  afterEach(() => {
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+  });
+
+  it('shows error toast with assertive aria-live and auto-dismisses after 6 seconds', () => {
     render(
       <ToastProvider>
-        <DemoActions />
+        <ToastProbe />
       </ToastProvider>
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Success' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Error' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Info' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Success' }));
+    fireEvent.click(screen.getByRole('button', { name: 'error' }));
 
-    const alerts = await screen.findAllByRole('alert');
-    expect(alerts).toHaveLength(3);
+    const toast = screen.getByRole('alert');
+    expect(toast).toHaveTextContent('Something went wrong');
+    expect(toast).toHaveAttribute('aria-live', 'assertive');
 
-    fireEvent.click(screen.getAllByLabelText('Dismiss notification')[0]);
-
-    await waitFor(() => {
-      expect(screen.getAllByRole('alert')).toHaveLength(3);
+    act(() => {
+      vi.advanceTimersByTime(5900);
     });
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('queues toasts when more than 3 are triggered', () => {
+    render(
+      <ToastProvider>
+        <ToastProbe />
+      </ToastProvider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'info-1' }));
+    fireEvent.click(screen.getByRole('button', { name: 'info-2' }));
+    fireEvent.click(screen.getByRole('button', { name: 'info-3' }));
+    fireEvent.click(screen.getByRole('button', { name: 'info-4' }));
+
+    expect(screen.getAllByRole('alert')).toHaveLength(3);
+    expect(screen.queryByText('Info #4')).not.toBeInTheDocument();
+
+    const dismissButtons = screen.getAllByRole('button', { name: 'Dismiss notification' });
+    fireEvent.click(dismissButtons[0]);
+
+    expect(screen.getAllByRole('alert')).toHaveLength(3);
+    expect(screen.getByText('Info #4')).toBeInTheDocument();
+  });
+
+  it('uses polite aria-live for success/info toasts', () => {
+    render(
+      <ToastProvider>
+        <ToastProbe />
+      </ToastProvider>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'success' }));
+
+    const toast = screen.getByRole('alert');
+    expect(toast).toHaveAttribute('aria-live', 'polite');
   });
 });

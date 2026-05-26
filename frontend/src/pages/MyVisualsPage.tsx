@@ -57,6 +57,7 @@ export default function MyVisualsPage() {
 
     try {
       await removeVisual(visualizerId);
+      toast.success('Visualizer removed from favorites.');
     } catch (error) {
       setSavedVisuals(previousVisuals);
       toast.error(getToastErrorMessage(error, 'Could not remove visualizer. Please try again.'));

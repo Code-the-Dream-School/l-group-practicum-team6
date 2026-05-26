@@ -3,101 +3,81 @@ import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import { changePassword, deleteAccount } from '../api/users';
 import { useAuth } from '../context/useAuth';
+import { useToast } from '../context/useToast';
 import { getInitial } from './../utils/getInitial';
+import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { Routes } from '../routes/paths';
 
 export default function SettingsPage() {
   const { user, updateProfile, logout } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const [profileState, setProfileState] = useState({
     saving: false,
-    error: null as string | null,
-    saved: false,
   });
   const [passwordForm, setPasswordForm] = useState({
     current: '',
     new: '',
     confirm: '',
-    error: null as string | null,
-    saved: false,
     saving: false,
   });
   const [deleteState, setDeleteState] = useState({
     isOpen: false,
     password: '',
-    error: null as string | null,
     deleting: false,
   });
 
   const email = user?.email ?? '';
   const initial = getInitial(user?.name ?? '');
+  const passwordsMismatch =
+    Boolean(passwordForm.new) &&
+    Boolean(passwordForm.confirm) &&
+    passwordForm.new !== passwordForm.confirm;
   const disableUpdatePassword =
     passwordForm.saving ||
     !passwordForm.current ||
     !passwordForm.new ||
     !passwordForm.confirm ||
-    Boolean(passwordForm.error);
+    passwordsMismatch;
   const disableDeleteAccount = deleteState.deleting || !deleteState.password;
 
   async function handleSaveProfile(nextDisplayName: string) {
     const trimmedName = nextDisplayName.trim();
-    setProfileState((prev) => ({ ...prev, error: null, saved: false }));
 
     if (!trimmedName) {
-      setProfileState((prev) => ({ ...prev, error: 'Display name cannot be empty' }));
+      toast.error('Display name cannot be empty');
       return;
     }
 
     if (trimmedName === (user?.name ?? '')) {
-      setProfileState((prev) => ({ ...prev, saved: true }));
       return;
     }
 
     setProfileState((prev) => ({ ...prev, saving: true }));
     try {
       await updateProfile({ name: trimmedName });
-      setProfileState((prev) => ({ ...prev, saved: true }));
+      toast.success('Profile updated successfully.');
     } catch (err) {
-      setProfileState((prev) => ({
-        ...prev,
-        error: err instanceof Error ? err.message : 'Failed to save changes',
-      }));
+      toast.error(getToastErrorMessage(err, 'Failed to save changes'));
     } finally {
       setProfileState((prev) => ({ ...prev, saving: false }));
     }
   }
 
   function validatePasswordMatch() {
-    if (!passwordForm.new || !passwordForm.confirm) {
-      setPasswordForm((prev) => ({ ...prev, error: null, saved: false }));
-      return;
+    if (passwordForm.new && passwordForm.confirm && passwordForm.new !== passwordForm.confirm) {
+      toast.error('New password and Confirm Password do not match');
     }
-
-    if (passwordForm.new !== passwordForm.confirm) {
-      setPasswordForm((prev) => ({
-        ...prev,
-        error: 'New password and Confirm Password do not match',
-        saved: false,
-      }));
-      return;
-    }
-
-    setPasswordForm((prev) => ({ ...prev, error: null }));
   }
 
   async function handleUpdatePassword() {
-    setPasswordForm((prev) => ({ ...prev, saved: false }));
-
     if (passwordForm.new !== passwordForm.confirm) {
-      setPasswordForm((prev) => ({
-        ...prev,
-        error: 'New password and Confirm Password do not match',
-      }));
+      toast.error('New password and Confirm Password do not match');
       return;
     }
 
-    setPasswordForm((prev) => ({ ...prev, error: null, saving: true }));
+    setPasswordForm((prev) => ({ ...prev, saving: true }));
 
     try {
       await changePassword({
@@ -109,16 +89,11 @@ export default function SettingsPage() {
         current: '',
         new: '',
         confirm: '',
-        error: null,
-        saved: true,
         saving: false,
       });
+      toast.success('Password updated successfully.');
     } catch (err) {
-      setPasswordForm((prev) => ({
-        ...prev,
-        error: err instanceof Error ? err.message : 'Failed to update password',
-        saving: false,
-      }));
+      toast.error(getToastErrorMessage(err, 'Failed to update password'));
     } finally {
       setPasswordForm((prev) => ({ ...prev, saving: false }));
     }
@@ -128,7 +103,6 @@ export default function SettingsPage() {
     setDeleteState({
       isOpen: true,
       password: '',
-      error: null,
       deleting: false,
     });
   }
@@ -139,7 +113,6 @@ export default function SettingsPage() {
     setDeleteState({
       isOpen: false,
       password: '',
-      error: null,
       deleting: false,
     });
   }
@@ -147,7 +120,7 @@ export default function SettingsPage() {
   async function handleDeleteAccount() {
     if (disableDeleteAccount) return;
 
-    setDeleteState((prev) => ({ ...prev, error: null, deleting: true }));
+    setDeleteState((prev) => ({ ...prev, deleting: true }));
 
     try {
       await deleteAccount(deleteState.password);
@@ -155,16 +128,12 @@ export default function SettingsPage() {
       setDeleteState({
         isOpen: false,
         password: '',
-        error: null,
         deleting: false,
       });
       await logout();
       navigate(Routes.HOME);
     } catch (err) {
-      setDeleteState((prev) => ({
-        ...prev,
-        error: err instanceof Error ? err.message : 'Failed to delete account',
-      }));
+      toast.error(getToastErrorMessage(err, 'Failed to delete account'));
     } finally {
       setDeleteState((prev) => ({ ...prev, deleting: false }));
     }
@@ -249,18 +218,8 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {profileState.error ? (
-                <p className="text-sm text-error" role="alert">
-                  {profileState.error}
-                </p>
-              ) : null}
-
               {profileState.saving ? (
                 <p className="text-sm text-text-secondary">Saving...</p>
-              ) : null}
-
-              {profileState.saved && !profileState.error ? (
-                <p className="text-sm text-secondary">Profile updated successfully.</p>
               ) : null}
             </div>
 
@@ -287,7 +246,6 @@ export default function SettingsPage() {
                       setPasswordForm((prev) => ({
                         ...prev,
                         current: ev.target.value,
-                        error: null,
                       }));
                     }}
                     className="input-field focus-visible:border-primary"
@@ -332,16 +290,6 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-
-              {passwordForm.error ? (
-                <p className="text-sm text-error" role="alert">
-                  {passwordForm.error}
-                </p>
-              ) : null}
-
-              {passwordForm.saved && !passwordForm.error ? (
-                <p className="text-sm text-secondary">Password updated successfully.</p>
-              ) : null}
 
               <button
                 type="button"
@@ -397,19 +345,12 @@ export default function SettingsPage() {
                     setDeleteState((prev) => ({
                       ...prev,
                       password: ev.target.value,
-                      error: null,
                     }));
                   }}
                   className="input-field focus-visible:border-error"
                 />
               </div>
             </div>
-
-            {deleteState.error ? (
-              <p className="mt-4 text-sm text-error" role="alert">
-                {deleteState.error}
-              </p>
-            ) : null}
 
             <div className="mt-6 flex items-center justify-end gap-3">
               <button

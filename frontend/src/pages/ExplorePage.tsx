@@ -109,12 +109,16 @@ export default function ExplorePage() {
   }, [page, debouncedSearch, selectedTag, toast]);
 
   async function handleToggleSave(id: string) {
-    if (savedVisualIds.includes(id)) return;
+    if (savedVisualIds.includes(id)) {
+      toast.info('This visualizer is already saved.');
+      return;
+    }
 
     setSavedVisualIds((currentIds) => [...currentIds, id]);
 
     try {
       await saveVisual(id);
+      toast.success('Visualizer saved to favorites.');
     } catch (error) {
       setSavedVisualIds((currentIds) => currentIds.filter((savedId) => savedId !== id));
       toast.error(getToastErrorMessage(error, 'Unable to save visualizer'));
