@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import LoaderSpinner from '../components/LoaderSpinner';
@@ -8,6 +9,8 @@ import {
 } from '../components/VisualizerPlayerShell';
 import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
 import { ApiError } from '../api/client';
+import { useToast } from '../context/useToast';
+import { getToastErrorMessage } from '../utils/toastErrorMessage';
 
 function getLoadErrorMessage(error: unknown): string {
   if (error instanceof ApiError && error.status === 401) {
@@ -23,6 +26,12 @@ function getLoadErrorMessage(error: unknown): string {
 
 function PlayerPageContent({ id }: { id: string }) {
   const { glsl, error, isLoading } = usePlayerGlsl(id);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!error) return;
+    toast.error(getToastErrorMessage(error, getLoadErrorMessage(error)));
+  }, [error, toast]);
 
   if (isLoading) {
     return (
@@ -45,6 +54,13 @@ function PlayerPageContent({ id }: { id: string }) {
 
 export default function PlayerPage() {
   const { id } = useParams<{ id: string }>();
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!id) {
+      toast.error('Visualizer not found.');
+    }
+  }, [id, toast]);
 
   return (
     <VisualizerPlayerLayout>

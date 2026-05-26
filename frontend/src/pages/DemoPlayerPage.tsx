@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import LoaderSpinner from '../components/LoaderSpinner';
 import {
   PlayerMessage,
@@ -6,6 +7,8 @@ import {
 } from '../components/VisualizerPlayerShell';
 import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
 import { ApiError } from '../api/client';
+import { useToast } from '../context/useToast';
+import { getToastErrorMessage } from '../utils/toastErrorMessage';
 
 function getDemoLoadErrorMessage(error: unknown): string {
   if (error instanceof ApiError && error.status === 404) {
@@ -17,6 +20,12 @@ function getDemoLoadErrorMessage(error: unknown): string {
 
 function DemoPlayerContent() {
   const { glsl, error, isLoading } = usePlayerGlsl('demo', { isDemo: true });
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!error) return;
+    toast.error(getToastErrorMessage(error, getDemoLoadErrorMessage(error)));
+  }, [error, toast]);
 
   if (isLoading) {
     return (
