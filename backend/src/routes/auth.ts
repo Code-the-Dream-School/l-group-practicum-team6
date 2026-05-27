@@ -4,11 +4,13 @@ import { register, login, logout } from '../controllers/auth';
 
 const router = Router();
 
-// Limits, 20 req per 15 min for one IP
+// Limits, 20 req per 15 min for one IP in prod, 1000 in dev
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
-  message: 'Too many requests from this IP, please try again after 15 minutes',
+  max: process.env.NODE_ENV === 'production' ? 20 : 1000,
+  message: {
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+  },
   standardHeaders: true,
   legacyHeaders: false,
 });
