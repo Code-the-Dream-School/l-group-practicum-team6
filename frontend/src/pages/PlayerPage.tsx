@@ -7,7 +7,7 @@ import {
   VisualizerPlayer,
   VisualizerPlayerLayout,
 } from '../components/VisualizerPlayerShell';
-import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
+import { usePlayerVisualizer } from '../hooks/usePlayerVisualizer';
 import { ApiError } from '../api/client';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
@@ -25,7 +25,7 @@ function getLoadErrorMessage(error: unknown): string {
 }
 
 function PlayerPageContent({ id }: { id: string }) {
-  const { glsl, error, isLoading } = usePlayerGlsl(id);
+  const { glsl, visual, error, isLoading } = usePlayerVisualizer(id);
   const toast = useToast();
 
   useEffect(() => {
@@ -45,11 +45,11 @@ function PlayerPageContent({ id }: { id: string }) {
     return <PlayerMessage>{getLoadErrorMessage(error)}</PlayerMessage>;
   }
 
-  if (!glsl) {
+  if (!glsl || !visual) {
     return <PlayerMessage>Unable to load visualizer</PlayerMessage>;
   }
 
-  return <VisualizerPlayer glsl={glsl} />;
+  return <VisualizerPlayer glsl={glsl} visual={visual} />;
 }
 
 export default function PlayerPage() {

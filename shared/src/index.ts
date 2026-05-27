@@ -13,6 +13,7 @@ export interface Visualizer {
   glsl: string;
   imageUrl?: string;
   isDemo: boolean;
+  tags?: string[];
 }
 
 export interface VisualizerListItem {
@@ -20,6 +21,7 @@ export interface VisualizerListItem {
   name: string;
   imageUrl?: string;
   isDemo: boolean;
+  tags?: string[];
 }
 
 export interface UserVisual {

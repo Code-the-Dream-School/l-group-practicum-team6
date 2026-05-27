@@ -1,15 +1,25 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import NavBar from './NavBar';
+import PlayerControlBar from './player/PlayerControlBar';
+import VisualInfoCard from './player/VisualInfoCard';
 import { useToast } from '../context/useToast';
+import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useAudioAnalyzer, type AudioAnalyzerStatus } from '../hooks/useAudioAnalyzer';
 import { startVisualPreview } from '../utils/visualPreview';
 
-export function VisualizerPlayer({ glsl }: { glsl: string }) {
+type VisualizerPlayerProps = {
+  glsl: string;
+  visual: PlayerVisual;
+};
+
+export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
   const toast = useToast();
   const { getAudioData, status } = useAudioAnalyzer();
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -43,6 +53,16 @@ export function VisualizerPlayer({ glsl }: { glsl: string }) {
       <div
         ref={containerRef}
         className="absolute inset-0 [&_canvas]:block [&_canvas]:h-full [&_canvas]:w-full"
+      />
+      <VisualInfoCard name={visual.name} tags={visual.tags} />
+      <PlayerControlBar
+        deviceLabel="Microphone — Built-in"
+        isPlaying={isPlaying}
+        isFavorited={isFavorited}
+        showFavorite={!visual.isDemo}
+        showPlaybackControls={!visual.isDemo}
+        onTogglePlay={() => setIsPlaying((value) => !value)}
+        onToggleFavorite={() => setIsFavorited((value) => !value)}
       />
     </div>
   );

@@ -26,7 +26,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         aria-expanded={open}
         aria-label="User menu"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-full"
+        className="inline-flex items-center gap-2 rounded-full cursor-pointer"
       >
         <Avatar user={user} />
       </button>
@@ -41,7 +41,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               to={Routes.SETTINGS}
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface"
+              className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
             >
               Settings
             </NavLink>
@@ -49,7 +49,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               type="button"
               role="menuitem"
               onClick={() => handleLogout()}
-              className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface"
+              className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
             >
               Log Out
             </button>

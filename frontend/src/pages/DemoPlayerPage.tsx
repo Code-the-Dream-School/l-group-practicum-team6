@@ -6,7 +6,7 @@ import {
   VisualizerPlayer,
   VisualizerPlayerLayout,
 } from '../components/VisualizerPlayerShell';
-import { usePlayerGlsl } from '../hooks/usePlayerGlsl';
+import { usePlayerVisualizer } from '../hooks/usePlayerVisualizer';
 import { ApiError } from '../api/client';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
@@ -20,7 +20,7 @@ function getDemoLoadErrorMessage(error: unknown): string {
 }
 
 function DemoPlayerContent() {
-  const { glsl, error, isLoading } = usePlayerGlsl('demo', { isDemo: true });
+  const { glsl, visual, error, isLoading } = usePlayerVisualizer('demo', { isDemo: true });
   const toast = useToast();
 
   useEffect(() => {
@@ -40,11 +40,11 @@ function DemoPlayerContent() {
     return <PlayerMessage>{getDemoLoadErrorMessage(error)}</PlayerMessage>;
   }
 
-  if (!glsl) {
+  if (!glsl || !visual) {
     return <PlayerMessage>Unable to load demo visualizer.</PlayerMessage>;
   }
 
-  return <VisualizerPlayer glsl={glsl} />;
+  return <VisualizerPlayer glsl={glsl} visual={visual} />;
 }
 
 export default function DemoPlayerPage() {
