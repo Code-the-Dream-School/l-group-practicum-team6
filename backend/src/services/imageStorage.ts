@@ -1,67 +1,29 @@
-import mongoose from 'mongoose';
-import { GridFSBucket, GridFSBucketReadStream, ObjectId } from 'mongodb';
+import { GridFSBucketReadStream, ObjectId } from 'mongodb';
 
-import { BadRequestError } from '../errors';
+import { validateImageSize, validateImageType } from '../utils/imageValidation';
+
+import { uploadBufferToGridFS, deleteGridFSFile, openGridFSDownloadStream } from '../utils/gridfs';
 
 const IMAGE_BUCKET_NAME = 'images';
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
-
-const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
-
-function getImagesBucket(): GridFSBucket {
-  const db = mongoose.connection.db;
-
-  if (!db) {
-    throw new Error('MongoDB connection is not ready');
-  }
-
-  return new GridFSBucket(db, { bucketName: IMAGE_BUCKET_NAME });
-}
-
-function validateImage(buffer: Buffer, mimetype: string): void {
-  if (!ALLOWED_IMAGE_TYPES.has(mimetype)) {
-    throw new BadRequestError('Unsupported image type');
-  }
-
-  if (buffer.length > MAX_IMAGE_SIZE_BYTES) {
-    throw new BadRequestError('Image size exceeds 5 MB limit');
-  }
-}
 
 export function uploadImage(
   buffer: Buffer,
   originalname: string,
   mimetype: string
 ): Promise<ObjectId> {
-  validateImage(buffer, mimetype);
+  validateImageType(mimetype);
+  validateImageSize(buffer.length);
 
-  const bucket = getImagesBucket();
-  const uploadStream = bucket.openUploadStream(originalname, {
-    metadata: { contentType: mimetype },
-  });
-
-  return new Promise((resolve, reject) => {
-    uploadStream.end(buffer);
-
-    uploadStream.on('finish', () => {
-      resolve(uploadStream.id);
-    });
-
-    uploadStream.on('error', reject);
-  });
+  return uploadBufferToGridFS(buffer, originalname, mimetype, IMAGE_BUCKET_NAME);
 }
 
 export function openDownloadStream(fileId: ObjectId): GridFSBucketReadStream {
-  const bucket = getImagesBucket();
-
-  return bucket.openDownloadStream(fileId);
+  return openGridFSDownloadStream(fileId, IMAGE_BUCKET_NAME);
 }
 
 export async function deleteImage(fileId: ObjectId): Promise<void> {
-  const bucket = getImagesBucket();
-
   try {
-    await bucket.delete(fileId);
+    await deleteGridFSFile(fileId, IMAGE_BUCKET_NAME);
   } catch (error) {
     if (error instanceof Error && error.message.includes('FileNotFound')) {
       return;
