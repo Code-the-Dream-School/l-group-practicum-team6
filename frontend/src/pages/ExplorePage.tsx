@@ -5,8 +5,10 @@ import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
   buildVisualizerImageEndpoint,
+  getSavedVisuals,
   getVisualizerTags,
   listVisualizers,
+  removeVisual,
   saveVisual,
 } from '../api';
 import searchIcon from '../assets/icons/search.svg';
@@ -74,6 +76,36 @@ export default function ExplorePage() {
   useEffect(() => {
     let cancelled = false;
 
+    async function loadSavedVisuals() {
+      if (!user) {
+        setSavedVisualIds([]);
+        return;
+      }
+
+      try {
+        const response = await getSavedVisuals();
+
+        if (cancelled) return;
+
+        setSavedVisualIds(response.data.map((savedVisual) => savedVisual.visualizerId._id));
+      } catch (error) {
+        if (cancelled) return;
+
+        setSavedVisualIds([]);
+        toast.error(getToastErrorMessage(error, 'Unable to load saved visualizers'));
+      }
+    }
+
+    void loadSavedVisuals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, toast]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     async function loadVisualizers() {
       setIsLoading(true);
 
@@ -109,19 +141,33 @@ export default function ExplorePage() {
   }, [page, debouncedSearch, selectedTag, toast]);
 
   async function handleToggleSave(id: string) {
-    if (savedVisualIds.includes(id)) {
-      toast.info('This visualizer is already saved.');
-      return;
-    }
+    if (!canSave) return;
 
-    setSavedVisualIds((currentIds) => [...currentIds, id]);
+    const wasSaved = savedVisualIds.includes(id);
+
+    setSavedVisualIds((currentIds) =>
+      wasSaved ? currentIds.filter((savedId) => savedId !== id) : [...currentIds, id]
+    );
 
     try {
-      await saveVisual(id);
-      toast.success('Visualizer saved to favorites.');
+      if (wasSaved) {
+        await removeVisual(id);
+        toast.success('Visualizer removed from favorites.');
+      } else {
+        await saveVisual(id);
+        toast.success('Visualizer saved to favorites.');
+      }
     } catch (error) {
-      setSavedVisualIds((currentIds) => currentIds.filter((savedId) => savedId !== id));
-      toast.error(getToastErrorMessage(error, 'Unable to save visualizer'));
+      setSavedVisualIds((currentIds) =>
+        wasSaved ? [...currentIds, id] : currentIds.filter((savedId) => savedId !== id)
+      );
+
+      toast.error(
+        getToastErrorMessage(
+          error,
+          wasSaved ? 'Unable to remove visualizer' : 'Unable to save visualizer'
+        )
+      );
     }
   }
 
