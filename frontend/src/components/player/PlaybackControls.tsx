@@ -54,7 +54,7 @@ export default function PlaybackControls({
         <img
           src={isPlaying ? pauseIcon : playIcon}
           alt=""
-          className={isPlaying ? 'h-5 w-5' : 'h-5 w-5 brightness-0 invert'}
+          className={isPlaying ? 'h-5 w-5' : 'h-10 w-10 brightness-0 invert'}
         />
       </button>
 

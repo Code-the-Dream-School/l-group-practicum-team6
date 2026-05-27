@@ -73,7 +73,8 @@ export function startVisualPreview(
   previewGlsl: string,
   getAudioData?: () => Uint8Array,
   immersive = false,
-  onReady?: () => void
+  onReady?: () => void,
+  getIsPlaying?: () => boolean
 ) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('webgl2', {
@@ -202,6 +203,8 @@ export function startVisualPreview(
   let lastTime = startTime;
   let frame = 0;
   let hasNotifiedReady = false;
+  let timePauseAccum = 0;
+  let pauseStartWall: number | null = null;
 
   function animate(now: number) {
     if (width === 0 || height === 0) {
@@ -209,17 +212,40 @@ export function startVisualPreview(
       return;
     }
 
-    const deltaTime = (now - lastTime) * 0.001;
-    lastTime = now;
+    const playing = getIsPlaying?.() ?? true;
 
-    uniforms.iTime.value = (now - startTime) * 0.001;
-    uniforms.iTimeDelta.value = deltaTime;
-    uniforms.iFrame.value = frame++;
-    uniforms.iFrameRate.value = deltaTime > 0 ? 1 / deltaTime : 0;
+    if (!playing) {
+      if (pauseStartWall === null) {
+        pauseStartWall = now;
+      }
+
+      uniforms.iTimeDelta.value = 0;
+      uniforms.iFrameRate.value = 0;
+    } else {
+      if (pauseStartWall !== null) {
+        timePauseAccum += now - pauseStartWall;
+        pauseStartWall = null;
+        lastTime = now;
+      }
+
+      const deltaTime = (now - lastTime) * 0.001;
+      lastTime = now;
+
+      uniforms.iTime.value = (now - startTime - timePauseAccum) * 0.001;
+      uniforms.iTimeDelta.value = deltaTime;
+      uniforms.iFrame.value = frame++;
+      uniforms.iFrameRate.value = deltaTime > 0 ? 1 / deltaTime : 0;
+    }
+
     syncShaderResolution();
 
     if (getAudioData) {
-      fillFftFromAudio(fftData, getAudioData());
+      if (playing) {
+        fillFftFromAudio(fftData, getAudioData());
+      } else {
+        fftData.fill(0);
+      }
+
       fftTexture.needsUpdate = true;
     }
 

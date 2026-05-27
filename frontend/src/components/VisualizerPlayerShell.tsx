@@ -4,6 +4,7 @@ import NavBar from './NavBar';
 import PlayerControlBar from './player/PlayerControlBar';
 import VisualInfoCard from './player/VisualInfoCard';
 import { useToast } from '../context/useToast';
+import { useFavoriteVisual } from '../hooks/useFavoriteVisual';
 import { useFullscreen } from '../hooks/useFullscreen';
 import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useAudioAnalyzer, type AudioAnalyzerStatus } from '../hooks/useAudioAnalyzer';
@@ -14,6 +15,8 @@ type VisualizerPlayerProps = {
   glsl: string;
   visual: PlayerVisual;
 };
+
+const PAUSE_OVERLAY_MS = 500;
 
 export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -26,7 +29,52 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     toggleFullscreen,
   } = useFullscreen<HTMLDivElement>();
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isFavorited, setIsFavorited] = useState(false);
+  const isShaderPlayingRef = useRef(true);
+  const pauseShaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const canFavorite = !visual.isDemo;
+
+  const scheduleShaderPause = useCallback(() => {
+    if (pauseShaderTimeoutRef.current) {
+      clearTimeout(pauseShaderTimeoutRef.current);
+    }
+
+    pauseShaderTimeoutRef.current = setTimeout(() => {
+      isShaderPlayingRef.current = false;
+      pauseShaderTimeoutRef.current = null;
+    }, PAUSE_OVERLAY_MS);
+  }, []);
+
+  const resumeShader = useCallback(() => {
+    if (pauseShaderTimeoutRef.current) {
+      clearTimeout(pauseShaderTimeoutRef.current);
+      pauseShaderTimeoutRef.current = null;
+    }
+
+    isShaderPlayingRef.current = true;
+  }, []);
+
+  const togglePlay = useCallback(() => {
+    setIsPlaying((playing) => {
+      if (playing) {
+        scheduleShaderPause();
+        return false;
+      }
+
+      resumeShader();
+      return true;
+    });
+  }, [resumeShader, scheduleShaderPause]);
+
+  useEffect(() => {
+    return () => {
+      if (pauseShaderTimeoutRef.current) {
+        clearTimeout(pauseShaderTimeoutRef.current);
+      }
+    };
+  }, []);
+  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, {
+    enabled: canFavorite,
+  });
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
@@ -54,6 +102,18 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
       if (key === 'm') {
         event.preventDefault();
         toggleMic();
+        return;
+      }
+
+      if (key === 's') {
+        event.preventDefault();
+        togglePlay();
+        return;
+      }
+
+      if (key === 'h' && canFavorite) {
+        event.preventDefault();
+        void toggleFavorite();
       }
     }
 
@@ -62,13 +122,20 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleToggleFullscreen, toggleMic]);
+  }, [canFavorite, handleToggleFullscreen, toggleFavorite, toggleMic, togglePlay]);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    return startVisualPreview(container, glsl, getAudioData, true);
+    return startVisualPreview(
+      container,
+      glsl,
+      getAudioData,
+      true,
+      undefined,
+      () => isShaderPlayingRef.current
+    );
   }, [glsl, getAudioData]);
 
   useEffect(() => {
@@ -97,6 +164,13 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
         ref={containerRef}
         className="absolute inset-0 [&_canvas]:block [&_canvas]:h-full [&_canvas]:w-full"
       />
+      <div
+        aria-hidden
+        data-testid="player-pause-overlay"
+        className={`pointer-events-none absolute inset-0 z-4 bg-black transition-opacity duration-500 ease-in-out ${
+          isPlaying ? 'opacity-0' : 'opacity-100'
+        }`}
+      />
       {!isFullscreen && (
         <>
           <VisualInfoCard name={visual.name} tags={visual.tags} />
@@ -105,10 +179,10 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
             isPlaying={isPlaying}
             isFavorited={isFavorited}
             isMicEnabled={isMicEnabled}
-            showFavorite={!visual.isDemo}
-            showPlaybackControls={!visual.isDemo}
-            onTogglePlay={() => setIsPlaying((value) => !value)}
-            onToggleFavorite={() => setIsFavorited((value) => !value)}
+            showFavorite={canFavorite}
+            showPlaybackControls={canFavorite}
+            onTogglePlay={togglePlay}
+            onToggleFavorite={() => void toggleFavorite()}
             onFullscreen={() => void handleToggleFullscreen()}
             onDeviceSelect={toggleMic}
           />
