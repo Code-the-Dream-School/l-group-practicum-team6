@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
+import { useToast } from '../context/useToast';
 
 import eyeIcon from '../assets/icons/eye.svg';
 import eyeOffIcon from '../assets/icons/eyeOff.svg';
@@ -12,29 +13,28 @@ import logoFull from '../assets/logo-full.svg';
 export default function SignUpPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
+  const toast = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     e.preventDefault();
-    setError(null);
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      toast.error('Password must be at least 8 characters');
       return;
     }
 
     if (!name || !email) {
-      setError('Please fill in name and email');
+      toast.error('Please fill in name and email');
       return;
     }
 
@@ -42,9 +42,10 @@ export default function SignUpPage() {
 
     try {
       await register(name.trim(), email.trim(), password); // trim user input
+      toast.success('Account created successfully!');
       navigate('/explore', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration error');
+      toast.error(err instanceof Error ? err.message : 'Registration error');
     } finally {
       setSubmitting(false);
     }
@@ -157,12 +158,6 @@ export default function SignUpPage() {
               </div>
             </div>
           </div>
-
-          {error ? (
-            <p className="text-center text-sm text-error" role="alert">
-              {error}
-            </p>
-          ) : null}
 
           <button
             type="submit"
