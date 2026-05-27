@@ -8,6 +8,7 @@ import { useFavoriteVisual } from '../hooks/useFavoriteVisual';
 import { useFullscreen } from '../hooks/useFullscreen';
 import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useAudioAnalyzer, type AudioAnalyzerStatus } from '../hooks/useAudioAnalyzer';
+import { usePlayerControlsVisibility } from '../hooks/usePlayerControlsVisibility';
 import { shouldHandlePlayerShortcut } from '../utils/playerKeyboard';
 import { startVisualPreview } from '../utils/visualPreview';
 
@@ -22,12 +23,14 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
   const toast = useToast();
-  const { getAudioData, status, isMicEnabled, toggleMic } = useAudioAnalyzer();
+  const { getAudioData, status, isMicEnabled, toggleMic, devices, selectedDeviceId, selectDevice } =
+    useAudioAnalyzer();
   const {
     targetRef: playerRootRef,
     isFullscreen,
     toggleFullscreen,
   } = useFullscreen<HTMLDivElement>();
+  const controlsVisible = usePlayerControlsVisibility(playerRootRef, status, !isFullscreen);
   const [isPlaying, setIsPlaying] = useState(true);
   const isShaderPlayingRef = useRef(true);
   const pauseShaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -80,7 +83,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     const didToggle = await toggleFullscreen();
 
     if (!didToggle) {
-      toast.error('Fullscreen is not available in this browser.');
+      toast.error('Fullscreen is not available in this browser');
     }
   }, [toggleFullscreen, toast]);
 
@@ -108,12 +111,6 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
       if (key === 's') {
         event.preventDefault();
         togglePlay();
-        return;
-      }
-
-      if (key === 'h' && canFavorite) {
-        event.preventDefault();
-        void toggleFavorite();
       }
     }
 
@@ -122,7 +119,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [canFavorite, handleToggleFullscreen, toggleFavorite, toggleMic, togglePlay]);
+  }, [handleToggleFullscreen, toggleMic, togglePlay]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -149,12 +146,12 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     }
 
     if (status === 'denied') {
-      toast.error('Microphone access was blocked. Enable it in browser settings.');
+      toast.error('Microphone access was blocked. Enable it in browser settings');
       return;
     }
 
     if (status === 'error') {
-      toast.error('Audio input is not available in this browser.');
+      toast.error('Audio input is not available in this browser');
     }
   }, [status, toast]);
 
@@ -172,21 +169,32 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
         }`}
       />
       {!isFullscreen && (
-        <>
-          <VisualInfoCard name={visual.name} tags={visual.tags} />
-          <PlayerControlBar
-            deviceLabel="Microphone — Built-in"
-            isPlaying={isPlaying}
-            isFavorited={isFavorited}
-            isMicEnabled={isMicEnabled}
-            showFavorite={canFavorite}
-            showPlaybackControls={canFavorite}
-            onTogglePlay={togglePlay}
-            onToggleFavorite={() => void toggleFavorite()}
-            onFullscreen={() => void handleToggleFullscreen()}
-            onDeviceSelect={toggleMic}
-          />
-        </>
+        <div
+          data-testid="player-controls-overlay"
+          className="pointer-events-none absolute inset-0 z-10"
+        >
+          <VisualInfoCard name={visual.name} tags={visual.tags} visible={controlsVisible} />
+          <div
+            data-testid="player-control-bar-layer"
+            className={`transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
+              controlsVisible ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <PlayerControlBar
+              audioDevices={devices}
+              selectedDeviceId={selectedDeviceId}
+              isPlaying={isPlaying}
+              isFavorited={isFavorited}
+              isMicEnabled={isMicEnabled}
+              showFavorite={canFavorite}
+              showPlaybackControls={canFavorite}
+              onTogglePlay={togglePlay}
+              onToggleFavorite={() => void toggleFavorite()}
+              onFullscreen={() => void handleToggleFullscreen()}
+              onSelectDevice={selectDevice}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

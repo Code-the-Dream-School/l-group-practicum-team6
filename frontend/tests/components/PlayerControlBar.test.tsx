@@ -13,8 +13,13 @@ describe('PlayerControlBar', () => {
     expect(screen.getByTestId('control-bar-right')).toBeInTheDocument();
   });
 
-  it('renders device label', () => {
-    render(<PlayerControlBar deviceLabel="Microphone — Built-in" />);
+  it('renders the selected device label', () => {
+    render(
+      <PlayerControlBar
+        audioDevices={[{ deviceId: 'builtin', label: 'Microphone — Built-in' }]}
+        selectedDeviceId="builtin"
+      />
+    );
 
     expect(screen.getByText('Microphone — Built-in')).toBeInTheDocument();
   });

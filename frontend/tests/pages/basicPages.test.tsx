@@ -54,6 +54,9 @@ vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
     status: 'idle',
     isMicEnabled: true,
     toggleMic: vi.fn(),
+    devices: [{ deviceId: 'default', label: 'Microphone' }],
+    selectedDeviceId: 'default',
+    selectDevice: vi.fn(),
   }),
 }));
 

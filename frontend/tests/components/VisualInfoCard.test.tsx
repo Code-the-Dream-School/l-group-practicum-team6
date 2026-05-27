@@ -4,6 +4,20 @@ import { describe, expect, it } from 'vitest';
 import VisualInfoCard from '../../src/components/player/VisualInfoCard';
 
 describe('VisualInfoCard', () => {
+  it('uses delayed show and faster hide opacity transitions', () => {
+    const { rerender } = render(<VisualInfoCard name="Aurora Wave" tags={['abstract']} visible />);
+
+    expect(screen.getByTestId('visual-info-card')).toHaveClass('delay-200', 'duration-300');
+
+    rerender(<VisualInfoCard name="Aurora Wave" tags={['abstract']} visible={false} />);
+
+    expect(screen.getByTestId('visual-info-card')).toHaveClass(
+      'duration-150',
+      'delay-0',
+      'opacity-0'
+    );
+  });
+
   it('shows visual name and first tag pill', () => {
     render(<VisualInfoCard name="Aurora Wave" tags={['abstract']} />);
 

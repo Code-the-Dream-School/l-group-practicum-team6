@@ -1,11 +1,13 @@
 import { useState } from 'react';
 
 import fullscreenIcon from '../../assets/icons/fullscreen.svg';
+import type { AudioInputDevice } from '../../utils/audioDevices';
 import DeviceSelectorButton from './DeviceSelectorButton';
 import PlaybackControls from './PlaybackControls';
 
 type PlayerControlBarProps = {
-  deviceLabel?: string;
+  audioDevices?: AudioInputDevice[];
+  selectedDeviceId?: string;
   isPlaying?: boolean;
   isFavorited?: boolean;
   showFavorite?: boolean;
@@ -16,12 +18,15 @@ type PlayerControlBarProps = {
   onPrevious?: () => void;
   onNext?: () => void;
   onFullscreen?: () => void;
-  onDeviceSelect?: () => void;
+  onSelectDevice?: (deviceId: string) => void;
   isMicEnabled?: boolean;
 };
 
+const defaultAudioDevices: AudioInputDevice[] = [{ deviceId: 'default', label: 'Microphone' }];
+
 export default function PlayerControlBar({
-  deviceLabel = 'input',
+  audioDevices = defaultAudioDevices,
+  selectedDeviceId = defaultAudioDevices[0].deviceId,
   isPlaying: isPlayingProp,
   isFavorited: isFavoritedProp,
   showFavorite = true,
@@ -32,7 +37,7 @@ export default function PlayerControlBar({
   onPrevious,
   onNext,
   onFullscreen,
-  onDeviceSelect,
+  onSelectDevice = () => {},
   isMicEnabled = true,
 }: PlayerControlBarProps) {
   const [isPlayingInternal, setIsPlayingInternal] = useState(true);
@@ -67,9 +72,10 @@ export default function PlayerControlBar({
       <div className="flex h-[75px] items-center justify-between gap-4 px-6">
         <div className="flex min-w-0 flex-1 items-center gap-4" data-testid="control-bar-left">
           <DeviceSelectorButton
-            deviceLabel={deviceLabel}
+            devices={audioDevices}
+            selectedDeviceId={selectedDeviceId}
             isMicEnabled={isMicEnabled}
-            onClick={onDeviceSelect}
+            onSelectDevice={onSelectDevice}
           />
         </div>
 

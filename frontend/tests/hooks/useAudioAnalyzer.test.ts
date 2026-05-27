@@ -6,7 +6,11 @@ const trackStop = vi.fn();
 const connect = vi.fn();
 const close = vi.fn();
 const resume = vi.fn().mockResolvedValue(undefined);
-const mockAudioTrack = { stop: trackStop, enabled: true };
+const mockAudioTrack = {
+  stop: trackStop,
+  enabled: true,
+  getSettings: () => ({ deviceId: 'builtin-mic' }),
+};
 
 function createAnalyser() {
   return {
@@ -43,6 +47,12 @@ describe('useAudioAnalyzer', () => {
           getTracks: () => [mockAudioTrack],
           getAudioTracks: () => [mockAudioTrack],
         }),
+        enumerateDevices: vi.fn().mockResolvedValue([
+          { kind: 'audioinput', deviceId: 'builtin-mic', label: 'Built-in Microphone' },
+          { kind: 'audioinput', deviceId: 'usb-mic', label: 'USB Microphone' },
+        ]),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
       },
     });
 
@@ -140,6 +150,39 @@ describe('useAudioAnalyzer', () => {
     expect(mockAudioTrack.enabled).toBe(false);
     expect(getByteFrequencyData).not.toHaveBeenCalled();
     expect(Array.from(data)).toEqual(Array(data.length).fill(0));
+  });
+
+  it('lists audio input devices after connecting', async () => {
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.devices).toHaveLength(2);
+    });
+
+    expect(result.current.devices[0]).toEqual({
+      deviceId: 'builtin-mic',
+      label: 'Built-in Microphone',
+    });
+    expect(result.current.selectedDeviceId).toBe('builtin-mic');
+  });
+
+  it('switches to a selected microphone device', async () => {
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+    });
+
+    result.current.selectDevice('usb-mic');
+
+    await waitFor(() => {
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenLastCalledWith({
+        audio: { deviceId: { exact: 'usb-mic' } },
+      });
+      expect(result.current.selectedDeviceId).toBe('usb-mic');
+    });
   });
 
   it('cleans up media tracks and audio context on unmount', async () => {
