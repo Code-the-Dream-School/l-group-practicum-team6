@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import PlayerControlBar from '../../src/components/player/PlayerControlBar';
 
@@ -53,9 +53,20 @@ describe('PlayerControlBar', () => {
     expect(screen.queryByLabelText(/favorite/i)).not.toBeInTheDocument();
   });
 
-  it('exposes fullscreen control', () => {
+  it('renders fullscreen button with a static label', () => {
     render(<PlayerControlBar />);
 
     expect(screen.getByLabelText('Fullscreen')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Exit fullscreen')).not.toBeInTheDocument();
+  });
+
+  it('calls onFullscreen when fullscreen button is clicked', () => {
+    const onFullscreen = vi.fn();
+
+    render(<PlayerControlBar onFullscreen={onFullscreen} />);
+
+    fireEvent.click(screen.getByLabelText('Fullscreen'));
+
+    expect(onFullscreen).toHaveBeenCalledTimes(1);
   });
 });

@@ -7,10 +7,16 @@ export type AudioAnalyzerStatus = 'idle' | 'connecting' | 'active' | 'denied' | 
 
 export function useAudioAnalyzer() {
   const [status, setStatus] = useState<AudioAnalyzerStatus>('idle');
+  const [isMicEnabled, setIsMicEnabled] = useState(true);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const bufferRef = useRef(new Uint8Array(FREQUENCY_BIN_COUNT));
   const streamRef = useRef<MediaStream | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const isMicEnabledRef = useRef(isMicEnabled);
+
+  useEffect(() => {
+    isMicEnabledRef.current = isMicEnabled;
+  }, [isMicEnabled]);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,6 +48,10 @@ export function useAudioAnalyzer() {
         analyser.smoothingTimeConstant = 0.8;
         source.connect(analyser);
 
+        stream.getAudioTracks().forEach((track) => {
+          track.enabled = isMicEnabledRef.current;
+        });
+
         streamRef.current = stream;
         audioContextRef.current = audioContext;
         analyserRef.current = analyser;
@@ -69,18 +79,30 @@ export function useAudioAnalyzer() {
     };
   }, []);
 
+  const toggleMic = useCallback(() => {
+    setIsMicEnabled((enabled) => {
+      const nextEnabled = !enabled;
+
+      streamRef.current?.getAudioTracks().forEach((track) => {
+        track.enabled = nextEnabled;
+      });
+
+      return nextEnabled;
+    });
+  }, []);
+
   const getAudioData = useCallback((): Uint8Array => {
     const analyser = analyserRef.current;
     const buffer = bufferRef.current;
 
-    if (analyser) {
-      analyser.getByteFrequencyData(buffer);
-    } else {
+    if (!isMicEnabled || !analyser) {
       buffer.fill(0);
+      return buffer;
     }
 
+    analyser.getByteFrequencyData(buffer);
     return buffer;
-  }, []);
+  }, [isMicEnabled]);
 
-  return { getAudioData, status };
+  return { getAudioData, status, isMicEnabled, toggleMic };
 }

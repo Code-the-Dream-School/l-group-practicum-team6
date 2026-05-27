@@ -17,6 +17,7 @@ type PlayerControlBarProps = {
   onNext?: () => void;
   onFullscreen?: () => void;
   onDeviceSelect?: () => void;
+  isMicEnabled?: boolean;
 };
 
 export default function PlayerControlBar({
@@ -32,6 +33,7 @@ export default function PlayerControlBar({
   onNext,
   onFullscreen,
   onDeviceSelect,
+  isMicEnabled = true,
 }: PlayerControlBarProps) {
   const [isPlayingInternal, setIsPlayingInternal] = useState(true);
   const [isFavoritedInternal, setIsFavoritedInternal] = useState(false);
@@ -64,7 +66,11 @@ export default function PlayerControlBar({
     >
       <div className="flex h-[75px] items-center justify-between gap-4 px-6">
         <div className="flex min-w-0 flex-1 items-center gap-4" data-testid="control-bar-left">
-          <DeviceSelectorButton deviceLabel={deviceLabel} onClick={onDeviceSelect} />
+          <DeviceSelectorButton
+            deviceLabel={deviceLabel}
+            isMicEnabled={isMicEnabled}
+            onClick={onDeviceSelect}
+          />
         </div>
 
         {showPlaybackControls && (

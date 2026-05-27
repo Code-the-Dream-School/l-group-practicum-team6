@@ -6,6 +6,7 @@ const trackStop = vi.fn();
 const connect = vi.fn();
 const close = vi.fn();
 const resume = vi.fn().mockResolvedValue(undefined);
+const mockAudioTrack = { stop: trackStop, enabled: true };
 
 function createAnalyser() {
   return {
@@ -33,12 +34,14 @@ describe('useAudioAnalyzer', () => {
     connect.mockReset();
     close.mockReset();
     resume.mockClear();
+    mockAudioTrack.enabled = true;
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       configurable: true,
       value: {
         getUserMedia: vi.fn().mockResolvedValue({
-          getTracks: () => [{ stop: trackStop }],
+          getTracks: () => [mockAudioTrack],
+          getAudioTracks: () => [mockAudioTrack],
         }),
       },
     });
@@ -112,6 +115,31 @@ describe('useAudioAnalyzer', () => {
     await waitFor(() => {
       expect(result.current.status).toBe('error');
     });
+  });
+
+  it('returns zeroed audio data when the microphone is toggled off', async () => {
+    getByteFrequencyData.mockImplementation((buffer: Uint8Array) => {
+      buffer[0] = 42;
+    });
+
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+    });
+
+    result.current.toggleMic();
+
+    await waitFor(() => {
+      expect(result.current.isMicEnabled).toBe(false);
+    });
+
+    const data = result.current.getAudioData();
+
+    expect(mockAudioTrack.enabled).toBe(false);
+    expect(getByteFrequencyData).not.toHaveBeenCalled();
+    expect(Array.from(data)).toEqual(Array(data.length).fill(0));
   });
 
   it('cleans up media tracks and audio context on unmount', async () => {

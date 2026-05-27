@@ -52,6 +52,8 @@ vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
   useAudioAnalyzer: () => ({
     getAudioData: vi.fn(),
     status: 'idle',
+    isMicEnabled: true,
+    toggleMic: vi.fn(),
   }),
 }));
 
