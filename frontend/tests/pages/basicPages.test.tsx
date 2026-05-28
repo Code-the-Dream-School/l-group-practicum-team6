@@ -33,6 +33,7 @@ vi.mock('../../src/api/visualizers', () => ({
       source: '',
       glsl: 'void main() {}',
       isDemo: false,
+      tags: ['abstract'],
     },
   }),
   getDemoVisualizer: vi.fn().mockResolvedValue({
@@ -42,6 +43,7 @@ vi.mock('../../src/api/visualizers', () => ({
       source: '',
       glsl: 'void main() {}',
       isDemo: true,
+      tags: ['reactive'],
     },
   }),
 }));
@@ -50,6 +52,11 @@ vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
   useAudioAnalyzer: () => ({
     getAudioData: vi.fn(),
     status: 'idle',
+    isMicEnabled: true,
+    toggleMic: vi.fn(),
+    devices: [{ deviceId: 'default', label: 'Microphone' }],
+    selectedDeviceId: 'default',
+    selectDevice: vi.fn(),
   }),
 }));
 
@@ -117,13 +124,16 @@ describe('basic pages', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+      expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
     });
 
+    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /Sign Up to unlock all visualizers/i })
     ).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: /^Explore$/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/favorite/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('playback-controls')).not.toBeInTheDocument();
   });
 
   it('renders PlayerPage', async () => {
@@ -150,10 +160,12 @@ describe('basic pages', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+      expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
     });
 
+    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Add to favorites/i)).toBeInTheDocument();
   });
 
   it('renders MyVisualsPage', () => {

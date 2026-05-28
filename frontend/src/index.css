@@ -30,6 +30,11 @@
     @apply inline-flex items-center;
   }
 
+  .mic-icon-disabled {
+    filter: brightness(0) saturate(100%) invert(42%) sepia(66%) saturate(2878%) hue-rotate(318deg)
+      brightness(100%) contrast(101%);
+  }
+
   @keyframes sound-wave {
     0%,
     100% {

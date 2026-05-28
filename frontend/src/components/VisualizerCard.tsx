@@ -128,7 +128,7 @@ export default function VisualizerCard({
                 type="button"
                 aria-label={isSaved ? `Unsave ${name}` : `Save ${name}`}
                 onClick={() => onToggleSave?.(id)}
-                className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-white transition hover:border-[#00D4FF]/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
+                className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-white transition hover:border-[#00D4FF]/40 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#00D4FF] cursor-pointer"
               >
                 {isSaved ? '\u2665' : '\u2661'}
               </button>

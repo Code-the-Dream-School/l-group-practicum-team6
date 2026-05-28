@@ -24,7 +24,13 @@ describe('usePreviewGlsl', () => {
 
   it('fetches once and reuses cached glsl on later hovers', async () => {
     getVisualizer.mockResolvedValue({
-      data: { glsl: 'shader body' },
+      data: {
+        _id: 'visual-1',
+        name: 'Test',
+        glsl: 'shader body',
+        source: '',
+        isDemo: false,
+      },
     });
 
     const { rerender } = renderHook(({ enabled }) => usePreviewGlsl('visual-1', { enabled }), {
@@ -58,7 +64,13 @@ describe('usePreviewGlsl', () => {
 
   it('loadVisualizerGlsl returns cached glsl without a network call', async () => {
     getVisualizer.mockResolvedValue({
-      data: { glsl: 'shader body' },
+      data: {
+        _id: 'visual-1',
+        name: 'Test',
+        glsl: 'shader body',
+        source: '',
+        isDemo: false,
+      },
     });
 
     await loadVisualizerGlsl('visual-1');
