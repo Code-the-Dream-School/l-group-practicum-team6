@@ -5,13 +5,17 @@ import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
   buildVisualizerImageEndpoint,
+  getSavedVisuals,
   getVisualizerTags,
   listVisualizers,
+  removeVisual,
   saveVisual,
 } from '../api';
 import searchIcon from '../assets/icons/search.svg';
 import { useAuth } from '../context/useAuth';
+import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import type { VisualizerListItem } from '@sonix/shared';
 
 const PAGE_SIZE = 8;
@@ -37,11 +41,11 @@ function getVisualTags(visual: ExploreVisualizer): string[] {
 
 export default function ExplorePage() {
   const { user } = useAuth();
+  const toast = useToast();
   const canSave = Boolean(user);
   const [visuals, setVisuals] = useState<ExploreVisualizer[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
-  const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -72,6 +76,36 @@ export default function ExplorePage() {
   useEffect(() => {
     let cancelled = false;
 
+    async function loadSavedVisuals() {
+      if (!user) {
+        setSavedVisualIds([]);
+        return;
+      }
+
+      try {
+        const response = await getSavedVisuals();
+
+        if (cancelled) return;
+
+        setSavedVisualIds(response.data.map((savedVisual) => savedVisual.visualizerId._id));
+      } catch (error) {
+        if (cancelled) return;
+
+        setSavedVisualIds([]);
+        toast.error(getToastErrorMessage(error, 'Unable to load saved visualizers'));
+      }
+    }
+
+    void loadSavedVisuals();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user, toast]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     async function loadVisualizers() {
       setIsLoading(true);
 
@@ -87,12 +121,11 @@ export default function ExplorePage() {
 
         setVisuals(response.data as ExploreVisualizer[]);
         setTotalPages(Math.max(response.pages, 1));
-        setErrorMessage('');
-      } catch {
+      } catch (error) {
         if (cancelled) return;
 
         setVisuals([]);
-        setErrorMessage('Unable to load visualizers');
+        toast.error(getToastErrorMessage(error, 'Unable to load visualizers'));
       } finally {
         if (!cancelled) {
           setIsLoading(false);
@@ -105,19 +138,36 @@ export default function ExplorePage() {
     return () => {
       cancelled = true;
     };
-  }, [page, debouncedSearch, selectedTag]);
+  }, [page, debouncedSearch, selectedTag, toast]);
 
   async function handleToggleSave(id: string) {
-    if (savedVisualIds.includes(id)) return;
+    if (!canSave) return;
 
-    setSavedVisualIds((currentIds) => [...currentIds, id]);
-    setErrorMessage('');
+    const wasSaved = savedVisualIds.includes(id);
+
+    setSavedVisualIds((currentIds) =>
+      wasSaved ? currentIds.filter((savedId) => savedId !== id) : [...currentIds, id]
+    );
 
     try {
-      await saveVisual(id);
-    } catch {
-      setSavedVisualIds((currentIds) => currentIds.filter((savedId) => savedId !== id));
-      setErrorMessage('Unable to save visualizer');
+      if (wasSaved) {
+        await removeVisual(id);
+        toast.success('Visualizer removed from favorites.');
+      } else {
+        await saveVisual(id);
+        toast.success('Visualizer saved to favorites.');
+      }
+    } catch (error) {
+      setSavedVisualIds((currentIds) =>
+        wasSaved ? [...currentIds, id] : currentIds.filter((savedId) => savedId !== id)
+      );
+
+      toast.error(
+        getToastErrorMessage(
+          error,
+          wasSaved ? 'Unable to remove visualizer' : 'Unable to save visualizer'
+        )
+      );
     }
   }
 
@@ -188,12 +238,6 @@ export default function ExplorePage() {
               ))}
             </div>
           </div>
-
-          {errorMessage && (
-            <div className="rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-              {errorMessage}
-            </div>
-          )}
 
           {isLoading ? (
             <div className="pt-35">

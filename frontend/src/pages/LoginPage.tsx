@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
+import { useToast } from '../context/useToast';
 
 import eyeIcon from '../assets/icons/eye.svg';
 import eyeOffIcon from '../assets/icons/eyeOff.svg';
@@ -12,27 +13,27 @@ import logoFull from '../assets/logo-full.svg';
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const toast = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     e.preventDefault();
-    setError(null);
 
     if (!email || !password) {
-      setError('Please fill in email and password');
+      toast.error('Please fill in email and password');
       return;
     }
 
     setSubmitting(true);
     try {
       await login(email.trim(), password);
+      toast.success('Welcome back!');
       navigate('/explore', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login error');
+      toast.error(err instanceof Error ? err.message : 'Login error');
     } finally {
       setSubmitting(false);
     }
@@ -96,12 +97,6 @@ export default function LoginPage() {
               </div>
             </div>
           </div>
-
-          {error ? (
-            <p className="text-center text-sm text-error" role="alert">
-              {error}
-            </p>
-          ) : null}
 
           <button
             type="submit"

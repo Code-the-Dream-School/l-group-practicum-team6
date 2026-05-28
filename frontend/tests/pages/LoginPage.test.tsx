@@ -4,11 +4,20 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockLogin = vi.fn();
 const mockNavigate = vi.fn();
+const mockToast = {
+  success: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+};
 
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => ({
     login: mockLogin,
   }),
+}));
+
+vi.mock('../../src/context/useToast', () => ({
+  useToast: () => mockToast,
 }));
 
 vi.mock('../../src/components/NavBar', () => ({
@@ -41,6 +50,9 @@ describe('LoginPage', () => {
   beforeEach(() => {
     mockLogin.mockReset();
     mockNavigate.mockReset();
+    mockToast.success.mockReset();
+    mockToast.error.mockReset();
+    mockToast.info.mockReset();
   });
 
   it('renders login form fields', () => {
@@ -52,14 +64,14 @@ describe('LoginPage', () => {
     expect(screen.getByRole('button', { name: 'Log In' })).toBeInTheDocument();
   });
 
-  it('shows validation error if email or password is missing', async () => {
+  it('shows validation toast if email or password is missing', () => {
     renderPage();
     const submitButton = screen.getByRole('button', { name: 'Log In' });
     const form = submitButton.closest('form');
     expect(form).toBeTruthy();
     fireEvent.submit(form!);
 
-    expect(await screen.findByText('Please fill in email and password')).toBeInTheDocument();
+    expect(mockToast.error).toHaveBeenCalledWith('Please fill in email and password');
     expect(mockLogin).not.toHaveBeenCalled();
   });
 
@@ -90,10 +102,11 @@ describe('LoginPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Log In' }));
 
     await waitFor(() => expect(mockLogin).toHaveBeenCalledWith('user@example.com', 'password123'));
+    expect(mockToast.success).toHaveBeenCalledWith('Welcome back!');
     expect(mockNavigate).toHaveBeenCalledWith('/explore', { replace: true });
   });
 
-  it('shows backend error on failed login', async () => {
+  it('shows backend error toast on failed login', async () => {
     mockLogin.mockRejectedValueOnce(new Error('Invalid Credentials'));
     renderPage();
 
@@ -105,6 +118,8 @@ describe('LoginPage', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Log In' }));
 
-    expect(await screen.findByText('Invalid Credentials')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith('Invalid Credentials');
+    });
   });
 });

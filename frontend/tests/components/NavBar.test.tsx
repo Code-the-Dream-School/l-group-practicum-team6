@@ -4,9 +4,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockUseAuth = vi.fn();
 const mockNavigate = vi.fn();
+const mockToast = {
+  success: vi.fn(),
+  error: vi.fn(),
+  info: vi.fn(),
+};
 
 vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => mockUseAuth(),
+}));
+
+vi.mock('../../src/context/useToast', () => ({
+  useToast: () => mockToast,
 }));
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -38,6 +47,9 @@ describe('NavBar', () => {
   beforeEach(() => {
     mockUseAuth.mockReset();
     mockNavigate.mockReset();
+    mockToast.success.mockReset();
+    mockToast.error.mockReset();
+    mockToast.info.mockReset();
   });
 
   describe('standard variant — guest', () => {
