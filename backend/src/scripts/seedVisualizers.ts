@@ -10,7 +10,6 @@ import Visualizer from '../models/Visualizer';
 import Image from '../models/Image';
 import User from '../models/User';
 import UserVisual from '../models/UserVisual';
-import { extraVisualizerFixtures } from '../seed/visualizers-extra.seed';
 
 interface JsonVisualizerEntry {
   shader: string;
@@ -101,26 +100,6 @@ async function seedJsonVisualizers(
     });
 
     console.log(`[+] visualizer ${entry.title}`);
-  }
-}
-
-async function seedExtraVisualizers(): Promise<void> {
-  for (const fixture of extraVisualizerFixtures) {
-    const id = new mongoose.Types.ObjectId(fixture.id);
-    const exists = await Visualizer.findById(id);
-    if (exists) {
-      console.log(`[skip] extra visualizer ${fixture.name} (already exists)`);
-      continue;
-    }
-    await Visualizer.create({
-      _id: id,
-      name: fixture.name,
-      source: fixture.source,
-      glsl: fixture.glsl,
-      tags: fixture.tags,
-      isDemo: false,
-    });
-    console.log(`[+] extra visualizer ${fixture.name}`);
   }
 }
 
@@ -216,7 +195,6 @@ async function main(): Promise<void> {
   }
 
   await seedJsonVisualizers(jsonVisualizers, bucket, previewsDir);
-  await seedExtraVisualizers();
   await seedUsers(users);
   await seedUserVisuals(userVisuals);
 

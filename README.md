@@ -176,15 +176,12 @@ npm run seed -w backend -- --reset   # wipes users/visualizers/userVisuals/image
 Seed inserts:
 
 - 20 visualizers from `backend/src/seed/visualizers.seed.json` (with PNG previews uploaded to GridFS, first one marked `isDemo: true`)
-- 12 extra visualizers from `backend/src/seed/visualizers-extra.seed.ts` (plasma, Lissajous, waveform, starfield, nebula, tunnel, kaleidoscope, wave grid, Mandelbrot flow, ripples, spiral, prism)
-- 3 users from `backend/src/seed/users.seed.json`
-- 5 `UserVisual` favorites for the first regular user
+- 1 admin user from `backend/src/seed/users.seed.json`
+- 5 `UserVisual` favorites for the admin
 
 ### Test credentials
 
 - Admin — `admin@sonix.dev` / `AdminPass123!`
-- User — `user1@sonix.dev` / `UserPass123!`
-- User — `user2@sonix.dev` / `UserPass123!`
 
 Also documented in `backend/.env.example`.
 
