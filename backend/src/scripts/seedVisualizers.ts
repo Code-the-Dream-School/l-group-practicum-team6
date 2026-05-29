@@ -20,19 +20,7 @@ interface JsonVisualizerEntry {
   id: string;
 }
 
-interface UserSeed {
-  email: string;
-  name: string;
-  password: string;
-  role: 'admin' | 'user';
-}
-
-interface UserVisualSeed {
-  userEmail: string;
-  visualizerId: string;
-}
-
-const RESET_FLAG = '--reset';
+const ADMIN_FAVORITES_COUNT = 5;
 
 async function uploadPng(
   bucket: GridFSBucket,
@@ -46,21 +34,6 @@ async function uploadPng(
       .on('finish', () => resolve(upload.id as mongoose.Types.ObjectId))
       .on('error', reject);
   });
-}
-
-async function resetDatabase(bucket: GridFSBucket): Promise<void> {
-  console.log('--reset: dropping collections and GridFS bucket');
-  await Promise.all([
-    Visualizer.deleteMany({}),
-    Image.deleteMany({}),
-    User.deleteMany({}),
-    UserVisual.deleteMany({}),
-  ]);
-  try {
-    await bucket.drop();
-  } catch {
-    // bucket didn't exist
-  }
 }
 
 async function seedJsonVisualizers(
@@ -103,67 +76,75 @@ async function seedJsonVisualizers(
   }
 }
 
-async function seedUsers(users: UserSeed[]): Promise<void> {
-  for (const u of users) {
-    const exists = await User.findOne({ email: u.email });
-    if (exists) {
-      console.log(`[skip] user ${u.email} (already exists)`);
-      continue;
-    }
-    // User model has no `role` field yet — kept in seed JSON for future use.
-    const user = new User({ email: u.email, name: u.name, password: u.password });
-    await user.save();
-    console.log(`[+] user ${u.email}`);
+async function seedAdmin(): Promise<void> {
+  const email = process.env.SEED_ADMIN_EMAIL;
+  const password = process.env.SEED_ADMIN_PASSWORD;
+  const name = process.env.SEED_ADMIN_NAME ?? 'Admin';
+
+  if (!email || !password) {
+    throw new Error(
+      'SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set in .env to seed the admin user'
+    );
   }
+
+  const existing = await User.findOne({ email });
+  if (existing) {
+    console.log(`[skip] admin ${email} (already exists)`);
+    return;
+  }
+
+  const user = new User({ email, name, password });
+  await user.save();
+  console.log(`[+] admin ${email}`);
 }
 
-async function seedUserVisuals(mappings: UserVisualSeed[]): Promise<void> {
-  for (const m of mappings) {
-    const user = await User.findOne({ email: m.userEmail });
-    if (!user) {
-      console.warn(`[warn] userVisual: user ${m.userEmail} not found, skipping`);
-      continue;
-    }
-    const visualizerId = new mongoose.Types.ObjectId(m.visualizerId);
-    const visualizer = await Visualizer.findById(visualizerId);
-    if (!visualizer) {
-      console.warn(`[warn] userVisual: visualizer ${m.visualizerId} not found, skipping`);
-      continue;
-    }
-    const exists = await UserVisual.findOne({ userId: user._id, visualizerId });
+async function seedAdminFavorites(): Promise<void> {
+  const email = process.env.SEED_ADMIN_EMAIL;
+  if (!email) return;
+
+  const admin = await User.findOne({ email });
+  if (!admin) {
+    console.warn(`[warn] admin ${email} not found, skipping favorites`);
+    return;
+  }
+
+  const firstVisualizers = await Visualizer.find()
+    .sort({ _id: 1 })
+    .limit(ADMIN_FAVORITES_COUNT)
+    .select('_id name');
+
+  for (const visualizer of firstVisualizers) {
+    const exists = await UserVisual.findOne({ userId: admin._id, visualizerId: visualizer._id });
     if (exists) {
-      console.log(`[skip] userVisual ${m.userEmail} -> ${visualizer.name}`);
+      console.log(`[skip] favorite ${email} -> ${visualizer.name}`);
       continue;
     }
-    await UserVisual.create({ userId: user._id, visualizerId });
-    console.log(`[+] userVisual ${m.userEmail} -> ${visualizer.name}`);
+    await UserVisual.create({ userId: admin._id, visualizerId: visualizer._id });
+    console.log(`[+] favorite ${email} -> ${visualizer.name}`);
   }
 }
 
 async function main(): Promise<void> {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Refusing to run seed in production');
+    process.exit(1);
+  }
+
   const mongoUri = process.env.MONGO_URI;
   if (!mongoUri) {
     console.error('MONGO_URI environment variable is not set');
     process.exit(1);
   }
 
-  const reset = process.argv.includes(RESET_FLAG);
-
   const seedDir = path.resolve(__dirname, '..', 'seed');
   const visualizersSeedPath = path.join(seedDir, 'visualizers.seed.json');
-  const usersSeedPath = path.join(seedDir, 'users.seed.json');
-  const userVisualsSeedPath = path.join(seedDir, 'userVisuals.seed.json');
   const previewsDir = path.resolve(__dirname, '..', '..', 'public', 'previews');
 
   let jsonVisualizers: JsonVisualizerEntry[];
-  let users: UserSeed[];
-  let userVisuals: UserVisualSeed[];
   try {
     jsonVisualizers = JSON.parse(fs.readFileSync(visualizersSeedPath, 'utf-8'));
-    users = JSON.parse(fs.readFileSync(usersSeedPath, 'utf-8'));
-    userVisuals = JSON.parse(fs.readFileSync(userVisualsSeedPath, 'utf-8'));
   } catch (error) {
-    console.error('Failed to read seed files');
+    console.error('Failed to read visualizers.seed.json');
     console.error(error);
     process.exit(1);
   }
@@ -190,13 +171,9 @@ async function main(): Promise<void> {
   }
   const bucket = new GridFSBucket(db, { bucketName: 'images' });
 
-  if (reset) {
-    await resetDatabase(bucket);
-  }
-
   await seedJsonVisualizers(jsonVisualizers, bucket, previewsDir);
-  await seedUsers(users);
-  await seedUserVisuals(userVisuals);
+  await seedAdmin();
+  await seedAdminFavorites();
 
   console.log('Seed complete');
   await mongoose.disconnect();

@@ -166,24 +166,27 @@ npm run seed -- --reset   # drops collections + GridFS bucket, then seeds
 
 ## Database Seed
 
-Run from repo root:
+Before running the seed, set admin credentials in your local `backend/.env` (see `.env.example`):
+
+```env
+SEED_ADMIN_EMAIL=admin@sonix.dev
+SEED_ADMIN_NAME=Admin
+SEED_ADMIN_PASSWORD=<ask the team for the current dev password>
+```
+
+Then run from repo root:
 
 ```bash
 npm run seed -w backend              # idempotent — re-runs produce the same state
-npm run seed -w backend -- --reset   # wipes users/visualizers/userVisuals/images + GridFS, then seeds
 ```
 
 Seed inserts:
 
 - 20 visualizers from `backend/src/seed/visualizers.seed.json` (with PNG previews uploaded to GridFS, first one marked `isDemo: true`)
-- 1 admin user from `backend/src/seed/users.seed.json`
-- 5 `UserVisual` favorites for the admin
+- 1 admin user — credentials from `SEED_ADMIN_*` env vars
+- 5 `UserVisual` favorites for the admin (first 5 visualizers by `_id`)
 
-### Test credentials
-
-- Admin — `admin@sonix.dev` / `AdminPass123!`
-
-Also documented in `backend/.env.example`.
+The seed script refuses to run when `NODE_ENV=production`.
 
 ## 🪝 Pre-commit hooks
 

@@ -65,3 +65,5 @@ backend/public/previews/
 
 # Local seed data
 backend/src/seed/visualizers.seed.json
+backend/src/seed/users.seed.json
+backend/src/seed/userVisuals.seed.json
