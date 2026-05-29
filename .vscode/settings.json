@@ -4,11 +4,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": [
-    { "pattern": "shared" },
-    { "pattern": "backend" },
-    { "pattern": "frontend" }
-  ],
   "files.associations": {
     "*.css": "tailwindcss"
   },
