@@ -9,8 +9,10 @@ import PlayerPage from './pages/PlayerPage';
 import MyVisualsPage from './pages/MyVisualsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SettingsPage from './pages/SettingsPage';
+import AdminVisualizersPage from './pages/AdminVisualizersPage';
 
 import ProtectedRoute from './routes/ProtectedRoute';
+import AdminRoute from './routes/AdminRoute';
 import GuestRoute from './routes/GuestRoute';
 import { Routes as RoutePaths } from './routes/paths';
 
@@ -73,6 +75,15 @@ function App() {
             <ProtectedRoute>
               <SettingsPage />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.ADMIN_VISUALS}
+          element={
+            <AdminRoute>
+              <AdminVisualizersPage />
+            </AdminRoute>
           }
         />
 

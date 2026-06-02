@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(await readApiError(res, 'Login failed'));
     }
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid login response');
+    if (!body?.data) throw new Error('Invalid login response');
     setUser(body.data);
   }, []);
 
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(await readApiError(res, 'Registration failed'));
     }
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid registration response');
+    if (!body?.data) throw new Error('Invalid registration response');
     setUser(body.data);
   }, []);
 
@@ -90,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid profile update response');
+    if (!body?.data) throw new Error('Invalid profile update response');
     setUser(body.data);
   }, []);
 

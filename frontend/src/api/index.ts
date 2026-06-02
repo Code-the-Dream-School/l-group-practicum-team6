@@ -26,3 +26,9 @@ export {
   getVisualizer,
   getVisualizerTags,
 } from './visualizers';
+
+export {
+  createAdminVisualizer,
+  updateAdminVisualizer,
+  deleteAdminVisualizer,
+} from './adminVisualizers';

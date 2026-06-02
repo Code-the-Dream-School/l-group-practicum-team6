@@ -9,6 +9,7 @@ export interface IUser extends Document {
   password: string;
   image?: mongoose.Types.ObjectId;
   createdAt: Date;
+  isAdmin: boolean;
 
   comparePassword(candidate: string): Promise<boolean>;
   createJWT(): string;
@@ -41,6 +42,10 @@ const UserSchema = new Schema<IUser>({
     type: Date,
     default: Date.now,
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 //password hash before save
@@ -58,7 +63,12 @@ UserSchema.methods.comparePassword = async function (candidate: string): Promise
 
 //create JWT method
 UserSchema.methods.createJWT = function () {
-  return createJWT({ userId: this._id, name: this.name, email: this.email });
+  return createJWT({
+    userId: this._id,
+    name: this.name,
+    email: this.email,
+    isAdmin: this.isAdmin,
+  });
 };
 
 //remove password from output

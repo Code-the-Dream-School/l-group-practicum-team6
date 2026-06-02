@@ -4,6 +4,7 @@ export interface User {
   email: string;
   createdAt: string;
   image?: string;
+  isAdmin?: boolean;
 }
 
 export interface Visualizer {
@@ -60,6 +61,10 @@ export enum ApiEndpoints {
   VISUALIZERS_TAGS = '/api/v1/visualizers/tags',
   VISUALIZERS_BY_ID = '/api/v1/visualizers/:id',
 
+  // Admin Visualizer Management
+  ADMIN_VISUALIZERS = '/api/v1/admin/visualizers',
+  ADMIN_VISUALIZERS_BY_ID = '/api/v1/admin/visualizers/:id',
+
   // Images
   IMAGES_USER = '/api/v1/images/users/user',
   IMAGES_USER_BY_ID = '/api/v1/images/users/:id',
@@ -82,4 +87,8 @@ export function buildUserImageEndpoint(id: string): string {
 
 export function buildVisualizerImageEndpoint(id: string): string {
   return ApiEndpoints.IMAGES_VISUALIZER_BY_ID.replace(':id', encodeURIComponent(id));
+}
+
+export function buildAdminVisualizerEndpoint(id: string): string {
+  return ApiEndpoints.ADMIN_VISUALIZERS_BY_ID.replace(':id', encodeURIComponent(id));
 }

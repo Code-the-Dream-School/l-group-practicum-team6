@@ -1,11 +1,12 @@
 import { Request as ExpressRequest, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
-import { UnauthenticatedError } from '../errors';
+import { ForbiddenError, UnauthenticatedError } from '../errors';
 
 export interface UserPayload {
   userId: string;
   name: string;
   email: string;
+  isAdmin?: boolean;
 }
 
 export interface AuthRequest extends ExpressRequest {
@@ -31,10 +32,19 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
       userId: payload.userId,
       name: payload.name,
       email: payload.email,
+      isAdmin: payload.isAdmin ?? false,
     };
 
     next();
   } catch {
     throw new UnauthenticatedError('Authentication Invalid');
   }
+};
+
+export const adminOnly = (req: AuthRequest, _res: Response, next: NextFunction) => {
+  if (!req.user || !req.user.isAdmin) {
+    throw new ForbiddenError('Admin access required');
+  }
+
+  next();
 };

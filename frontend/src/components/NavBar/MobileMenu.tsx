@@ -31,6 +31,16 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           >
             My Visuals
           </NavLink>
+          {user.isAdmin && (
+            <NavLink
+              to={Routes.ADMIN_VISUALS}
+              className={({ isActive }) =>
+                `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
+              }
+            >
+              Admin
+            </NavLink>
+          )}
           <div className="mt-3 flex items-center gap-3 border-t border-primary-border pt-3">
             <Avatar user={user} />
             <span className="text-sm text-text-primary">{user.name}</span>
