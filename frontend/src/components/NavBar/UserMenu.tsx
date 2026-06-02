@@ -37,6 +37,16 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
             role="menu"
             className="absolute right-0 mt-2 w-48 rounded-lg border border-primary-border bg-elevated py-1 shadow-lg z-20"
           >
+            {user.isAdmin && (
+              <NavLink
+                to={Routes.ADMIN_VISUALS}
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
+              >
+                Admin
+              </NavLink>
+            )}
             <NavLink
               to={Routes.SETTINGS}
               role="menuitem"

@@ -3,6 +3,7 @@ export enum Routes {
   LOGIN = '/login',
   SIGNUP = '/signup',
   EXPLORE = '/explore',
+  ADMIN_VISUALS = '/admin/visualizers',
   VISUALIZER_DEMO = '/visualizer/demo',
   VISUALIZER = '/visualizer/:id',
   MY_VISUALS = '/my-visuals',

@@ -35,6 +35,12 @@ const authedUser = {
   createdAt: '2026-01-01',
 };
 
+const adminUser = {
+  ...authedUser,
+  _id: 'admin-1',
+  isAdmin: true,
+};
+
 function renderAt(path: string) {
   return render(
     <MemoryRouter initialEntries={[path]}>
@@ -118,6 +124,12 @@ describe('NavBar', () => {
       expect(logout).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith('/', { replace: true });
     });
+  });
+
+  it('shows Admin link for admin users', () => {
+    mockUseAuth.mockReturnValue({ user: adminUser, logout: vi.fn() });
+    renderAt('/');
+    expect(screen.getAllByRole('link', { name: 'Admin' }).length).toBeGreaterThan(0);
   });
 
   describe('minimal variant', () => {

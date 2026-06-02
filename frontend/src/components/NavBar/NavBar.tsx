@@ -80,6 +80,18 @@ const NavBar = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {user?.isAdmin && (
+            <NavLink
+              to={Routes.ADMIN_VISUALS}
+              className={({ isActive }) =>
+                isActive
+                  ? 'inline-flex items-center rounded-md border border-primary px-3 py-1.5 text-sm font-medium text-text-primary'
+                  : 'inline-flex items-center rounded-md border border-primary-border px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-elevated'
+              }
+            >
+              Admin
+            </NavLink>
+          )}
           {user ? (
             <div className="hidden md:block">
               <UserMenu user={user} onLogout={handleLogout} />

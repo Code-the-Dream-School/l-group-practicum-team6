@@ -10,6 +10,7 @@ vi.mock('../../src/context/useAuth', () => ({
 
 import GuestRoute from '../../src/routes/GuestRoute';
 import ProtectedRoute from '../../src/routes/ProtectedRoute';
+import AdminRoute from '../../src/routes/AdminRoute';
 
 describe('route guards', () => {
   beforeEach(() => {
