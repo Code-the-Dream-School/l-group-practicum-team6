@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import VisualizerCard from '../components/VisualizerCard';
 import { useToast } from '../context/useToast';
@@ -6,6 +7,8 @@ import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../
 import type { SavedVisual } from '../api/users';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
+import { buildVisualizerPath, Routes } from '../routes/paths';
+import { TOAST_MESSAGES } from '../constants/messages';
 
 type SortOption = 'recent' | 'az' | 'za';
 
@@ -22,7 +25,7 @@ export default function MyVisualsPage() {
         const response = await getSavedVisuals();
         setSavedVisuals(response.data);
       } catch (error) {
-        toast.error(getToastErrorMessage(error, 'Unable to load your saved visualizers.'));
+        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
       } finally {
         setIsLoading(false);
       }
@@ -57,7 +60,7 @@ export default function MyVisualsPage() {
 
     try {
       await removeVisual(visualizerId);
-      toast.success('Visualizer removed from favorites.');
+      toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
     } catch (error) {
       setSavedVisuals(previousVisuals);
       toast.error(getToastErrorMessage(error, 'Could not remove visualizer. Please try again.'));
@@ -103,12 +106,12 @@ export default function MyVisualsPage() {
               <p className="mt-2 max-w-xs text-xs leading-5 text-text-secondary">
                 Browse visualizers and save your favorites to build your personal collection.
               </p>
-              <a
-                href="/explore"
+              <Link
+                to={Routes.EXPLORE}
                 className="mt-5 inline-flex rounded-md bg-[#8b5cf6] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#7c3aed]"
               >
                 Explore Visuals
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -127,7 +130,9 @@ export default function MyVisualsPage() {
                           : undefined
                       }
                       playPath={
-                        visualizer.isDemo ? '/visualizer/demo' : `/visualizer/${visualizer._id}`
+                        visualizer.isDemo
+                          ? Routes.VISUALIZER_DEMO
+                          : buildVisualizerPath(visualizer._id)
                       }
                       isDemo={visualizer.isDemo}
                       previewGlsl={visualizer.glsl}

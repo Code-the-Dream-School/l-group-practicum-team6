@@ -12,15 +12,19 @@ import imageRouter from './routes/images';
 
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
+import { API_ROUTES, RATE_LIMIT } from './constants';
 
 const app = express();
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
+  windowMs: RATE_LIMIT.WINDOW_MS,
+  max:
+    process.env.NODE_ENV === 'production'
+      ? RATE_LIMIT.GLOBAL_MAX_PRODUCTION
+      : RATE_LIMIT.GLOBAL_MAX_NON_PRODUCTION,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { message: 'Too many requests, please try again later.' },
+  message: { message: RATE_LIMIT.GLOBAL_MESSAGE },
 });
 app.use(limiter);
 
@@ -40,18 +44,18 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-app.get('/api/v1/health', (_req, res) => {
+app.get(API_ROUTES.HEALTH, (_req, res) => {
   res.json({ status: 'ok' });
 });
 
 // Auth routes — register, login, logout
-app.use('/api/v1/auth', authRouter);
+app.use(API_ROUTES.AUTH, authRouter);
 // Profile management, visualiser collection
-app.use('/api/v1/users', userRouter);
+app.use(API_ROUTES.USERS, userRouter);
 // Visualizer route
-app.use('/api/v1/visualizers', visualizerRouter);
+app.use(API_ROUTES.VISUALIZERS, visualizerRouter);
 // Image routes - upload and retrieval
-app.use('/api/v1/images', imageRouter);
+app.use(API_ROUTES.IMAGES, imageRouter);
 
 // Serve built SPA: static assets first, then send index.html for any
 // non-/api GET so client-side routes (e.g. /login) resolve on refresh.

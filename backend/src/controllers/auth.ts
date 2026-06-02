@@ -1,20 +1,21 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { UnauthenticatedError, BadRequestError } from '../errors';
-import { attachCookiesToResponse } from '../utils/jwt';
+import { attachCookiesToResponse, clearAuthCookie } from '../utils/jwt';
 import User from '../models/User';
+import { API_ERROR_MESSAGES, API_SUCCESS_MESSAGES } from '../constants';
 
 // Register a new user
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    throw new BadRequestError('Please provide name, email and password');
+    throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_NAME_EMAIL_PASSWORD);
   }
 
   const emailAlreadyExists = await User.findOne({ email });
   if (emailAlreadyExists) {
-    throw new BadRequestError('Email already exists');
+    throw new BadRequestError(API_ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
   }
 
   const user = await User.create({ name, email, password });
@@ -29,17 +30,17 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError('Please provide email and password');
+    throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_EMAIL_PASSWORD);
   }
 
   const user = await User.findOne({ email });
   if (!user) {
-    throw new UnauthenticatedError('Invalid Credentials');
+    throw new UnauthenticatedError(API_ERROR_MESSAGES.INVALID_CREDENTIALS);
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedError('Invalid Credentials');
+    throw new UnauthenticatedError(API_ERROR_MESSAGES.INVALID_CREDENTIALS);
   }
 
   const token = user.createJWT();
@@ -50,10 +51,6 @@ export const login = async (req: Request, res: Response) => {
 
 // Logout user
 export const logout = async (req: Request, res: Response) => {
-  res.cookie('token', 'logout', {
-    httpOnly: true,
-    expires: new Date(Date.now()),
-    signed: true,
-  });
-  res.status(StatusCodes.OK).json({ msg: 'user logged out!' });
+  clearAuthCookie(res);
+  res.status(StatusCodes.OK).json({ msg: API_SUCCESS_MESSAGES.USER_LOGGED_OUT });
 };

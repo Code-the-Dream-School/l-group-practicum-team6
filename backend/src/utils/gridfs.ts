@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 import { GridFSBucket, GridFSBucketReadStream, ObjectId } from 'mongodb';
 import { Readable } from 'stream';
+import { GRIDFS_BUCKETS, type GridFsBucketName } from '../constants';
 
-type BucketName = 'images' | 'shaders';
 type GridFSFileId = string | mongoose.Types.ObjectId | ObjectId;
 
-export function getGridFSBucket(bucketName: BucketName = 'images'): GridFSBucket {
+export function getGridFSBucket(
+  bucketName: GridFsBucketName = GRIDFS_BUCKETS.IMAGES
+): GridFSBucket {
   const db = mongoose.connection.db;
 
   if (!db) {
@@ -21,7 +23,7 @@ export function uploadBufferToGridFS(
   buffer: Buffer,
   filename: string,
   contentType: string,
-  bucketName: BucketName = 'images'
+  bucketName: GridFsBucketName = GRIDFS_BUCKETS.IMAGES
 ): Promise<ObjectId> {
   const bucket = getGridFSBucket(bucketName);
 
@@ -43,7 +45,7 @@ export function uploadBufferToGridFS(
 
 export async function deleteGridFSFile(
   fileId: GridFSFileId,
-  bucketName: BucketName = 'images'
+  bucketName: GridFsBucketName = GRIDFS_BUCKETS.IMAGES
 ): Promise<void> {
   const bucket = getGridFSBucket(bucketName);
   await bucket.delete(new ObjectId(fileId.toString()));
@@ -51,7 +53,7 @@ export async function deleteGridFSFile(
 
 export function openGridFSDownloadStream(
   fileId: GridFSFileId,
-  bucketName: BucketName = 'images'
+  bucketName: GridFsBucketName = GRIDFS_BUCKETS.IMAGES
 ): GridFSBucketReadStream {
   const bucket = getGridFSBucket(bucketName);
   return bucket.openDownloadStream(new ObjectId(fileId.toString()));
