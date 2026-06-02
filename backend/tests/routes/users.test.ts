@@ -108,7 +108,7 @@ describe('User routes', () => {
       const res = await agent.patch('/api/v1/users/user').send({ email: 'taken@example.com' });
 
       expect(res.status).toBe(400);
-      expect(res.body.error.message).toBe('Email already in use');
+      expect(res.body.error.message).toBe('Email already exists');
     });
   });
 

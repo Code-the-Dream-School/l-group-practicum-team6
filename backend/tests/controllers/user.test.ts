@@ -121,7 +121,7 @@ describe('updateUser', () => {
     const req = makeReq({ body: { email: 'taken@example.com' } });
     const res = makeRes();
 
-    await expect(updateUser(req, res)).rejects.toThrow('Email already in use');
+    await expect(updateUser(req, res)).rejects.toThrow('Email already exists');
   });
 
   it('throws NotFoundError when user does not exist', async () => {
