@@ -1,6 +1,11 @@
-import { ApiEndpoints, type ApiResponse, type User, type Visualizer } from '@sonix/shared';
+import {
+  ApiEndpoints,
+  buildUserVisualEndpoint,
+  type ApiResponse,
+  type User,
+  type Visualizer,
+} from '@sonix/shared';
 import { apiFetch } from './client';
-import { buildSavedVisualEndpoint } from './endpoints';
 
 type UpdateProfileData = {
   name?: string;
@@ -25,38 +30,38 @@ export type SavedVisual = {
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
-  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USER, {
+  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.CURRENT_USER, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function changePassword(data: ChangePasswordData): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_PASSWORD, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.CURRENT_USER_PASSWORD, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function deleteAccount(password: string): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER, {
+  return apiFetch<ApiResponse<null>>(ApiEndpoints.CURRENT_USER, {
     method: 'DELETE',
     body: JSON.stringify({ password }),
   });
 }
 
 export function getSavedVisuals(): Promise<ApiResponse<SavedVisual[]>> {
-  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.USER_VISUALS);
+  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.CURRENT_USER_VISUALS);
 }
 
 export function saveVisual(id: string): Promise<ApiResponse<SavedVisual>> {
-  return apiFetch<ApiResponse<SavedVisual>>(buildSavedVisualEndpoint(id), {
+  return apiFetch<ApiResponse<SavedVisual>>(buildUserVisualEndpoint(id), {
     method: 'POST',
   });
 }
 
 export function removeVisual(id: string): Promise<{ msg: string }> {
-  return apiFetch<{ msg: string }>(buildSavedVisualEndpoint(id), {
+  return apiFetch<{ msg: string }>(buildUserVisualEndpoint(id), {
     method: 'DELETE',
   });
 }
