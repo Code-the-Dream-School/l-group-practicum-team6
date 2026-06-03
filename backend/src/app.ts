@@ -12,21 +12,9 @@ import imageRouter from './routes/images';
 
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
-import { API_ROUTES, RATE_LIMIT } from './constants';
+import { API_ROUTES } from './constants';
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: RATE_LIMIT.WINDOW_MS,
-  max:
-    process.env.NODE_ENV === 'production'
-      ? RATE_LIMIT.GLOBAL_MAX_PRODUCTION
-      : RATE_LIMIT.GLOBAL_MAX_NON_PRODUCTION,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: RATE_LIMIT.GLOBAL_MESSAGE },
-});
-app.use(limiter);
 
 app.use(express.json());
 app.use(helmet());
