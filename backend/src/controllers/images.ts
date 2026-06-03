@@ -74,6 +74,8 @@ export async function getUserImage(req: Request, res: Response) {
   }
 
   res.setHeader('Content-Type', image.contentType);
+  // User image can be replaced any time; short private cache only.
+  res.setHeader('Cache-Control', 'private, max-age=600');
 
   const downloadStream = openGridFSDownloadStream(image.fileId, GRIDFS_BUCKETS.IMAGES);
   downloadStream.pipe(res);
@@ -112,6 +114,8 @@ export async function getVisualizerImage(req: Request, res: Response) {
   }
 
   res.setHeader('Content-Type', image.contentType);
+  // Visualizer images never change after seeding; cache for one year.
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
 
   const downloadStream = openGridFSDownloadStream(image.fileId, GRIDFS_BUCKETS.IMAGES);
   downloadStream.pipe(res);

@@ -4,7 +4,6 @@ import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
-  buildVisualizerImageEndpoint,
   getSavedVisuals,
   getVisualizerTags,
   listVisualizers,

@@ -5,7 +5,7 @@ import { RATE_LIMIT } from '../constants';
 
 const router = Router();
 
-// Limits, 20 req per 15 min for one IP in prod, 1000 in dev
+// Limits, 50 req per 1 min for one IP in prod, 1000 in dev
 const authLimiter = rateLimit({
   windowMs: RATE_LIMIT.WINDOW_MS,
   max:

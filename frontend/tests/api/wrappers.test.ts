@@ -22,10 +22,10 @@ import {
   deleteVisualizerImage,
 } from '../../src/api/images';
 import {
-  buildVisualizerDetailEndpoint,
-  buildSavedVisualEndpoint,
+  buildVisualizerEndpoint,
+  buildUserVisualEndpoint,
   buildVisualizerImageEndpoint,
-} from '../../src/api';
+} from '@sonix/shared';
 import { ApiEndpoints } from '@sonix/shared';
 
 const mockedApiFetch = vi.mocked(apiFetch);
@@ -38,7 +38,7 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER);
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER);
   });
 
   it('login posts credentials', () => {
@@ -115,7 +115,7 @@ describe('visualizers api', () => {
   it('getVisualizer calls visualizer by id endpoint', () => {
     getVisualizer('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(buildVisualizerDetailEndpoint('visual123'));
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildVisualizerEndpoint('visual123'));
   });
 });
 
@@ -123,7 +123,7 @@ describe('users api', () => {
   it('updateProfile patches profile data', () => {
     updateProfile({ name: 'Bob' });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER, {
       method: 'PATCH',
       body: JSON.stringify({ name: 'Bob' }),
     });
@@ -135,7 +135,7 @@ describe('users api', () => {
       newPassword: 'newpass',
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_PASSWORD, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER_PASSWORD, {
       method: 'PATCH',
       body: JSON.stringify({
         currentPassword: 'oldpass',
@@ -147,7 +147,7 @@ describe('users api', () => {
   it('deleteAccount deletes account with password confirmation', () => {
     deleteAccount('password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER, {
       method: 'DELETE',
       body: JSON.stringify({ password: 'password123' }),
     });
@@ -156,13 +156,13 @@ describe('users api', () => {
   it('getSavedVisuals calls saved visuals endpoint', () => {
     getSavedVisuals();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_VISUALS);
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER_VISUALS);
   });
 
   it('saveVisual posts visual id', () => {
     saveVisual('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(buildSavedVisualEndpoint('visual123'), {
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildUserVisualEndpoint('visual123'), {
       method: 'POST',
     });
   });
@@ -170,7 +170,7 @@ describe('users api', () => {
   it('removeVisual deletes saved visual id', () => {
     removeVisual('visual123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(buildSavedVisualEndpoint('visual123'), {
+    expect(mockedApiFetch).toHaveBeenCalledWith(buildUserVisualEndpoint('visual123'), {
       method: 'DELETE',
     });
   });
@@ -183,7 +183,7 @@ describe('images api', () => {
     uploadAvatar(file);
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      ApiEndpoints.IMAGES_USER,
+      ApiEndpoints.CURRENT_USER_IMAGE,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(FormData),
@@ -194,7 +194,7 @@ describe('images api', () => {
   it('deleteAvatar deletes avatar', () => {
     deleteAvatar();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.CURRENT_USER_IMAGE, {
       method: 'DELETE',
     });
   });

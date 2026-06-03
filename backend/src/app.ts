@@ -1,6 +1,5 @@
 import path from 'path';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -15,18 +14,6 @@ import { errorHandler } from './middleware/errorHandler';
 import { API_ROUTES, RATE_LIMIT } from './constants';
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: RATE_LIMIT.WINDOW_MS,
-  max:
-    process.env.NODE_ENV === 'production'
-      ? RATE_LIMIT.GLOBAL_MAX_PRODUCTION
-      : RATE_LIMIT.GLOBAL_MAX_NON_PRODUCTION,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: RATE_LIMIT.GLOBAL_MESSAGE },
-});
-app.use(limiter);
 
 app.use(express.json());
 app.use(helmet());

@@ -135,7 +135,7 @@ describe('SettingsPage', () => {
       RequestInit,
     ];
 
-    expect(passwordUrl).toBe(ApiEndpoints.USER_PASSWORD);
+    expect(passwordUrl).toBe(ApiEndpoints.CURRENT_USER_PASSWORD);
     expect(passwordRequest).toEqual(
       expect.objectContaining({
         method: 'PATCH',
@@ -177,7 +177,7 @@ describe('SettingsPage', () => {
       RequestInit,
     ];
 
-    expect(deleteUrl).toBe(ApiEndpoints.USER);
+    expect(deleteUrl).toBe(ApiEndpoints.CURRENT_USER);
     expect(deleteRequest).toEqual(
       expect.objectContaining({
         method: 'DELETE',

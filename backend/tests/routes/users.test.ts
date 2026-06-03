@@ -56,10 +56,10 @@ describe('User routes', () => {
   });
 
   it.each([
-    ['GET', '/api/v1/users/user'],
-    ['PATCH', '/api/v1/users/user'],
-    ['DELETE', '/api/v1/users/user'],
-    ['PATCH', '/api/v1/users/user/password'],
+    ['GET', '/api/v1/users/current'],
+    ['PATCH', '/api/v1/users/current'],
+    ['DELETE', '/api/v1/users/current'],
+    ['PATCH', '/api/v1/users/current/password'],
     ['GET', '/api/v1/users/current/visuals'],
   ])('rejects unauthenticated %s %s with 401', async (method, url) => {
     const m = method.toLowerCase() as 'get' | 'patch' | 'delete';
@@ -67,24 +67,23 @@ describe('User routes', () => {
     expect(res.status).toBe(401);
   });
 
-  describe('GET /api/v1/users/user', () => {
+  describe('GET /api/v1/users/current', () => {
     it('returns the current authenticated user', async () => {
       const { agent, email } = await registerAndLogin();
 
-      const res = await agent.get('/api/v1/users/user');
-
+      const res = await agent.get('/api/v1/users/current');
       expect(res.status).toBe(200);
       expect(res.body.data.email).toBe(email);
       expect(res.body.data.password).toBeUndefined();
     });
   });
 
-  describe('PATCH /api/v1/users/user', () => {
+  describe('PATCH /api/v1/users/current', () => {
     it('updates name and email', async () => {
       const { agent } = await registerAndLogin();
 
       const res = await agent
-        .patch('/api/v1/users/user')
+        .patch('/api/v1/users/current')
         .send({ name: 'Renamed', email: 'renamed@example.com' });
 
       expect(res.status).toBe(200);
@@ -95,7 +94,7 @@ describe('User routes', () => {
     it('returns 400 when neither name nor email is provided', async () => {
       const { agent } = await registerAndLogin();
 
-      const res = await agent.patch('/api/v1/users/user').send({});
+      const res = await agent.patch('/api/v1/users/current').send({});
 
       expect(res.status).toBe(400);
       expect(res.body.error.message).toBe('Please provide name or email');
@@ -105,19 +104,19 @@ describe('User routes', () => {
       const { agent } = await registerAndLogin();
       await User.create({ name: 'Other', email: 'taken@example.com', password });
 
-      const res = await agent.patch('/api/v1/users/user').send({ email: 'taken@example.com' });
+      const res = await agent.patch('/api/v1/users/current').send({ email: 'taken@example.com' });
 
       expect(res.status).toBe(400);
       expect(res.body.error.message).toBe('Email already exists');
     });
   });
 
-  describe('PATCH /api/v1/users/user/password', () => {
+  describe('PATCH /api/v1/users/current/password', () => {
     it('updates the password when both fields are valid', async () => {
       const { agent, email } = await registerAndLogin();
 
       const res = await agent
-        .patch('/api/v1/users/user/password')
+        .patch('/api/v1/users/current/password')
         .send({ currentPassword: password, newPassword: 'newpassword456' });
 
       expect(res.status).toBe(200);
@@ -134,7 +133,7 @@ describe('User routes', () => {
     ])('returns 400 when %s missing', async (_label, body) => {
       const { agent } = await registerAndLogin();
 
-      const res = await agent.patch('/api/v1/users/user/password').send(body);
+      const res = await agent.patch('/api/v1/users/current/password').send(body);
 
       expect(res.status).toBe(400);
       expect(res.body.error.message).toBe('Please provide all password fields');
@@ -144,7 +143,7 @@ describe('User routes', () => {
       const { agent } = await registerAndLogin();
 
       const res = await agent
-        .patch('/api/v1/users/user/password')
+        .patch('/api/v1/users/current/password')
         .send({ currentPassword: password, newPassword: 'short' });
 
       expect(res.status).toBe(400);
@@ -155,7 +154,7 @@ describe('User routes', () => {
       const { agent } = await registerAndLogin();
 
       const res = await agent
-        .patch('/api/v1/users/user/password')
+        .patch('/api/v1/users/current/password')
         .send({ currentPassword: password, newPassword: password });
 
       expect(res.status).toBe(400);
@@ -166,7 +165,7 @@ describe('User routes', () => {
       const { agent } = await registerAndLogin();
 
       const res = await agent
-        .patch('/api/v1/users/user/password')
+        .patch('/api/v1/users/current/password')
         .send({ currentPassword: 'wrongpassword', newPassword: 'newpassword456' });
 
       expect(res.status).toBe(400);
@@ -174,13 +173,13 @@ describe('User routes', () => {
     });
   });
 
-  describe('DELETE /api/v1/users/user', () => {
+  describe('DELETE /api/v1/users/current', () => {
     it('deletes the user, cascades userVisuals, and clears the cookie', async () => {
       const { agent, user } = await registerAndLogin();
       const visualizer = await Visualizer.create({ name: 'V', glsl: 'void main() {}' });
       await UserVisual.create({ userId: user._id, visualizerId: visualizer._id });
 
-      const res = await agent.delete('/api/v1/users/user').send({ password });
+      const res = await agent.delete('/api/v1/users/current').send({ password });
 
       expect(res.status).toBe(204);
       expect(await User.findById(user._id)).toBeNull();
@@ -193,7 +192,7 @@ describe('User routes', () => {
     it('returns 400 when password is not provided', async () => {
       const { agent } = await registerAndLogin();
 
-      const res = await agent.delete('/api/v1/users/user').send({});
+      const res = await agent.delete('/api/v1/users/current').send({});
 
       expect(res.status).toBe(400);
       expect(res.body.error.message).toBe('Please provide password');
@@ -202,7 +201,7 @@ describe('User routes', () => {
     it('returns 400 when password is wrong', async () => {
       const { agent, user } = await registerAndLogin();
 
-      const res = await agent.delete('/api/v1/users/user').send({ password: 'wrongpassword' });
+      const res = await agent.delete('/api/v1/users/current').send({ password: 'wrongpassword' });
 
       expect(res.status).toBe(400);
       expect(res.body.error.message).toBe('Invalid password');
