@@ -2,12 +2,22 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors';
 import Visualizer from '../models/Visualizer';
+import { API_ERROR_MESSAGES, VISUALIZER_PAGINATION } from '../constants';
 
 // GET /api/v1/visualizers, public endpoint.
 export const getAllVisualizers = async (req: Request, res: Response) => {
   // Pagination defaults and max cap
-  const page = Math.max(1, parseInt(req.query.page as string) || 1);
-  const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 12));
+  const page = Math.max(
+    VISUALIZER_PAGINATION.DEFAULT_PAGE,
+    parseInt(req.query.page as string) || VISUALIZER_PAGINATION.DEFAULT_PAGE
+  );
+  const limit = Math.min(
+    VISUALIZER_PAGINATION.MAX_LIMIT,
+    Math.max(
+      VISUALIZER_PAGINATION.MIN_LIMIT,
+      parseInt(req.query.limit as string) || VISUALIZER_PAGINATION.DEFAULT_LIMIT
+    )
+  );
   const skip = (page - 1) * limit;
 
   // Dynamic Mongo filter
@@ -46,7 +56,7 @@ export const getDemoVisualizer = async (_req: Request, res: Response) => {
   const visualizer = await Visualizer.findOne({ isDemo: true });
 
   // Returns 404 when no demo visualizer exists in the DB
-  if (!visualizer) throw new NotFoundError('No demo visualizer found');
+  if (!visualizer) throw new NotFoundError(API_ERROR_MESSAGES.NO_DEMO_VISUALIZER_FOUND);
 
   res.status(StatusCodes.OK).json({ data: visualizer });
 };
@@ -63,7 +73,7 @@ export const getTags = async (_req: Request, res: Response) => {
 export const getVisualizerById = async (req: Request, res: Response) => {
   const visualizer = await Visualizer.findById(req.params.id);
 
-  if (!visualizer) throw new NotFoundError('Visualizer not found');
+  if (!visualizer) throw new NotFoundError(API_ERROR_MESSAGES.VISUALIZER_NOT_FOUND);
   // Returns the full visualizer
   res.status(StatusCodes.OK).json({ data: visualizer });
 };

@@ -116,7 +116,7 @@ describe('MyVisualsPage', () => {
     );
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith('Unable to load your saved visualizers.');
+      expect(mockToast.error).toHaveBeenCalledWith('Unable to load saved visualizers');
       expect(screen.getByText(/No favorites yet/i)).toBeInTheDocument();
     });
   });

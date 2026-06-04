@@ -2,6 +2,8 @@ import { Request, Response } from 'express'; // Answers to client
 import { StatusCodes } from 'http-status-codes'; // Wrraped tool to show codes
 import mongoose from 'mongoose';
 import { BadRequestError, NotFoundError } from '../errors';
+import { clearAuthCookie } from '../utils/jwt';
+import { API_ERROR_MESSAGES, API_SUCCESS_MESSAGES } from '../constants';
 
 import User from '../models/User';
 import UserVisual from '../models/UserVisual';
@@ -16,7 +18,7 @@ interface AuthRequest extends Request {
 export const showCurrentUser = async (req: AuthRequest, res: Response) => {
   const user = await User.findById(req.user?.userId ?? '');
 
-  if (!user) throw new NotFoundError('User not found');
+  if (!user) throw new NotFoundError(API_ERROR_MESSAGES.USER_NOT_FOUND);
   res.status(StatusCodes.OK).json({ data: user });
 };
 
@@ -26,16 +28,16 @@ export const updateUser = async (req: AuthRequest, res: Response) => {
   const { name, email } = req.body;
 
   // Validation
-  if (!name && !email) throw new BadRequestError('Please provide name or email');
+  if (!name && !email) throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_NAME_OR_EMAIL);
 
   // Check DB
   const user = await User.findById(req.user?.userId ?? '');
 
   // Working on result (checking, changes)
-  if (!user) throw new NotFoundError('User not found');
+  if (!user) throw new NotFoundError(API_ERROR_MESSAGES.USER_NOT_FOUND);
   if (email && email !== user.email) {
     const emailExists = await User.findOne({ email });
-    if (emailExists) throw new BadRequestError('Email already in use');
+    if (emailExists) throw new BadRequestError(API_ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
     user.email = email;
   }
   if (name) user.name = name;
@@ -50,29 +52,29 @@ export const updateUserPassword = async (req: AuthRequest, res: Response) => {
 
   // Checking data
   if (!currentPassword || !newPassword) {
-    throw new BadRequestError('Please provide all password fields');
+    throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_ALL_PASSWORD_FIELDS);
   }
 
-  if (newPassword.length < 8) throw new BadRequestError('Password must be at least 8 characters');
+  if (newPassword.length < 8) throw new BadRequestError(API_ERROR_MESSAGES.PASSWORD_MIN_LENGTH);
 
   // check if new password is the same as previus
   if (currentPassword === newPassword) {
-    throw new BadRequestError('New password must be different from current password');
+    throw new BadRequestError(API_ERROR_MESSAGES.NEW_PASSWORD_MUST_DIFFER);
   }
 
   // Manipulation with DB
   const user = await User.findById(req.user?.userId ?? '').select('+password');
-  if (!user) throw new NotFoundError('User not found');
+  if (!user) throw new NotFoundError(API_ERROR_MESSAGES.USER_NOT_FOUND);
 
   const isMatch = await user.comparePassword(currentPassword);
-  if (!isMatch) throw new BadRequestError('Current password is incorrect');
+  if (!isMatch) throw new BadRequestError(API_ERROR_MESSAGES.CURRENT_PASSWORD_INCORRECT);
 
   // Save
   user.password = newPassword;
   await user.save();
 
   // Respond
-  res.status(StatusCodes.OK).json({ msg: 'Password updated' });
+  res.status(StatusCodes.OK).json({ msg: API_SUCCESS_MESSAGES.PASSWORD_UPDATED });
 };
 
 // Delete User
@@ -81,15 +83,15 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   const { password } = req.body;
 
   // Validate
-  if (!password) throw new BadRequestError('Please provide password');
+  if (!password) throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_PASSWORD);
 
   // go to DB
   const user = await User.findById(req.user?.userId ?? '').select('+password');
 
   // Process and delete
-  if (!user) throw new NotFoundError('User not found');
+  if (!user) throw new NotFoundError(API_ERROR_MESSAGES.USER_NOT_FOUND);
   const isMatch = await user.comparePassword(password);
-  if (!isMatch) throw new BadRequestError('Invalid password');
+  if (!isMatch) throw new BadRequestError(API_ERROR_MESSAGES.INVALID_PASSWORD);
 
   // Cascade delete
   await UserVisual.deleteMany({ userId: user._id });
@@ -97,7 +99,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   await User.findByIdAndDelete(user._id);
 
   // Respond
-  res.cookie('token', 'logout', { httpOnly: true, expires: new Date(Date.now()), signed: true });
+  clearAuthCookie(res);
   res.status(StatusCodes.NO_CONTENT).send();
 };
 
@@ -119,21 +121,21 @@ export const addVisualToCollection = async (req: AuthRequest, res: Response) => 
 
   // Validate if id is valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new BadRequestError('Invalid visualizer ID');
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
   }
 
   // Go to DB
   const visualizer = await Visualizer.findById(id);
 
   // Processing and go to DB
-  if (!visualizer) throw new NotFoundError('Visualizer not found');
+  if (!visualizer) throw new NotFoundError(API_ERROR_MESSAGES.VISUALIZER_NOT_FOUND);
 
   const alreadySaved = await UserVisual.findOne({
     userId: new mongoose.Types.ObjectId(req.user?.userId ?? ''),
     visualizerId: new mongoose.Types.ObjectId(id),
   });
 
-  if (alreadySaved) throw new BadRequestError('Visualizer already in collection');
+  if (alreadySaved) throw new BadRequestError(API_ERROR_MESSAGES.VISUALIZER_ALREADY_IN_COLLECTION);
 
   const userVisual = await UserVisual.create({
     userId: new mongoose.Types.ObjectId(req.user?.userId ?? ''),
@@ -151,7 +153,7 @@ export const removeVisualFromCollection = async (req: AuthRequest, res: Response
 
   // Validate if id is valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new BadRequestError('Invalid visualizer ID');
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
   }
 
   // Go to DB , find and remove
@@ -161,8 +163,8 @@ export const removeVisualFromCollection = async (req: AuthRequest, res: Response
   });
 
   // Process result
-  if (!userVisual) throw new NotFoundError('Visualizer not found in collection');
+  if (!userVisual) throw new NotFoundError(API_ERROR_MESSAGES.VISUALIZER_NOT_FOUND_IN_COLLECTION);
 
   // Respond
-  res.status(StatusCodes.OK).json({ msg: 'Removed from collection' });
+  res.status(StatusCodes.OK).json({ msg: API_SUCCESS_MESSAGES.REMOVED_FROM_COLLECTION });
 };

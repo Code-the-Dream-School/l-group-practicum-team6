@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getSavedVisuals, removeVisual, saveVisual } from '../api';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
+import { TOAST_MESSAGES } from '../constants/messages';
 
 type UseFavoriteVisualOptions = {
   enabled?: boolean;
@@ -61,10 +62,10 @@ export function useFavoriteVisual(
     try {
       if (wasFavorited) {
         await removeVisual(visualizerId);
-        toast.success('Visualizer removed from favorites');
+        toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
       } else {
         await saveVisual(visualizerId);
-        toast.success('Visualizer saved to favorites');
+        toast.success(TOAST_MESSAGES.VISUALIZER.SAVED_TO_FAVORITES);
       }
     } catch (error) {
       setIsFavorited(wasFavorited);
@@ -72,7 +73,9 @@ export function useFavoriteVisual(
       toast.error(
         getToastErrorMessage(
           error,
-          wasFavorited ? 'Unable to remove visualizer' : 'Unable to save visualizer'
+          wasFavorited
+            ? TOAST_MESSAGES.VISUALIZER.REMOVE_FAILED
+            : TOAST_MESSAGES.VISUALIZER.SAVE_FAILED
         )
       );
     }

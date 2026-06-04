@@ -10,3 +10,7 @@ export enum Routes {
   NOT_FOUND = '*',
   SETTINGS = '/settings',
 }
+
+export function buildVisualizerPath(id: string): string {
+  return Routes.VISUALIZER.replace(':id', encodeURIComponent(id));
+}

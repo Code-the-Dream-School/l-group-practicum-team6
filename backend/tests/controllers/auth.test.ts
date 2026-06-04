@@ -3,6 +3,7 @@ import { register, login, logout } from '../../src/controllers/auth';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import User from '../../src/models/User';
+import { clearAuthCookie } from '../../src/utils/jwt';
 
 vi.mock('../../src/models/User', () => ({
   default: {
@@ -13,6 +14,7 @@ vi.mock('../../src/models/User', () => ({
 
 vi.mock('../../src/utils/jwt', () => ({
   attachCookiesToResponse: vi.fn(),
+  clearAuthCookie: vi.fn(),
 }));
 
 const mockedUser = vi.mocked(User);
@@ -127,7 +129,7 @@ describe('Auth Controller', () => {
 
       await logout(req, res);
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-      expect(res.cookie).toHaveBeenCalledWith('token', 'logout', expect.any(Object));
+      expect(clearAuthCookie).toHaveBeenCalledWith(res);
       expect(res.json).toHaveBeenCalledWith({ msg: 'user logged out!' });
     });
   });

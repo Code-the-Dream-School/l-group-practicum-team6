@@ -1,5 +1,12 @@
 export { apiFetch, ApiError } from './client';
 
+export {
+  ApiEndpoints,
+  buildVisualizerDetailEndpoint,
+  buildVisualizerImageEndpoint,
+  buildSavedVisualEndpoint,
+} from './endpoints';
+
 export { getUser, login, register, logout } from './auth';
 
 export {

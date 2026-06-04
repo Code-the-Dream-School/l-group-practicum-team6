@@ -65,3 +65,7 @@ backend/public/previews/
 
 # Local seed data
 backend/src/seed/visualizers.seed.json
+
+# Playwright
+playwright-report/
+test-results/

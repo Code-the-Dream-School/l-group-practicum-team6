@@ -6,16 +6,17 @@ import User from '../models/User';
 import type { AuthRequest } from '../middleware/authentication';
 import { BadRequestError, NotFoundError } from '../errors';
 import { uploadBufferToGridFS, deleteGridFSFile, openGridFSDownloadStream } from '../utils/gridfs';
+import { API_ERROR_MESSAGES, GRIDFS_BUCKETS, IMAGE_OWNER_TYPES } from '../constants';
 
 export async function uploadUserImage(req: AuthRequest, res: Response) {
   if (!req.file) {
-    throw new BadRequestError('Please provide an image');
+    throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_IMAGE);
   }
 
   const userId = new mongoose.Types.ObjectId(req.user!.userId);
 
   const existingImage = await Image.findOne({
-    ownerType: 'user',
+    ownerType: IMAGE_OWNER_TYPES.USER,
     ownerId: userId,
   });
 
@@ -23,20 +24,20 @@ export async function uploadUserImage(req: AuthRequest, res: Response) {
     req.file.buffer,
     req.file.originalname,
     req.file.mimetype,
-    'images'
+    GRIDFS_BUCKETS.IMAGES
   );
 
   if (existingImage) {
-    await deleteGridFSFile(existingImage.fileId, 'images');
+    await deleteGridFSFile(existingImage.fileId, GRIDFS_BUCKETS.IMAGES);
   }
 
   const imageRecord = await Image.findOneAndUpdate(
     {
-      ownerType: 'user',
+      ownerType: IMAGE_OWNER_TYPES.USER,
       ownerId: userId,
     },
     {
-      ownerType: 'user',
+      ownerType: IMAGE_OWNER_TYPES.USER,
       ownerId: userId,
       fileId: newFileId,
       filename: req.file.originalname,
@@ -59,24 +60,22 @@ export async function uploadUserImage(req: AuthRequest, res: Response) {
 
 export async function getUserImage(req: Request, res: Response) {
   if (!mongoose.Types.ObjectId.isValid(String(req.params.userId))) {
-    throw new BadRequestError('Invalid user ID');
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_USER_ID);
   }
 
   const ownerId = new mongoose.Types.ObjectId(String(req.params.userId));
   const image = await Image.findOne({
-    ownerType: 'user',
+    ownerType: IMAGE_OWNER_TYPES.USER,
     ownerId,
   });
 
   if (!image) {
-    throw new NotFoundError('Image not found');
+    throw new NotFoundError(API_ERROR_MESSAGES.IMAGE_NOT_FOUND);
   }
 
   res.setHeader('Content-Type', image.contentType);
-  // User image can be replaced any time; short private cache only.
-  res.setHeader('Cache-Control', 'private, max-age=600');
 
-  const downloadStream = openGridFSDownloadStream(image.fileId, 'images');
+  const downloadStream = openGridFSDownloadStream(image.fileId, GRIDFS_BUCKETS.IMAGES);
   downloadStream.pipe(res);
 }
 
@@ -84,15 +83,15 @@ export async function deleteUserImage(req: AuthRequest, res: Response) {
   const userId = new mongoose.Types.ObjectId(req.user!.userId);
 
   const image = await Image.findOne({
-    ownerType: 'user',
+    ownerType: IMAGE_OWNER_TYPES.USER,
     ownerId: userId,
   });
 
   if (!image) {
-    throw new NotFoundError('Image not found');
+    throw new NotFoundError(API_ERROR_MESSAGES.IMAGE_NOT_FOUND);
   }
 
-  await deleteGridFSFile(image.fileId, 'images');
+  await deleteGridFSFile(image.fileId, GRIDFS_BUCKETS.IMAGES);
   await Image.deleteOne({ _id: image._id });
   await User.findByIdAndUpdate(userId, { $unset: { image: '' } });
 
@@ -101,21 +100,19 @@ export async function deleteUserImage(req: AuthRequest, res: Response) {
 
 export async function getVisualizerImage(req: Request, res: Response) {
   if (!mongoose.Types.ObjectId.isValid(String(req.params.visualizerId))) {
-    throw new BadRequestError('Invalid visualizer ID');
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
   }
   const image = await Image.findOne({
-    ownerType: 'visualizer',
+    ownerType: IMAGE_OWNER_TYPES.VISUALIZER,
     ownerId: new mongoose.Types.ObjectId(String(req.params.visualizerId)),
   });
 
   if (!image) {
-    throw new NotFoundError('Image not found');
+    throw new NotFoundError(API_ERROR_MESSAGES.IMAGE_NOT_FOUND);
   }
 
   res.setHeader('Content-Type', image.contentType);
-  // Visualizer images never change after seeding; cache for one year.
-  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
 
-  const downloadStream = openGridFSDownloadStream(image.fileId, 'images');
+  const downloadStream = openGridFSDownloadStream(image.fileId, GRIDFS_BUCKETS.IMAGES);
   downloadStream.pipe(res);
 }
