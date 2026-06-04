@@ -1,6 +1,7 @@
-import { Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { register, login, logout } from '../controllers/auth';
+import { TooManyRequestsError } from '../errors';
 import { RATE_LIMIT } from '../constants';
 
 const router = Router();
@@ -12,8 +13,8 @@ const authLimiter = rateLimit({
     process.env.NODE_ENV === 'production'
       ? RATE_LIMIT.AUTH_MAX_PRODUCTION
       : RATE_LIMIT.AUTH_MAX_NON_PRODUCTION,
-  message: {
-    message: RATE_LIMIT.AUTH_MESSAGE,
+  handler: (_req: Request, _res: Response, next: NextFunction) => {
+    next(new TooManyRequestsError(RATE_LIMIT.AUTH_MESSAGE));
   },
   standardHeaders: true,
   legacyHeaders: false,
