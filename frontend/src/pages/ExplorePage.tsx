@@ -4,7 +4,6 @@ import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
-  buildVisualizerImageEndpoint,
   getSavedVisuals,
   getVisualizerTags,
   listVisualizers,
@@ -16,7 +15,7 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import type { VisualizerListItem } from '@sonix/shared';
+import { type VisualizerListItem, buildVisualizerImageEndpoint } from '@sonix/shared';
 
 const PAGE_SIZE = 8;
 const SEARCH_DEBOUNCE_MS = 400;

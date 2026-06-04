@@ -48,12 +48,12 @@ export enum ApiEndpoints {
   AUTH_LOGOUT = '/api/v1/auth/logout',
 
   // User Profile
-  USER = '/api/v1/users/user',
-  USER_PASSWORD = '/api/v1/users/user/password',
+  CURRENT_USER = '/api/v1/users/current',
+  CURRENT_USER_PASSWORD = '/api/v1/users/current/password',
 
   // User Visuals Collection
-  USER_VISUALS = '/api/v1/users/current/visuals',
-  USER_VISUALS_BY_ID = '/api/v1/users/current/visuals/:id',
+  CURRENT_USER_VISUALS = '/api/v1/users/current/visuals',
+  CURRENT_USER_VISUALS_BY_ID = '/api/v1/users/current/visuals/:id',
 
   // Visualizer Catalog
   VISUALIZERS = '/api/v1/visualizers',
@@ -66,15 +66,15 @@ export enum ApiEndpoints {
   ADMIN_VISUALIZERS_BY_ID = '/api/v1/admin/visualizers/:id',
 
   // Images
-  IMAGES_USER = '/api/v1/images/users/user',
-  IMAGES_USER_BY_ID = '/api/v1/images/users/:id',
-  IMAGES_VISUALIZER_BY_ID = '/api/v1/images/visualizers/:id',
+  CURRENT_USER_IMAGE = '/api/v1/images/users/current',
+  USER_IMAGE_BY_ID = '/api/v1/images/users/:id',
+  VISUALIZER_IMAGES_BY_ID = '/api/v1/images/visualizers/:id',
 }
 
 // Dynamic endpoint builders
 
 export function buildUserVisualEndpoint(id: string): string {
-  return ApiEndpoints.USER_VISUALS_BY_ID.replace(':id', encodeURIComponent(id));
+  return ApiEndpoints.CURRENT_USER_VISUALS_BY_ID.replace(':id', encodeURIComponent(id));
 }
 
 export function buildVisualizerEndpoint(id: string): string {
@@ -82,11 +82,11 @@ export function buildVisualizerEndpoint(id: string): string {
 }
 
 export function buildUserImageEndpoint(id: string): string {
-  return ApiEndpoints.IMAGES_USER_BY_ID.replace(':id', encodeURIComponent(id));
+  return ApiEndpoints.USER_IMAGE_BY_ID.replace(':id', encodeURIComponent(id));
 }
 
 export function buildVisualizerImageEndpoint(id: string): string {
-  return ApiEndpoints.IMAGES_VISUALIZER_BY_ID.replace(':id', encodeURIComponent(id));
+  return ApiEndpoints.VISUALIZER_IMAGES_BY_ID.replace(':id', encodeURIComponent(id));
 }
 
 export function buildAdminVisualizerEndpoint(id: string): string {

@@ -1,6 +1,5 @@
 import path from 'path';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -14,15 +13,6 @@ import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { message: 'Too many requests, please try again later.' },
-});
-app.use(limiter);
 
 app.use(express.json());
 app.use(helmet());

@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function fetchUser() {
       try {
-        const res = await fetch(ApiEndpoints.USER, {
+        const res = await fetch(ApiEndpoints.CURRENT_USER, {
           credentials: 'include',
         });
         if (!res.ok) {
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateProfile = useCallback(async (payload: { name?: string; email?: string }) => {
-    const res = await fetch(ApiEndpoints.USER, {
+    const res = await fetch(ApiEndpoints.CURRENT_USER, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
