@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
+import { Routes } from '../routes/paths';
+import { TOAST_MESSAGES } from '../constants/messages';
 
 import eyeIcon from '../assets/icons/eye.svg';
 import eyeOffIcon from '../assets/icons/eyeOff.svg';
@@ -23,17 +25,17 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error('Please fill in email and password');
+      toast.error(TOAST_MESSAGES.AUTH.LOGIN_MISSING_FIELDS);
       return;
     }
 
     setSubmitting(true);
     try {
       await login(email.trim(), password);
-      toast.success('Welcome back!');
-      navigate('/explore', { replace: true });
+      toast.success(TOAST_MESSAGES.AUTH.LOGIN_SUCCESS);
+      navigate(Routes.EXPLORE, { replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Login error');
+      toast.error(err instanceof Error ? err.message : TOAST_MESSAGES.AUTH.LOGIN_FALLBACK_ERROR);
     } finally {
       setSubmitting(false);
     }
@@ -118,7 +120,7 @@ export default function LoginPage() {
 
           <div className="flex justify-center items-center gap-1">
             <p className="text-sm text-text-secondary">Don't have an account?</p>
-            <Link to="/signup" className="text-sm text-primary">
+            <Link to={Routes.SIGNUP} className="text-sm text-primary">
               Sign Up
             </Link>
           </div>

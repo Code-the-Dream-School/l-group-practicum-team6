@@ -4,6 +4,7 @@ import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
 import {
+  buildVisualizerImageEndpoint,
   getSavedVisuals,
   getVisualizerTags,
   listVisualizers,
@@ -15,7 +16,8 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { type VisualizerListItem, buildVisualizerImageEndpoint } from '@sonix/shared';
+import type { VisualizerListItem } from '@sonix/shared';
+import { TOAST_MESSAGES } from '../constants/messages';
 
 const PAGE_SIZE = 8;
 const SEARCH_DEBOUNCE_MS = 400;
@@ -91,7 +93,7 @@ export default function ExplorePage() {
         if (cancelled) return;
 
         setSavedVisualIds([]);
-        toast.error(getToastErrorMessage(error, 'Unable to load saved visualizers'));
+        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
       }
     }
 
@@ -124,7 +126,7 @@ export default function ExplorePage() {
         if (cancelled) return;
 
         setVisuals([]);
-        toast.error(getToastErrorMessage(error, 'Unable to load visualizers'));
+        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_FAILED));
       } finally {
         if (!cancelled) {
           setIsLoading(false);
@@ -151,10 +153,10 @@ export default function ExplorePage() {
     try {
       if (wasSaved) {
         await removeVisual(id);
-        toast.success('Visualizer removed from favorites.');
+        toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
       } else {
         await saveVisual(id);
-        toast.success('Visualizer saved to favorites.');
+        toast.success(TOAST_MESSAGES.VISUALIZER.SAVED_TO_FAVORITES);
       }
     } catch (error) {
       setSavedVisualIds((currentIds) =>
@@ -164,7 +166,7 @@ export default function ExplorePage() {
       toast.error(
         getToastErrorMessage(
           error,
-          wasSaved ? 'Unable to remove visualizer' : 'Unable to save visualizer'
+          wasSaved ? TOAST_MESSAGES.VISUALIZER.REMOVE_FAILED : TOAST_MESSAGES.VISUALIZER.SAVE_FAILED
         )
       );
     }

@@ -5,6 +5,8 @@ import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
+import { Routes } from '../routes/paths';
+import { TOAST_MESSAGES } from '../constants/messages';
 
 import eyeIcon from '../assets/icons/eye.svg';
 import eyeOffIcon from '../assets/icons/eyeOff.svg';
@@ -25,16 +27,16 @@ export default function SignUpPage() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+      toast.error(TOAST_MESSAGES.AUTH.SIGNUP_PASSWORDS_MISMATCH);
       return;
     }
     if (password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+      toast.error(TOAST_MESSAGES.AUTH.SIGNUP_PASSWORD_MIN_LENGTH);
       return;
     }
 
     if (!name || !email) {
-      toast.error('Please fill in name and email');
+      toast.error(TOAST_MESSAGES.AUTH.SIGNUP_MISSING_FIELDS);
       return;
     }
 
@@ -42,10 +44,10 @@ export default function SignUpPage() {
 
     try {
       await register(name.trim(), email.trim(), password); // trim user input
-      toast.success('Account created successfully!');
-      navigate('/explore', { replace: true });
+      toast.success(TOAST_MESSAGES.AUTH.SIGNUP_SUCCESS);
+      navigate(Routes.EXPLORE, { replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Registration error');
+      toast.error(err instanceof Error ? err.message : TOAST_MESSAGES.AUTH.SIGNUP_FALLBACK_ERROR);
     } finally {
       setSubmitting(false);
     }
@@ -179,7 +181,7 @@ export default function SignUpPage() {
 
           <div className="flex items-center justify-center gap-1">
             <p className="text-sm text-text-secondary">Already have an account?</p>
-            <Link to="/login" className="text-sm text-primary">
+            <Link to={Routes.LOGIN} className="text-sm text-primary">
               Log In
             </Link>
           </div>

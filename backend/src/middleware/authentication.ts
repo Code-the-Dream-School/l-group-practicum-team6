@@ -1,6 +1,7 @@
 import { Request as ExpressRequest, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { UnauthenticatedError } from '../errors';
+import { API_ERROR_MESSAGES, AUTH_CONSTANTS } from '../constants';
 
 export interface UserPayload {
   userId: string;
@@ -13,10 +14,10 @@ export interface AuthRequest extends ExpressRequest {
 }
 
 export const authenticateUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.signedCookies.token;
+  const token = req.signedCookies[AUTH_CONSTANTS.COOKIE_NAME];
 
   if (!token) {
-    throw new UnauthenticatedError('Authentication Invalid');
+    throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
   }
 
   const secret = process.env.JWT_SECRET;
@@ -35,6 +36,6 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
 
     next();
   } catch {
-    throw new UnauthenticatedError('Authentication Invalid');
+    throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
   }
 };

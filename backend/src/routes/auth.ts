@@ -1,15 +1,19 @@
 import { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { register, login, logout } from '../controllers/auth';
+import { RATE_LIMIT } from '../constants';
 
 const router = Router();
 
-// Limits, 50 req per 1 min for one IP in prod, 1000 in dev
+// Limits, 20 req per 15 min for one IP in prod, 1000 in dev
 const authLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 50 : 1000,
+  windowMs: RATE_LIMIT.WINDOW_MS,
+  max:
+    process.env.NODE_ENV === 'production'
+      ? RATE_LIMIT.AUTH_MAX_PRODUCTION
+      : RATE_LIMIT.AUTH_MAX_NON_PRODUCTION,
   message: {
-    message: 'Too many requests from this IP, please try again after 1 minute',
+    message: RATE_LIMIT.AUTH_MESSAGE,
   },
   standardHeaders: true,
   legacyHeaders: false,

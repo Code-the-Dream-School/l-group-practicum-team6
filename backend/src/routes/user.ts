@@ -16,10 +16,10 @@ const router = Router();
 router.use(authenticateUser);
 
 // User profile , get, edit, remove
-router.route('/current').get(showCurrentUser).patch(updateUser).delete(deleteUser);
+router.route('/user').get(showCurrentUser).patch(updateUser).delete(deleteUser);
 
 // Change password
-router.route('/current/password').patch(updateUserPassword);
+router.route('/user/password').patch(updateUserPassword);
 
 // List of visuals
 router.route('/current/visuals').get(getUserVisuals);

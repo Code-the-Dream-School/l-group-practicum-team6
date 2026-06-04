@@ -70,7 +70,7 @@ describe('useFavoriteVisual', () => {
 
     expect(saveVisual).toHaveBeenCalledWith('visual-2');
     expect(result.current.isFavorited).toBe(true);
-    expect(toast.success).toHaveBeenCalledWith('Visualizer saved to favorites');
+    expect(toast.success).toHaveBeenCalledWith('Visualizer saved to favorites.');
   });
 
   it('removes a visual when toggled off', async () => {
@@ -86,7 +86,7 @@ describe('useFavoriteVisual', () => {
 
     expect(removeVisual).toHaveBeenCalledWith('visual-1');
     expect(result.current.isFavorited).toBe(false);
-    expect(toast.success).toHaveBeenCalledWith('Visualizer removed from favorites');
+    expect(toast.success).toHaveBeenCalledWith('Visualizer removed from favorites.');
   });
 
   it('rolls back when the API call fails', async () => {

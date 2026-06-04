@@ -3,8 +3,9 @@ import { GridFSBucketReadStream, ObjectId } from 'mongodb';
 import { validateImageSize, validateImageType } from '../utils/imageValidation';
 
 import { uploadBufferToGridFS, deleteGridFSFile, openGridFSDownloadStream } from '../utils/gridfs';
+import { GRIDFS_BUCKETS } from '../constants';
 
-const IMAGE_BUCKET_NAME = 'images';
+const IMAGE_BUCKET_NAME = GRIDFS_BUCKETS.IMAGES;
 
 export function uploadImage(
   buffer: Buffer,
