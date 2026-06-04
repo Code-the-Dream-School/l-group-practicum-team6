@@ -4,6 +4,8 @@ import { BadRequestError } from '../../src/errors/BadRequestError';
 import { NotFoundError } from '../../src/errors/NotFoundError';
 import { UnauthenticatedError } from '../../src/errors/UnauthenticatedError';
 import { ForbiddenError } from '../../src/errors/ForbiddenError';
+import { TooManyRequestsError } from '../../src/errors/TooManyRequestsError';
+import { RATE_LIMIT } from '../../src/constants';
 
 describe('BadRequestError', () => {
   it('extends CustomAPIError and uses status 400', () => {
@@ -70,5 +72,22 @@ describe('ForbiddenError', () => {
 
     expect(error.message).toBe('Access denied');
     expect(error.statusCode).toBe(403);
+  });
+});
+
+describe('TooManyRequestsError', () => {
+  it('extends CustomAPIError and uses status 429', () => {
+    const error = new TooManyRequestsError();
+
+    expect(error).toBeInstanceOf(CustomAPIError);
+    expect(error.statusCode).toBe(429);
+    expect(error.message).toBe(RATE_LIMIT.GLOBAL_MESSAGE);
+  });
+
+  it('accepts a custom message', () => {
+    const error = new TooManyRequestsError('Too many requests from this IP');
+
+    expect(error.message).toBe('Too many requests from this IP');
+    expect(error.statusCode).toBe(429);
   });
 });
