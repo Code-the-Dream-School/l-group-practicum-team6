@@ -41,13 +41,7 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
     throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
   }
 };
-export const adminOnly = (req: AuthRequest, _res: Response, next: NextFunction) => {
-  if (!req.user || !req.user.isAdmin) {
-    throw new ForbiddenError('Admin access required');
-  }
 
-  next();
-};
 export const adminOnly = (req: AuthRequest, _res: Response, next: NextFunction) => {
   if (!req.user || !req.user.isAdmin) {
     throw new ForbiddenError('Admin access required');
