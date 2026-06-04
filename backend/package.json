@@ -13,7 +13,8 @@
     "test:related": "vitest related --run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "seed": "ts-node src/scripts/seedVisualizers.ts"
+    "seed": "ts-node src/scripts/seedVisualizers.ts",
+    "seed:e2e": "ts-node src/scripts/seedE2E.ts"
   },
   "dependencies": {
     "@sonix/shared": "*",
