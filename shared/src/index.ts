@@ -134,6 +134,16 @@ export const VISUALIZER_PAGINATION = {
   MAX_LIMIT: 50,
 } as const;
 
+export const LABELS = {
+  EXPLORE: 'Explore',
+  MY_VISUALS: 'My Visuals',
+  SETTINGS: 'Settings',
+  LOG_OUT: 'Log Out',
+  LOG_IN: 'Log In',
+  SIGN_UP: 'Sign Up',
+  SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
+} as const;
+
 export const TOAST_MESSAGES = {
   AUTH: {
     LOGIN_SUCCESS: 'Welcome back!',

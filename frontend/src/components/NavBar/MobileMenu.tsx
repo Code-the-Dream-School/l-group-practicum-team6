@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import type { User } from '@sonix/shared';
 
+import { LABELS } from '@sonix/shared';
 import { Routes } from '../../routes/paths';
 import { AuthLinks } from './AuthLinks';
 import { Avatar } from './Avatar';
@@ -21,7 +22,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
               `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
             }
           >
-            Explore
+            {LABELS.EXPLORE}
           </NavLink>
           <NavLink
             to={Routes.MY_VISUALS}
@@ -29,7 +30,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
               `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
             }
           >
-            My Visuals
+            {LABELS.MY_VISUALS}
           </NavLink>
           <div className="mt-3 flex items-center gap-3 border-t border-primary-border pt-3">
             <Avatar user={user} />
@@ -39,14 +40,14 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
             to={Routes.SETTINGS}
             className="block w-full text-left py-3 text-base text-text-primary"
           >
-            Settings
+            {LABELS.SETTINGS}
           </NavLink>
           <button
             type="button"
             onClick={() => onLogout()}
             className="block w-full text-left py-3 text-base text-text-primary"
           >
-            Log Out
+            {LABELS.LOG_OUT}
           </button>
         </>
       ) : (

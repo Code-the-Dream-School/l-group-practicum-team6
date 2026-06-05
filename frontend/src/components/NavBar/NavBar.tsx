@@ -6,6 +6,8 @@ import { useAuth } from '../../context/useAuth';
 import { useToast } from '../../context/useToast';
 import { Routes } from '../../routes/paths';
 
+import { LABELS } from '@sonix/shared';
+
 import { AuthLinks } from './AuthLinks';
 import { HamburgerIcon } from './HamburgerIcon';
 import { MobileMenu } from './MobileMenu';
@@ -63,7 +65,7 @@ const NavBar = () => {
                     : 'text-sm font-medium text-text-secondary hover:text-text-primary'
                 }
               >
-                Explore
+                {LABELS.EXPLORE}
               </NavLink>
               <NavLink
                 to={Routes.MY_VISUALS}
@@ -73,7 +75,7 @@ const NavBar = () => {
                     : 'text-sm font-medium text-text-secondary hover:text-text-primary'
                 }
               >
-                My Visuals
+                {LABELS.MY_VISUALS}
               </NavLink>
             </nav>
           )}

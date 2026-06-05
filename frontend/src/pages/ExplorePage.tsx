@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import { LABELS } from '@sonix/shared';
 import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
@@ -190,7 +191,7 @@ export default function ExplorePage() {
 
       <main className="flex-1 px-6 py-10 text-white">
         <section className="mx-auto max-w-7xl space-y-8">
-          <h1 className="text-3xl font-bold text-text-primary">Explore Visuals</h1>
+          <h1 className="text-3xl font-bold text-text-primary">{LABELS.EXPLORE}</h1>
 
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
             <label className="relative w-full shrink-0 sm:w-auto sm:min-w-[220px]">
