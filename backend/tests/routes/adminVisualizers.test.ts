@@ -1,9 +1,35 @@
 import request from 'supertest';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as jwt from 'jsonwebtoken';
 import signature from 'cookie-signature';
 
+vi.mock('../../src/models/User', () => ({
+  default: {
+    findById: vi.fn(),
+  },
+}));
+
+vi.mock('../../src/models/Visualizer', () => ({
+  default: {
+    create: vi.fn(),
+    findById: vi.fn(),
+    findByIdAndUpdate: vi.fn(),
+    findByIdAndDelete: vi.fn(),
+  },
+}));
+
+import User from '../../src/models/User';
+import Visualizer from '../../src/models/Visualizer';
+
 let app: typeof import('../../src/app').default;
+
+const ADMIN_USER_ID = '507f1f77bcf86cd799439011';
+
+function makeFindByIdChain(result: { isAdmin: boolean } | null) {
+  const lean = vi.fn().mockResolvedValue(result);
+  const select = vi.fn().mockReturnValue({ lean });
+  return { select };
+}
 
 describe('Admin visualizer routes', () => {
   beforeAll(async () => {
@@ -14,11 +40,15 @@ describe('Admin visualizer routes', () => {
     app = (await import('../../src/app')).default;
   });
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   function buildAuthCookie(isAdmin: boolean) {
     const secret = process.env.JWT_SECRET as string;
     const token = jwt.sign(
       {
-        userId: '507f1f77bcf86cd799439011',
+        userId: ADMIN_USER_ID,
         name: 'Test User',
         email: 'test@example.com',
         isAdmin,
@@ -32,6 +62,8 @@ describe('Admin visualizer routes', () => {
   }
 
   it('returns 403 for non-admin authenticated users on all admin visualizer routes', async () => {
+    vi.mocked(User.findById).mockReturnValue(makeFindByIdChain(null) as any);
+
     const cookie = buildAuthCookie(false);
 
     const createRes = await request(app)
@@ -60,6 +92,8 @@ describe('Admin visualizer routes', () => {
   });
 
   it('returns 400 when creating a visualizer without glsl', async () => {
+    vi.mocked(User.findById).mockReturnValue(makeFindByIdChain({ isAdmin: true }) as any);
+
     const cookie = buildAuthCookie(true);
 
     const res = await request(app)
