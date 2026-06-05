@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Footer from '../components/Footer';
@@ -28,6 +29,8 @@ const bars = [
 ];
 
 export default function NotFoundPage() {
+  const [showTeam, setShowTeam] = useState(false);
+
   return (
     <div className="flex min-h-screen flex-col justify-between bg-void text-text-primary">
       <NavBar />
@@ -51,7 +54,10 @@ export default function NotFoundPage() {
         </div>
 
         <section className="relative z-10 max-w-xl text-center">
-          <p className="animate-heartbeat bg-gradient-to-r from-[#f5ecff] via-[#d8b4fe] to-[#7dd3fc] bg-clip-text text-8xl font-extrabold tracking-tight text-transparent drop-shadow-[0_0_35px_rgba(192,132,252,0.35)] md:text-9xl">
+          <p
+            onClick={() => setShowTeam(!showTeam)}
+            className="animate-heartbeat cursor-pointer bg-linear-to-r from-[#f5ecff] via-[#d8b4fe] to-[#7dd3fc] bg-clip-text text-8xl font-extrabold tracking-tight text-transparent drop-shadow-[0_0_35px_rgba(192,132,252,0.35)] transition-transform hover:scale-105 md:text-9xl"
+          >
             404
           </p>
 
@@ -94,6 +100,53 @@ export default function NotFoundPage() {
           </div>
         </section>
       </main>
+
+      {showTeam && (
+        <div className="relative z-10 animate-fadeIn px-6 py-4 text-center">
+          <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest">
+            Team
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            {[
+              { name: 'Almira Koshkina', handle: 'AlmiraKoshkina' },
+              { name: 'Dinar Ibragimov', handle: 'Alarlar' },
+              { name: 'Joe Siburov', handle: 'shweps13' },
+              { name: 'Lily Meyer', handle: 'Lili-Kiwi' },
+              { name: 'Olesia Mironenko', handle: 'olesiamironenko' },
+            ].map((member) => (
+              <a
+                key={member.handle}
+                href={`https://github.com/${member.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
+              >
+                {member.name}
+              </a>
+            ))}
+          </div>
+
+          <p className="mt-4 text-xs font-semibold text-text-secondary uppercase tracking-widest">
+            Mentors
+          </p>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            {[
+              { name: 'Sergey Sherstobitov', handle: 'in43sh' },
+              { name: 'Serhii Smyk', handle: 'smykserhi' },
+            ].map((member) => (
+              <a
+                key={member.handle}
+                href={`https://github.com/${member.handle}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
+              >
+                {member.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
