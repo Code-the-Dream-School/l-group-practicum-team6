@@ -3,7 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 import { UnauthenticatedError, BadRequestError } from '../errors';
 import { attachCookiesToResponse, clearAuthCookie } from '../utils/jwt';
 import User from '../models/User';
-import { API_ERROR_MESSAGES, API_SUCCESS_MESSAGES } from '../constants';
+import { API_ERROR_MESSAGES } from '@sonix/shared';
+import { API_SUCCESS_MESSAGES } from '@sonix/shared';
 
 // Register a new user
 export const register = async (req: Request, res: Response) => {

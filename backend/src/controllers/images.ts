@@ -6,7 +6,8 @@ import User from '../models/User';
 import type { AuthRequest } from '../middleware/authentication';
 import { BadRequestError, NotFoundError } from '../errors';
 import { uploadBufferToGridFS, deleteGridFSFile, openGridFSDownloadStream } from '../utils/gridfs';
-import { API_ERROR_MESSAGES, GRIDFS_BUCKETS, IMAGE_OWNER_TYPES } from '../constants';
+import { API_ERROR_MESSAGES } from '@sonix/shared';
+import { GRIDFS_BUCKETS, IMAGE_OWNER_TYPES } from '../constants';
 
 export async function uploadUserImage(req: AuthRequest, res: Response) {
   if (!req.file) {

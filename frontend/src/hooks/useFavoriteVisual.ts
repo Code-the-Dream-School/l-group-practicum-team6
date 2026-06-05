@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { getSavedVisuals, removeVisual, saveVisual } from '../api';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { TOAST_MESSAGES } from '../constants/messages';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 type UseFavoriteVisualOptions = {
   enabled?: boolean;

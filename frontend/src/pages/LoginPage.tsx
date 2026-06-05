@@ -6,7 +6,7 @@ import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { Routes } from '../routes/paths';
-import { TOAST_MESSAGES } from '../constants/messages';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 import eyeIcon from '../assets/icons/eye.svg';
 import eyeOffIcon from '../assets/icons/eyeOff.svg';
