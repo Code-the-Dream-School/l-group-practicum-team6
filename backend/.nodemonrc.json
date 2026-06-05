@@ -1,0 +1,7 @@
+{
+  "watch": ["src", "../shared/src"],
+  "ext": "ts,json",
+  "ignore": ["node_modules", "dist"],
+  "delay": 500,
+  "exec": "npm run build -w shared && ts-node src/server.ts"
+}

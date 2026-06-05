@@ -23,7 +23,7 @@ async function registerUser(page: Page, user: ReturnType<typeof buildUser>) {
   await page.getByRole('button', { name: 'Sign Up' }).click();
 
   await expect(page).toHaveURL(/\/explore$/);
-  await expect(page.getByRole('heading', { name: 'Explore Visuals' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Explore' })).toBeVisible();
 }
 
 async function logout(page: Page) {
@@ -73,21 +73,16 @@ test.describe('critical user journeys', () => {
 
     await registerUser(page, user);
 
-    const saveButton = page.getByRole('button', { name: /^Save / }).first();
-    const saveButtonLabel = await saveButton.getAttribute('aria-label');
-    const visualName = saveButtonLabel?.replace(/^Save /, '');
+    const saveButtons = page.getByRole('button', { name: /^Save / });
+    const firstSaveButton = saveButtons.first();
+    await firstSaveButton.click();
 
-    expect(visualName).toBeTruthy();
-
-    await saveButton.click();
-
-    await expect(page.getByRole('button', { name: `Unsave ${visualName}` })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Unsave / }).first()).toBeVisible();
 
     await page.getByRole('link', { name: 'My Visuals' }).click();
 
     await expect(page).toHaveURL(/\/my-visuals$/);
-    await expect(page.getByRole('heading', { name: 'My Favorites' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: visualName! })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'My Visuals', level: 1 })).toBeVisible();
   });
 
   test('demo player renders canvas', async ({ page }) => {

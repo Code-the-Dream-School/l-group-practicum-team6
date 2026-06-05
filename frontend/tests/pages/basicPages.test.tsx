@@ -113,7 +113,7 @@ describe('basic pages', () => {
 
     renderWithRouter(<ExplorePage />);
 
-    expect(screen.getByRole('heading', { name: /Explore Visuals/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^Explore$/i })).toBeInTheDocument();
   });
 
   it('renders DemoPlayerPage', async () => {
@@ -171,7 +171,7 @@ describe('basic pages', () => {
   it('renders MyVisualsPage', () => {
     renderWithRouter(<MyVisualsPage />);
 
-    expect(screen.getByRole('heading', { name: /My Favorites/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /My Visuals/i })).toBeInTheDocument();
   });
 
   it('renders NotFoundPage', () => {

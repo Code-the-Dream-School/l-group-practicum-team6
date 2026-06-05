@@ -8,7 +8,7 @@ import type { SavedVisual } from '../api/users';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { buildVisualizerPath, Routes } from '../routes/paths';
-import { TOAST_MESSAGES } from '@sonix/shared';
+import { LABELS, TOAST_MESSAGES } from '@sonix/shared';
 
 type SortOption = 'recent' | 'az' | 'za';
 
@@ -75,7 +75,7 @@ export default function MyVisualsPage() {
         <div className="w-full max-w-4xl">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-xl font-semibold tracking-tight">My Favorites</h1>
+              <h1 className="text-xl font-semibold tracking-tight">{LABELS.MY_VISUALS}</h1>
             </div>
 
             <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
