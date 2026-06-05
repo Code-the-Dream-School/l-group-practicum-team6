@@ -26,7 +26,7 @@ import {
   buildSavedVisualEndpoint,
   buildVisualizerImageEndpoint,
 } from '../../src/api';
-import { ApiEndpoints } from '@sonix/shared';
+import { API_ROUTES } from '@sonix/shared';
 
 const mockedApiFetch = vi.mocked(apiFetch);
 
@@ -38,13 +38,13 @@ describe('auth api', () => {
   it('getUser calls correct endpoint', () => {
     getUser();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER);
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.USER);
   });
 
   it('login posts credentials', () => {
     login('test@example.com', 'password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_LOGIN, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.AUTH_LOGIN, {
       method: 'POST',
       body: JSON.stringify({
         email: 'test@example.com',
@@ -56,7 +56,7 @@ describe('auth api', () => {
   it('register posts user data', () => {
     register('John', 'test@example.com', 'password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_REGISTER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.AUTH_REGISTER, {
       method: 'POST',
       body: JSON.stringify({
         name: 'John',
@@ -69,7 +69,7 @@ describe('auth api', () => {
   it('logout posts to logout endpoint', () => {
     logout();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.AUTH_LOGOUT, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.AUTH_LOGOUT, {
       method: 'POST',
     });
   });
@@ -79,13 +79,13 @@ describe('visualizers api', () => {
   it('listVisualizers calls base endpoint without params', () => {
     listVisualizers();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS);
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.VISUALIZERS);
   });
 
   it('listVisualizers skips undefined params', () => {
     listVisualizers({ search: 'wave', page: undefined, limit: 10 });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(`${ApiEndpoints.VISUALIZERS}?search=wave&limit=10`);
+    expect(mockedApiFetch).toHaveBeenCalledWith(`${API_ROUTES.VISUALIZERS}?search=wave&limit=10`);
   });
 
   it('listVisualizers returns base endpoint when all params are undefined', () => {
@@ -95,21 +95,21 @@ describe('visualizers api', () => {
       limit: undefined,
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS);
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.VISUALIZERS);
   });
 
   it('listVisualizers includes query params', () => {
     listVisualizers({ search: 'wave', page: 1, limit: 10 });
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      `${ApiEndpoints.VISUALIZERS}?search=wave&page=1&limit=10`
+      `${API_ROUTES.VISUALIZERS}?search=wave&page=1&limit=10`
     );
   });
 
   it('getDemoVisualizer calls demo endpoint', () => {
     getDemoVisualizer();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.VISUALIZERS_DEMO);
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.VISUALIZERS_DEMO);
   });
 
   it('getVisualizer calls visualizer by id endpoint', () => {
@@ -123,7 +123,7 @@ describe('users api', () => {
   it('updateProfile patches profile data', () => {
     updateProfile({ name: 'Bob' });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.USER, {
       method: 'PATCH',
       body: JSON.stringify({ name: 'Bob' }),
     });
@@ -135,7 +135,7 @@ describe('users api', () => {
       newPassword: 'newpass',
     });
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_PASSWORD, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.USER_PASSWORD, {
       method: 'PATCH',
       body: JSON.stringify({
         currentPassword: 'oldpass',
@@ -147,7 +147,7 @@ describe('users api', () => {
   it('deleteAccount deletes account with password confirmation', () => {
     deleteAccount('password123');
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.USER, {
       method: 'DELETE',
       body: JSON.stringify({ password: 'password123' }),
     });
@@ -156,7 +156,7 @@ describe('users api', () => {
   it('getSavedVisuals calls saved visuals endpoint', () => {
     getSavedVisuals();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.USER_VISUALS);
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.USER_VISUALS);
   });
 
   it('saveVisual posts visual id', () => {
@@ -183,7 +183,7 @@ describe('images api', () => {
     uploadAvatar(file);
 
     expect(mockedApiFetch).toHaveBeenCalledWith(
-      ApiEndpoints.IMAGES_USER,
+      API_ROUTES.IMAGES_USER,
       expect.objectContaining({
         method: 'POST',
         body: expect.any(FormData),
@@ -194,7 +194,7 @@ describe('images api', () => {
   it('deleteAvatar deletes avatar', () => {
     deleteAvatar();
 
-    expect(mockedApiFetch).toHaveBeenCalledWith(ApiEndpoints.IMAGES_USER, {
+    expect(mockedApiFetch).toHaveBeenCalledWith(API_ROUTES.IMAGES_USER, {
       method: 'DELETE',
     });
   });

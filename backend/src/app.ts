@@ -11,7 +11,7 @@ import imageRouter from './routes/images';
 import adminVisualizerRouter from './routes/adminVisualizers';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
-import { API_ROUTES } from './constants';
+import { API_ROUTES } from '@sonix/shared';
 
 const app = express();
 
@@ -44,7 +44,7 @@ app.use(API_ROUTES.VISUALIZERS, visualizerRouter);
 // Image routes - upload and retrieval
 app.use(API_ROUTES.IMAGES, imageRouter);
 // Admin visualizer management routes
-app.use('/api/v1/admin/visualizers', adminVisualizerRouter);
+app.use(API_ROUTES.ADMIN_VISUALIZERS, adminVisualizerRouter);
 // Serve built SPA: static assets first, then send index.html for any
 // non-/api GET so client-side routes (e.g. /login) resolve on refresh.
 const clientDist = path.resolve(__dirname, '../../frontend/dist');

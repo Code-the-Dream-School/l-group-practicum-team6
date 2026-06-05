@@ -70,7 +70,7 @@ import LandingPage from '../../src/pages/LandingPage';
 import MyVisualsPage from '../../src/pages/MyVisualsPage';
 import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
-import { Routes as RoutePaths } from '../../src/routes/paths';
+import { ROUTES as RoutePaths } from '@sonix/shared';
 import { useAuth } from '../../src/context/useAuth';
 
 function renderWithRouter(ui: React.ReactElement) {

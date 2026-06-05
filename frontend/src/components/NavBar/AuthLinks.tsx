@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { Routes } from '../../routes/paths';
+import { ROUTES } from '@sonix/shared';
 
 type AuthLinksProps = {
   variant?: 'default' | 'demo-player';
@@ -11,7 +11,7 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
   if (variant === 'demo-player') {
     return (
       <Link
-        to={Routes.SIGNUP}
+        to={ROUTES.SIGNUP}
         className={stacked ? 'btn-primary justify-center text-center' : 'btn-primary'}
       >
         Sign Up to unlock all visualizers
@@ -22,10 +22,10 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
   if (stacked) {
     return (
       <>
-        <Link to={Routes.LOGIN} className="btn-ghost justify-center">
+        <Link to={ROUTES.LOGIN} className="btn-ghost justify-center">
           Log In
         </Link>
-        <Link to={Routes.SIGNUP} className="btn-primary justify-center">
+        <Link to={ROUTES.SIGNUP} className="btn-primary justify-center">
           Sign Up
         </Link>
       </>
@@ -34,10 +34,10 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
 
   return (
     <>
-      <Link to={Routes.LOGIN} className="btn-ghost">
+      <Link to={ROUTES.LOGIN} className="btn-ghost">
         Log In
       </Link>
-      <Link to={Routes.SIGNUP} className="btn-primary">
+      <Link to={ROUTES.SIGNUP} className="btn-primary">
         Sign Up
       </Link>
     </>

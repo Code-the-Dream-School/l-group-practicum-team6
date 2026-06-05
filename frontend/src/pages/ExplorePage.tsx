@@ -17,7 +17,7 @@ import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import type { VisualizerListItem } from '@sonix/shared';
-import { TOAST_MESSAGES } from '../constants/messages';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 const PAGE_SIZE = 8;
 const SEARCH_DEBOUNCE_MS = 400;

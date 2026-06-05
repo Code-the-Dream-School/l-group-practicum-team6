@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import type { User } from '@sonix/shared';
 
-import { Routes } from '../../routes/paths';
+import { ROUTES } from '@sonix/shared';
 import { Avatar } from './Avatar';
 
 interface UserMenuProps {
@@ -39,7 +39,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
           >
             {user.isAdmin && (
               <NavLink
-                to={Routes.ADMIN_VISUALS}
+                to={ROUTES.ADMIN_VISUALS}
                 role="menuitem"
                 onClick={() => setOpen(false)}
                 className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
@@ -48,7 +48,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               </NavLink>
             )}
             <NavLink
-              to={Routes.SETTINGS}
+              to={ROUTES.SETTINGS}
               role="menuitem"
               onClick={() => setOpen(false)}
               className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"

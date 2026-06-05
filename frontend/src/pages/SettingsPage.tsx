@@ -6,7 +6,7 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { getInitial } from './../utils/getInitial';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { Routes } from '../routes/paths';
+import { ROUTES } from '@sonix/shared';
 
 export default function SettingsPage() {
   const { user, updateProfile, logout } = useAuth();
@@ -131,7 +131,7 @@ export default function SettingsPage() {
         deleting: false,
       });
       await logout();
-      navigate(Routes.HOME);
+      navigate(ROUTES.HOME);
     } catch (err) {
       toast.error(getToastErrorMessage(err, 'Failed to delete account'));
     } finally {

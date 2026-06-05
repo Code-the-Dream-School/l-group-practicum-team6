@@ -1,4 +1,4 @@
-import { ApiEndpoints, type ApiResponse, type User } from '@sonix/shared';
+import { API_ROUTES, type ApiResponse, type User } from '@sonix/shared';
 import { apiFetch } from './client';
 
 type AuthData = {
@@ -7,11 +7,11 @@ type AuthData = {
 };
 
 export function getUser(): Promise<ApiResponse<AuthData>> {
-  return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.USER);
+  return apiFetch<ApiResponse<AuthData>>(API_ROUTES.USER);
 }
 
 export function login(email: string, password: string): Promise<ApiResponse<AuthData>> {
-  return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.AUTH_LOGIN, {
+  return apiFetch<ApiResponse<AuthData>>(API_ROUTES.AUTH_LOGIN, {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
@@ -22,14 +22,14 @@ export function register(
   email: string,
   password: string
 ): Promise<ApiResponse<AuthData>> {
-  return apiFetch<ApiResponse<AuthData>>(ApiEndpoints.AUTH_REGISTER, {
+  return apiFetch<ApiResponse<AuthData>>(API_ROUTES.AUTH_REGISTER, {
     method: 'POST',
     body: JSON.stringify({ name, email, password }),
   });
 }
 
 export function logout(): Promise<void> {
-  return apiFetch<void>(ApiEndpoints.AUTH_LOGOUT, {
+  return apiFetch<void>(API_ROUTES.AUTH_LOGOUT, {
     method: 'POST',
   });
 }

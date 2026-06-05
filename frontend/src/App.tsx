@@ -12,7 +12,7 @@ import SettingsPage from './pages/SettingsPage';
 import AdminVisualizersPage from './pages/AdminVisualizersPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import GuestRoute from './routes/GuestRoute';
-import { Routes as RoutePaths } from './routes/paths';
+import { ROUTES as RoutePaths } from '@sonix/shared';
 import AdminRoute from './routes/AdminRoute';
 function App() {
   return (

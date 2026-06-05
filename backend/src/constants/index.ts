@@ -1,13 +1,3 @@
-export const API_BASE_PATH = '/api/v1';
-
-export const API_ROUTES = {
-  HEALTH: `${API_BASE_PATH}/health`,
-  AUTH: `${API_BASE_PATH}/auth`,
-  USERS: `${API_BASE_PATH}/users`,
-  VISUALIZERS: `${API_BASE_PATH}/visualizers`,
-  IMAGES: `${API_BASE_PATH}/images`,
-} as const;
-
 export const RATE_LIMIT = {
   WINDOW_MS: 15 * 60 * 1000,
   GLOBAL_MAX_PRODUCTION: 100,
@@ -51,6 +41,7 @@ export const API_ERROR_MESSAGES = {
   UNSUPPORTED_FILE_TYPE: 'Unsupported file type',
   IMAGE_SIZE_EXCEEDS_LIMIT: 'Image size exceeds 5 MB limit',
   INVALID_FILE_TYPE: 'Invalid file type',
+  ADMIN_ACCESS_REQUIRED: 'Admin access required',
 } as const;
 
 export const API_SUCCESS_MESSAGES = {

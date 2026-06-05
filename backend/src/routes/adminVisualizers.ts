@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { adminOnly, authenticateUser } from '../middleware/authentication';
+import { authenticateAdmin } from '../middleware/authentication';
 import {
   createVisualizer,
   deleteVisualizer,
@@ -8,10 +8,8 @@ import {
 
 const router = Router();
 
-router.use(authenticateUser, adminOnly);
-
-router.post('/', createVisualizer);
-router.patch('/:id', updateVisualizer);
-router.delete('/:id', deleteVisualizer);
+router.post('/', authenticateAdmin, createVisualizer);
+router.patch('/:id', authenticateAdmin, updateVisualizer);
+router.delete('/:id', authenticateAdmin, deleteVisualizer);
 
 export default router;

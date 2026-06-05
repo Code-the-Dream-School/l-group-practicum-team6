@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { ApiResponse, User } from '@sonix/shared';
 import type { AuthContextValue } from './auth-context';
 
-import { ApiEndpoints } from '@sonix/shared';
+import { API_ROUTES } from '@sonix/shared';
 import { AuthContext } from './auth-context';
 
 async function readApiError(res: Response, fallback: string): Promise<string> {
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function fetchUser() {
       try {
-        const res = await fetch(ApiEndpoints.USER, {
+        const res = await fetch(API_ROUTES.USER, {
           credentials: 'include',
         });
         if (!res.ok) {
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await fetch(ApiEndpoints.AUTH_LOGIN, {
+    const res = await fetch(API_ROUTES.AUTH_LOGIN, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    const res = await fetch(ApiEndpoints.AUTH_REGISTER, {
+    const res = await fetch(API_ROUTES.AUTH_REGISTER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateProfile = useCallback(async (payload: { name?: string; email?: string }) => {
-    const res = await fetch(ApiEndpoints.USER, {
+    const res = await fetch(API_ROUTES.USER, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await fetch(ApiEndpoints.AUTH_LOGOUT, {
+      await fetch(API_ROUTES.AUTH_LOGOUT, {
         method: 'POST',
         credentials: 'include',
       });

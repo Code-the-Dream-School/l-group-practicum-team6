@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
-import { Routes } from '../routes/paths';
+import { ROUTES } from '@sonix/shared';
 
 const bars = [
   'h-6',
@@ -74,7 +74,7 @@ export default function NotFoundPage() {
                 focus:outline-none
                 focus:ring-2 focus:ring-cyan-300/60
               "
-              to={Routes.HOME}
+              to={ROUTES.HOME}
             >
               Go Home
             </Link>
@@ -87,7 +87,7 @@ export default function NotFoundPage() {
                 focus:outline-none
                 focus:ring-2 focus:ring-cyan-300/60
               "
-              to={Routes.EXPLORE}
+              to={ROUTES.EXPLORE}
             >
               Explore Visuals
             </Link>

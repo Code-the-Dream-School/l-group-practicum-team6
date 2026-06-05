@@ -11,7 +11,6 @@ export default function ForbiddenPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-200">Error 403</p>
           <h1 className="mt-4 text-3xl font-bold">Forbidden</h1>
           <p className="mt-3 text-text-secondary">
-            This is a placeholder page for routes that require admin access. <br />
             You are logged in, but your account does not have admin access to this page.
           </p>
         </section>

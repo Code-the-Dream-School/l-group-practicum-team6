@@ -2,6 +2,7 @@ import { Request as ExpressRequest, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { ForbiddenError, UnauthenticatedError } from '../errors';
 import { API_ERROR_MESSAGES, AUTH_CONSTANTS } from '../constants';
+import User from '../models/User';
 
 export interface UserPayload {
   userId: string;
@@ -14,9 +15,8 @@ export interface AuthRequest extends ExpressRequest {
   user?: UserPayload;
 }
 
-export const authenticateUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
+const verifyToken = (req: AuthRequest): UserPayload => {
   const token = req.signedCookies[AUTH_CONSTANTS.COOKIE_NAME];
-
   if (!token) {
     throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
   }
@@ -28,24 +28,34 @@ export const authenticateUser = async (req: AuthRequest, res: Response, next: Ne
 
   try {
     const payload = jwt.verify(token, secret) as UserPayload;
-
-    req.user = {
-      userId: payload.userId,
-      name: payload.name,
-      email: payload.email,
-      isAdmin: payload.isAdmin ?? false,
-    };
-
-    next();
+    if (!payload.userId || !payload.name || !payload.email) {
+      throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
+    }
+    return payload;
   } catch {
     throw new UnauthenticatedError(API_ERROR_MESSAGES.AUTHENTICATION_INVALID);
   }
 };
 
-export const adminOnly = (req: AuthRequest, _res: Response, next: NextFunction) => {
-  if (!req.user || !req.user.isAdmin) {
-    throw new ForbiddenError('Admin access required');
-  }
+export const authenticateUser = async (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const payload = verifyToken(req);
 
+  req.user = {
+    userId: payload.userId,
+    name: payload.name,
+    email: payload.email,
+    isAdmin: payload.isAdmin ?? false,
+  };
+
+  next();
+};
+
+export const authenticateAdmin = async (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const payload = verifyToken(req);
+
+  const dbUser = await User.findById(payload.userId).select('isAdmin').lean<{ isAdmin: boolean }>();
+  if (!dbUser?.isAdmin) {
+    throw new ForbiddenError(API_ERROR_MESSAGES.ADMIN_ACCESS_REQUIRED);
+  }
   next();
 };

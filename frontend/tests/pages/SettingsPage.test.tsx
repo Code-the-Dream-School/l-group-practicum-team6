@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { ApiEndpoints } from '@sonix/shared';
+import { API_ROUTES } from '@sonix/shared';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -135,7 +135,7 @@ describe('SettingsPage', () => {
       RequestInit,
     ];
 
-    expect(passwordUrl).toBe(ApiEndpoints.USER_PASSWORD);
+    expect(passwordUrl).toBe(API_ROUTES.USER_PASSWORD);
     expect(passwordRequest).toEqual(
       expect.objectContaining({
         method: 'PATCH',
@@ -177,7 +177,7 @@ describe('SettingsPage', () => {
       RequestInit,
     ];
 
-    expect(deleteUrl).toBe(ApiEndpoints.USER);
+    expect(deleteUrl).toBe(API_ROUTES.USER);
     expect(deleteRequest).toEqual(
       expect.objectContaining({
         method: 'DELETE',
