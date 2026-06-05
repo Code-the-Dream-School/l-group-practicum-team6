@@ -1,7 +1,8 @@
 import { Request as ExpressRequest, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { UnauthenticatedError } from '../errors';
-import { API_ERROR_MESSAGES, AUTH_CONSTANTS } from '../constants';
+import { API_ERROR_MESSAGES } from '@sonix/shared';
+import { AUTH_CONSTANTS } from '../constants';
 
 export interface UserPayload {
   userId: string;

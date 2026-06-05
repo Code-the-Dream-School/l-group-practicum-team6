@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { VisualizerListItem } from '@sonix/shared';
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
@@ -14,7 +13,8 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { TOAST_MESSAGES } from '../constants/messages';
+import type { VisualizerListItem } from '@sonix/shared';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 const PAGE_SIZE = 8;
 const SEARCH_DEBOUNCE_MS = 400;

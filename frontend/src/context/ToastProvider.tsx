@@ -43,7 +43,6 @@ function toastReducer(state: ToastState, action: ToastAction): ToastState {
   if (action.type === 'ENQUEUE') {
     const all = [...state.visible, ...state.queue];
 
-    console.log('Enqueueing toast:', action.payload);
     const isDupe =
       all.some((t) => t.type === action.payload.type) &&
       all.some((t) => t.message === action.payload.message);

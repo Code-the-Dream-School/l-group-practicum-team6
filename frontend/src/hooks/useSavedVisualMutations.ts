@@ -5,7 +5,7 @@ import type { SavedVisual } from '../api/users';
 import { useToast } from '../context/useToast';
 import { visualizerQueryKeys } from '../queries/visualizerKeys';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { TOAST_MESSAGES } from '../constants/messages';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 export function useSaveVisualMutation() {
   const queryClient = useQueryClient();

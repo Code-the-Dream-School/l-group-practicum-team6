@@ -11,7 +11,7 @@ import imageRouter from './routes/images';
 
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
-import { API_ROUTES } from './constants';
+import { API_ROUTES } from '@sonix/shared';
 
 const app = express();
 

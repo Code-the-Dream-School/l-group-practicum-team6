@@ -9,7 +9,7 @@ import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { buildVisualizerPath, Routes } from '../routes/paths';
-import { TOAST_MESSAGES } from '../constants/messages';
+import { TOAST_MESSAGES } from '@sonix/shared';
 
 type SortOption = 'recent' | 'az' | 'za';
 
