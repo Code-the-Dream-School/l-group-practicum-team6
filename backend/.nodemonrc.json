@@ -1,0 +1,7 @@
+{
+  "watch": ["src", "../shared/src"],
+  "ext": "ts,json",
+  "ignore": ["node_modules", "dist"],
+  "exec": "ts-node",
+  "args": "src/server.ts"
+}
