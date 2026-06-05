@@ -80,7 +80,7 @@ export const getVisualizerById = async (req: Request, res: Response) => {
 
   validateObjectId(id, API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
 
-  const visualizer = await Visualizer.findById(req.params.id);
+  const visualizer = await Visualizer.findById(id);
 
   if (!visualizer) throw new NotFoundError(API_ERROR_MESSAGES.VISUALIZER_NOT_FOUND);
   // Returns the full visualizer
