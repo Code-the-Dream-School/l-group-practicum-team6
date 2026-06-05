@@ -24,12 +24,19 @@ export default {
     const cmds = [`prettier --write ${absFiles.map(quote).join(' ')}`];
 
     const groups = groupByWorkspace(relFiles);
+    let sharedBuilt = false;
 
     for (const ws of WORKSPACES) {
       const files = groups[ws];
       if (!files.length) continue;
       const wsRel = files.map((f) => quote(path.relative(ws, f))).join(' ');
       cmds.push(`npm exec --workspace=${ws} -- eslint --fix --max-warnings=0 ${wsRel}`);
+
+      if ((ws === 'backend' || ws === 'frontend') && !sharedBuilt) {
+        cmds.push('npm run build -w shared');
+        sharedBuilt = true;
+      }
+
       cmds.push(`npm run typecheck -w ${ws}`);
       if (WORKSPACES_WITH_TESTS.includes(ws)) {
         cmds.push(`npm run test:related -w ${ws} -- ${wsRel}`);
