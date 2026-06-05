@@ -1,17 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { LABELS } from '@sonix/shared';
 import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
-import {
-  buildVisualizerImageEndpoint,
-  getSavedVisuals,
-  getVisualizerTags,
-  listVisualizers,
-  removeVisual,
-  saveVisual,
-} from '../api';
+import { buildVisualizerImageEndpoint } from '../api';
+import { useSaveVisualMutation, useRemoveVisualMutation } from '../hooks/useSavedVisualMutations';
+import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
+import { useVisualizerListQuery } from '../hooks/useVisualizerListQuery';
+import { useVisualizerTagsQuery } from '../hooks/useVisualizerTagsQuery';
 import searchIcon from '../assets/icons/search.svg';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
@@ -45,12 +42,8 @@ export default function ExplorePage() {
   const { user } = useAuth();
   const toast = useToast();
   const canSave = Boolean(user);
-  const [visuals, setVisuals] = useState<ExploreVisualizer[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: categories = [] } = useVisualizerTagsQuery();
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const handleSearchDebounced = useCallback(() => {
     setPage(1);
@@ -62,115 +55,54 @@ export default function ExplorePage() {
   );
   const [selectedTag, setSelectedTag] = useState('');
 
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const response = await getVisualizerTags();
-        setCategories(response.data.map((tag) => tag.toLowerCase()));
-      } catch {
-        setCategories([]);
-      }
-    }
+  const {
+    data: visualizerList,
+    isPending: isListPending,
+    isError: isListError,
+    error: listError,
+  } = useVisualizerListQuery({
+    page,
+    limit: PAGE_SIZE,
+    search: debouncedSearch || undefined,
+    tag: selectedTag || undefined,
+  });
 
-    void loadCategories();
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadSavedVisuals() {
-      if (!user) {
-        setSavedVisualIds([]);
-        return;
-      }
-
-      try {
-        const response = await getSavedVisuals();
-
-        if (cancelled) return;
-
-        setSavedVisualIds(response.data.map((savedVisual) => savedVisual.visualizerId._id));
-      } catch (error) {
-        if (cancelled) return;
-
-        setSavedVisualIds([]);
-        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
-      }
-    }
-
-    void loadSavedVisuals();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [user, toast]);
+  const visuals = (visualizerList?.visuals ?? []) as ExploreVisualizer[];
+  const totalPages = visualizerList?.totalPages ?? 1;
+  const isLoading = isListPending;
+  const {
+    data: savedVisuals,
+    isError: isSavedError,
+    error: savedError,
+  } = useSavedVisualsQuery({ enabled: canSave });
+  const saveMutation = useSaveVisualMutation();
+  const removeMutation = useRemoveVisualMutation();
+  const savedVisualIds = useMemo(
+    () => savedVisuals?.map((savedVisual) => savedVisual.visualizerId._id) ?? [],
+    [savedVisuals]
+  );
 
   useEffect(() => {
-    let cancelled = false;
+    if (!isListError || !listError) return;
 
-    async function loadVisualizers() {
-      setIsLoading(true);
+    toast.error(getToastErrorMessage(listError, TOAST_MESSAGES.VISUALIZER.LOAD_FAILED));
+  }, [isListError, listError, toast]);
 
-      try {
-        const response = await listVisualizers({
-          page,
-          limit: PAGE_SIZE,
-          search: debouncedSearch || undefined,
-          tag: selectedTag || undefined,
-        });
+  useEffect(() => {
+    if (!isSavedError || !savedError) return;
 
-        if (cancelled) return;
+    toast.error(getToastErrorMessage(savedError, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
+  }, [isSavedError, savedError, toast]);
 
-        setVisuals(response.data as ExploreVisualizer[]);
-        setTotalPages(Math.max(response.pages, 1));
-      } catch (error) {
-        if (cancelled) return;
-
-        setVisuals([]);
-        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_FAILED));
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadVisualizers();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [page, debouncedSearch, selectedTag, toast]);
-
-  async function handleToggleSave(id: string) {
+  function handleToggleSave(id: string) {
     if (!canSave) return;
 
-    const wasSaved = savedVisualIds.includes(id);
-
-    setSavedVisualIds((currentIds) =>
-      wasSaved ? currentIds.filter((savedId) => savedId !== id) : [...currentIds, id]
-    );
-
-    try {
-      if (wasSaved) {
-        await removeVisual(id);
-        toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
-      } else {
-        await saveVisual(id);
-        toast.success(TOAST_MESSAGES.VISUALIZER.SAVED_TO_FAVORITES);
-      }
-    } catch (error) {
-      setSavedVisualIds((currentIds) =>
-        wasSaved ? [...currentIds, id] : currentIds.filter((savedId) => savedId !== id)
-      );
-
-      toast.error(
-        getToastErrorMessage(
-          error,
-          wasSaved ? TOAST_MESSAGES.VISUALIZER.REMOVE_FAILED : TOAST_MESSAGES.VISUALIZER.SAVE_FAILED
-        )
-      );
+    if (savedVisualIds.includes(id)) {
+      removeMutation.mutate(id);
+      return;
     }
+
+    saveMutation.mutate(id);
   }
 
   function handlePageChange(nextPage: number) {

@@ -1,89 +1,37 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
-import { getSavedVisuals, removeVisual, saveVisual } from '../api';
-import { useToast } from '../context/useToast';
-import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { TOAST_MESSAGES } from '@sonix/shared';
+import { useRemoveVisualMutation, useSaveVisualMutation } from './useSavedVisualMutations';
+import { useSavedVisualsQuery } from './useSavedVisualsQuery';
 
-type UseFavoriteVisualOptions = {
+type FavoriteVisualOptions = {
   enabled?: boolean;
 };
 
 export function useFavoriteVisual(
   visualizerId: string,
-  { enabled = true }: UseFavoriteVisualOptions = {}
+  { enabled = true }: FavoriteVisualOptions = {}
 ) {
-  const toast = useToast();
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { data: savedVisuals, isPending } = useSavedVisualsQuery({ enabled });
+  const saveMutation = useSaveVisualMutation();
+  const removeMutation = useRemoveVisualMutation();
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    let cancelled = false;
-
-    async function loadFavoriteState() {
-      setIsLoading(true);
-
-      try {
-        const response = await getSavedVisuals();
-
-        if (cancelled) return;
-
-        const savedIds = response.data.map((saved) => saved.visualizerId._id);
-        setIsFavorited(savedIds.includes(visualizerId));
-      } catch {
-        if (!cancelled) {
-          setIsFavorited(false);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadFavoriteState();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, visualizerId]);
+  const isFavorited =
+    savedVisuals?.some((saved) => saved.visualizerId._id === visualizerId) ?? false;
 
   const toggleFavorite = useCallback(async () => {
     if (!enabled) return;
 
-    const wasFavorited = isFavorited;
-
-    setIsFavorited(!wasFavorited);
-
-    try {
-      if (wasFavorited) {
-        await removeVisual(visualizerId);
-        toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
-      } else {
-        await saveVisual(visualizerId);
-        toast.success(TOAST_MESSAGES.VISUALIZER.SAVED_TO_FAVORITES);
-      }
-    } catch (error) {
-      setIsFavorited(wasFavorited);
-
-      toast.error(
-        getToastErrorMessage(
-          error,
-          wasFavorited
-            ? TOAST_MESSAGES.VISUALIZER.REMOVE_FAILED
-            : TOAST_MESSAGES.VISUALIZER.SAVE_FAILED
-        )
-      );
+    if (isFavorited) {
+      await removeMutation.mutateAsync(visualizerId);
+      return;
     }
-  }, [enabled, isFavorited, toast, visualizerId]);
+
+    await saveMutation.mutateAsync(visualizerId);
+  }, [enabled, isFavorited, removeMutation, saveMutation, visualizerId]);
 
   return {
     isFavorited: enabled ? isFavorited : false,
-    isLoading: enabled ? isLoading : false,
+    isLoading: enabled ? isPending : false,
     toggleFavorite,
   };
 }

@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import VisualizerCard from '../components/VisualizerCard';
 import { useToast } from '../context/useToast';
-import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../api';
-import type { SavedVisual } from '../api/users';
+import { buildVisualizerImageEndpoint } from '../api';
+import { useRemoveVisualMutation } from '../hooks/useSavedVisualMutations';
+import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { buildVisualizerPath, Routes } from '../routes/paths';
@@ -14,25 +15,16 @@ type SortOption = 'recent' | 'az' | 'za';
 
 export default function MyVisualsPage() {
   const toast = useToast();
-  const [savedVisuals, setSavedVisuals] = useState<SavedVisual[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: savedVisuals = [], isPending: isLoading, isError, error } = useSavedVisualsQuery();
+  const removeMutation = useRemoveVisualMutation();
 
   useEffect(() => {
-    async function loadSavedVisuals() {
-      try {
-        const response = await getSavedVisuals();
-        setSavedVisuals(response.data);
-      } catch (error) {
-        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    if (!isError || !error) return;
 
-    void loadSavedVisuals();
-  }, [toast]);
+    toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
+  }, [isError, error, toast]);
 
   const sortedVisuals = useMemo(() => {
     const visuals = [...savedVisuals];
@@ -51,19 +43,12 @@ export default function MyVisualsPage() {
   }, [savedVisuals, sortOption]);
 
   async function handleRemoveVisual(visualizerId: string) {
-    const previousVisuals = savedVisuals;
-
-    setSavedVisuals((currentVisuals) =>
-      currentVisuals.filter((savedVisual) => savedVisual.visualizerId._id !== visualizerId)
-    );
     setConfirmRemoveId(null);
 
     try {
-      await removeVisual(visualizerId);
-      toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
-    } catch (error) {
-      setSavedVisuals(previousVisuals);
-      toast.error(getToastErrorMessage(error, 'Could not remove visualizer. Please try again.'));
+      await removeMutation.mutateAsync(visualizerId);
+    } catch {
+      // Toast is handled in the mutation hook.
     }
   }
 
