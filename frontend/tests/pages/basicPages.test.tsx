@@ -64,6 +64,7 @@ vi.mock('../../src/utils/visualPreview', () => ({
   startVisualPreview: vi.fn(() => vi.fn()),
 }));
 
+import { QueryClientTestProvider } from '../../src/test/queryClient';
 import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
 import ExplorePage from '../../src/pages/ExplorePage';
 import LandingPage from '../../src/pages/LandingPage';
@@ -74,7 +75,11 @@ import { Routes as RoutePaths } from '../../src/routes/paths';
 import { useAuth } from '../../src/context/useAuth';
 
 function renderWithRouter(ui: React.ReactElement) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
+  return render(
+    <QueryClientTestProvider>
+      <MemoryRouter>{ui}</MemoryRouter>
+    </QueryClientTestProvider>
+  );
 }
 
 const guestAuth = {

@@ -6,11 +6,11 @@ import VisualizerCard from '../components/VisualizerCard';
 import {
   buildVisualizerImageEndpoint,
   getSavedVisuals,
-  getVisualizerTags,
   listVisualizers,
   removeVisual,
   saveVisual,
 } from '../api';
+import { useVisualizerTagsQuery } from '../hooks/useVisualizerTagsQuery';
 import searchIcon from '../assets/icons/search.svg';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
@@ -45,7 +45,7 @@ export default function ExplorePage() {
   const toast = useToast();
   const canSave = Boolean(user);
   const [visuals, setVisuals] = useState<ExploreVisualizer[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const { data: categories = [] } = useVisualizerTagsQuery();
   const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -60,19 +60,6 @@ export default function ExplorePage() {
     handleSearchDebounced
   );
   const [selectedTag, setSelectedTag] = useState('');
-
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const response = await getVisualizerTags();
-        setCategories(response.data.map((tag) => tag.toLowerCase()));
-      } catch {
-        setCategories([]);
-      }
-    }
-
-    void loadCategories();
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
