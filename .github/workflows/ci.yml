@@ -53,7 +53,8 @@ jobs:
 
     env:
       PORT: 5001
-      MONGO_URI: mongodb://127.0.0.1:27017/sonix-e2e
+      MONGO_URI: mongodb://127.0.0.1:27017/sonix-main
+      MONGO_URI_E2E: mongodb://127.0.0.1:27017/sonix-e2e
       JWT_SECRET: e2e_secret
       CLIENT_URL: http://localhost:5173
 
