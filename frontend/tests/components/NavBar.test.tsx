@@ -129,6 +129,7 @@ describe('NavBar', () => {
   it('shows Admin link for admin users', () => {
     mockUseAuth.mockReturnValue({ user: adminUser, logout: vi.fn() });
     renderAt('/');
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
     expect(screen.getAllByRole('link', { name: 'Admin' }).length).toBeGreaterThan(0);
   });
 
