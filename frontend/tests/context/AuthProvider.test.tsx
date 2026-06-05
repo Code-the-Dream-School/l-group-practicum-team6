@@ -114,6 +114,48 @@ describe('AuthProvider', () => {
 
     await waitFor(() => expect(screen.getByTestId('user-name')).toHaveTextContent('Login User'));
   });
+  it('handles auth payload and keeps admin flag', async () => {
+    function AdminProbe() {
+      const { user, login } = useAuth();
+      return (
+        <div>
+          <p data-testid="admin-state">{user?.isAdmin ? 'admin' : 'not-admin'}</p>
+          <button type="button" onClick={() => void login('admin@example.com', 'password123')}>
+            login-admin
+          </button>
+        </div>
+      );
+    }
+
+    vi.mocked(global.fetch)
+      .mockResolvedValueOnce({
+        ok: false,
+        json: async () => ({}),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          data: {
+            _id: 'a1',
+            name: 'Admin User',
+            email: 'admin@example.com',
+            createdAt: '2026-01-04',
+            isAdmin: true,
+          },
+        }),
+      } as Response);
+
+    render(
+      <AuthProvider>
+        <AdminProbe />
+      </AuthProvider>
+    );
+
+    await screen.findByTestId('admin-state');
+    fireEvent.click(screen.getByRole('button', { name: 'login-admin' }));
+
+    await waitFor(() => expect(screen.getByTestId('admin-state')).toHaveTextContent('admin'));
+  });
 
   it('throws login error from api message', async () => {
     vi.mocked(global.fetch)

@@ -1,5 +1,5 @@
 import multer from 'multer';
-import { API_ERROR_MESSAGES } from '@sonix/shared';
+import { API_ERROR_MESSAGES } from '../constants';
 import { MAX_IMAGE_SIZE_BYTES, validateImageType } from '../utils/imageValidation';
 
 export const uploadImage = multer({

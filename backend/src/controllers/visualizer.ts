@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { NotFoundError } from '../errors';
 import Visualizer from '../models/Visualizer';
-import { API_ERROR_MESSAGES, VISUALIZER_PAGINATION } from '@sonix/shared';
+import { API_ERROR_MESSAGES, VISUALIZER_PAGINATION } from '../constants';
 
 // GET /api/v1/visualizers, public endpoint.
 export const getAllVisualizers = async (req: Request, res: Response) => {

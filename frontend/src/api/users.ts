@@ -1,4 +1,4 @@
-import { ApiEndpoints, type ApiResponse, type User, type Visualizer } from '@sonix/shared';
+import { API_ROUTES, type ApiResponse, type User, type Visualizer } from '@sonix/shared';
 import { apiFetch } from './client';
 import { buildSavedVisualEndpoint } from './endpoints';
 
@@ -25,28 +25,28 @@ export type SavedVisual = {
 };
 
 export function updateProfile(data: UpdateProfileData): Promise<ApiResponse<UserData>> {
-  return apiFetch<ApiResponse<UserData>>(ApiEndpoints.USER, {
+  return apiFetch<ApiResponse<UserData>>(API_ROUTES.USER, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function changePassword(data: ChangePasswordData): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER_PASSWORD, {
+  return apiFetch<ApiResponse<null>>(API_ROUTES.USER_PASSWORD, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
 export function deleteAccount(password: string): Promise<ApiResponse<null>> {
-  return apiFetch<ApiResponse<null>>(ApiEndpoints.USER, {
+  return apiFetch<ApiResponse<null>>(API_ROUTES.USER, {
     method: 'DELETE',
     body: JSON.stringify({ password }),
   });
 }
 
 export function getSavedVisuals(): Promise<ApiResponse<SavedVisual[]>> {
-  return apiFetch<ApiResponse<SavedVisual[]>>(ApiEndpoints.USER_VISUALS);
+  return apiFetch<ApiResponse<SavedVisual[]>>(API_ROUTES.USER_VISUALS);
 }
 
 export function saveVisual(id: string): Promise<ApiResponse<SavedVisual>> {

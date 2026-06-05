@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import type { ApiResponse, User } from '@sonix/shared';
 import type { AuthContextValue } from './auth-context';
 
-import { ApiEndpoints } from '@sonix/shared';
+import { API_ROUTES } from '@sonix/shared';
 import { clearSavedVisualsCache } from '../lib/clearSavedVisualsCache';
 import { AuthContext } from './auth-context';
 
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function fetchUser() {
       try {
-        const res = await fetch(ApiEndpoints.USER, {
+        const res = await fetch(API_ROUTES.USER, {
           credentials: 'include',
         });
         if (!res.ok) {
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const res = await fetch(ApiEndpoints.AUTH_LOGIN, {
+    const res = await fetch(API_ROUTES.AUTH_LOGIN, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -59,13 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(await readApiError(res, 'Login failed'));
     }
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid login response');
+    if (!body?.data) throw new Error('Invalid login response');
     clearSavedVisualsCache();
     setUser(body.data);
   }, []);
 
   const register = useCallback(async (name: string, email: string, password: string) => {
-    const res = await fetch(ApiEndpoints.AUTH_REGISTER, {
+    const res = await fetch(API_ROUTES.AUTH_REGISTER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -75,13 +75,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(await readApiError(res, 'Registration failed'));
     }
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid registration response');
+    if (!body?.data) throw new Error('Invalid registration response');
     clearSavedVisualsCache();
     setUser(body.data);
   }, []);
 
   const updateProfile = useCallback(async (payload: { name?: string; email?: string }) => {
-    const res = await fetch(ApiEndpoints.USER, {
+    const res = await fetch(API_ROUTES.USER, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -93,13 +93,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const body = (await res.json()) as ApiResponse<User>;
-    if (!body.data) throw new Error('Invalid profile update response');
+    if (!body?.data) throw new Error('Invalid profile update response');
     setUser(body.data);
   }, []);
 
   const logout = useCallback(async () => {
     try {
-      await fetch(ApiEndpoints.AUTH_LOGOUT, {
+      await fetch(API_ROUTES.AUTH_LOGOUT, {
         method: 'POST',
         credentials: 'include',
       });

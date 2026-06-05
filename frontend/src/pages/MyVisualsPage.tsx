@@ -8,8 +8,7 @@ import { useRemoveVisualMutation } from '../hooks/useSavedVisualMutations';
 import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { buildVisualizerPath, Routes } from '../routes/paths';
-import { LABELS, TOAST_MESSAGES } from '@sonix/shared';
+import { LABELS, TOAST_MESSAGES, ROUTES } from '@sonix/shared';
 
 type SortOption = 'recent' | 'az' | 'za';
 
@@ -41,6 +40,10 @@ export default function MyVisualsPage() {
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
   }, [savedVisuals, sortOption]);
+
+  function buildVisualizerPath(id: string): string {
+    return ROUTES.VISUALIZER.replace(':id', encodeURIComponent(id));
+  }
 
   async function handleRemoveVisual(visualizerId: string) {
     setConfirmRemoveId(null);
@@ -92,7 +95,7 @@ export default function MyVisualsPage() {
                 Browse visualizers and save your favorites to build your personal collection.
               </p>
               <Link
-                to={Routes.EXPLORE}
+                to={ROUTES.EXPLORE}
                 className="mt-5 inline-flex rounded-md bg-[#8b5cf6] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#7c3aed]"
               >
                 Explore Visuals
@@ -116,7 +119,7 @@ export default function MyVisualsPage() {
                       }
                       playPath={
                         visualizer.isDemo
-                          ? Routes.VISUALIZER_DEMO
+                          ? ROUTES.VISUALIZER_DEMO
                           : buildVisualizerPath(visualizer._id)
                       }
                       isDemo={visualizer.isDemo}

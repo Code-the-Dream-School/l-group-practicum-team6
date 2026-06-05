@@ -1,5 +1,5 @@
 import { BadRequestError } from '../errors';
-import { API_ERROR_MESSAGES } from '@sonix/shared';
+import { API_ERROR_MESSAGES } from '../constants';
 
 export const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;

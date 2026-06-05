@@ -9,11 +9,11 @@ import PlayerPage from './pages/PlayerPage';
 import MyVisualsPage from './pages/MyVisualsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SettingsPage from './pages/SettingsPage';
-
+import AdminVisualizersPage from './pages/AdminVisualizersPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import GuestRoute from './routes/GuestRoute';
-import { Routes as RoutePaths } from './routes/paths';
-
+import { ROUTES as RoutePaths } from '@sonix/shared';
+import AdminRoute from './routes/AdminRoute';
 function App() {
   return (
     <BrowserRouter>
@@ -73,6 +73,15 @@ function App() {
             <ProtectedRoute>
               <SettingsPage />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.ADMIN_VISUALS}
+          element={
+            <AdminRoute>
+              <AdminVisualizersPage />
+            </AdminRoute>
           }
         />
 

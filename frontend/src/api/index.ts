@@ -1,7 +1,6 @@
 export { apiFetch, ApiError } from './client';
 
 export {
-  ApiEndpoints,
   buildVisualizerDetailEndpoint,
   buildVisualizerImageEndpoint,
   buildSavedVisualEndpoint,
@@ -26,3 +25,9 @@ export {
   getVisualizer,
   getVisualizerTags,
 } from './visualizers';
+
+export {
+  createAdminVisualizer,
+  updateAdminVisualizer,
+  deleteAdminVisualizer,
+} from './adminVisualizers';

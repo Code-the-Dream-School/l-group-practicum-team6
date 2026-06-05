@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
-import { Routes } from '../routes/paths';
+import { ROUTES } from '@sonix/shared';
 import { TOAST_MESSAGES } from '@sonix/shared';
 
 import eyeIcon from '../assets/icons/eye.svg';
@@ -45,7 +45,7 @@ export default function SignUpPage() {
     try {
       await register(name.trim(), email.trim(), password); // trim user input
       toast.success(TOAST_MESSAGES.AUTH.SIGNUP_SUCCESS);
-      navigate(Routes.EXPLORE, { replace: true });
+      navigate(ROUTES.EXPLORE, { replace: true });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : TOAST_MESSAGES.AUTH.SIGNUP_FALLBACK_ERROR);
     } finally {
@@ -181,7 +181,7 @@ export default function SignUpPage() {
 
           <div className="flex items-center justify-center gap-1">
             <p className="text-sm text-text-secondary">Already have an account?</p>
-            <Link to={Routes.LOGIN} className="text-sm text-primary">
+            <Link to={ROUTES.LOGIN} className="text-sm text-primary">
               Log In
             </Link>
           </div>

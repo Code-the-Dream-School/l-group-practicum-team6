@@ -4,7 +4,7 @@ import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import logoFull from '../../assets/logo-full.svg';
 import { useAuth } from '../../context/useAuth';
 import { useToast } from '../../context/useToast';
-import { Routes } from '../../routes/paths';
+import { ROUTES } from '@sonix/shared';
 
 import { LABELS } from '@sonix/shared';
 
@@ -19,8 +19,8 @@ const NavBar = () => {
   const { user, logout } = useAuth();
   const toast = useToast();
 
-  const isMinimal = location.pathname === Routes.LOGIN || location.pathname === Routes.SIGNUP;
-  const isDemoPlayer = location.pathname === Routes.VISUALIZER_DEMO;
+  const isMinimal = location.pathname === ROUTES.LOGIN || location.pathname === ROUTES.SIGNUP;
+  const isDemoPlayer = location.pathname === ROUTES.VISUALIZER_DEMO;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [prevPath, setPrevPath] = useState(location.pathname);
@@ -41,7 +41,7 @@ const NavBar = () => {
   if (isMinimal) {
     return (
       <div className="flex h-16 items-center bg-surface px-6 md:px-20">
-        <Link to={Routes.HOME}>
+        <Link to={ROUTES.HOME}>
           <img src={logoFull} alt="Sonix" />
         </Link>
       </div>
@@ -52,13 +52,13 @@ const NavBar = () => {
     <header className="bg-surface">
       <div className="flex h-16 items-center justify-between px-6 md:px-20">
         <div className="flex items-center gap-10">
-          <Link to={Routes.HOME} aria-label="Sonix home">
+          <Link to={ROUTES.HOME} aria-label="Sonix home">
             <img src={logoFull} alt="Sonix" />
           </Link>
           {user && (
             <nav className="hidden md:flex items-center gap-6">
               <NavLink
-                to={Routes.EXPLORE}
+                to={ROUTES.EXPLORE}
                 className={({ isActive }) =>
                   isActive
                     ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
@@ -68,7 +68,7 @@ const NavBar = () => {
                 {LABELS.EXPLORE}
               </NavLink>
               <NavLink
-                to={Routes.MY_VISUALS}
+                to={ROUTES.MY_VISUALS}
                 className={({ isActive }) =>
                   isActive
                     ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'

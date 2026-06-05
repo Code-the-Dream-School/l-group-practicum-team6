@@ -3,8 +3,8 @@ import { StatusCodes } from 'http-status-codes'; // Wrraped tool to show codes
 import mongoose from 'mongoose';
 import { BadRequestError, NotFoundError } from '../errors';
 import { clearAuthCookie } from '../utils/jwt';
-import { API_ERROR_MESSAGES } from '@sonix/shared';
-import { API_SUCCESS_MESSAGES } from '@sonix/shared';
+import { API_ERROR_MESSAGES } from '../constants';
+import { API_SUCCESS_MESSAGES } from '../constants';
 
 import User from '../models/User';
 import UserVisual from '../models/UserVisual';

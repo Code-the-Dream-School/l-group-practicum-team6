@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import type { User } from '@sonix/shared';
 
 import { LABELS } from '@sonix/shared';
-import { Routes } from '../../routes/paths';
+import { ROUTES } from '@sonix/shared';
 import { AuthLinks } from './AuthLinks';
 import { Avatar } from './Avatar';
 
@@ -17,7 +17,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
       {user ? (
         <>
           <NavLink
-            to={Routes.EXPLORE}
+            to={ROUTES.EXPLORE}
             className={({ isActive }) =>
               `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
             }
@@ -25,19 +25,29 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
             {LABELS.EXPLORE}
           </NavLink>
           <NavLink
-            to={Routes.MY_VISUALS}
+            to={ROUTES.MY_VISUALS}
             className={({ isActive }) =>
               `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
             }
           >
             {LABELS.MY_VISUALS}
           </NavLink>
+          {user.isAdmin && (
+            <NavLink
+              to={ROUTES.ADMIN_VISUALS}
+              className={({ isActive }) =>
+                `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
+              }
+            >
+              Admin
+            </NavLink>
+          )}
           <div className="mt-3 flex items-center gap-3 border-t border-primary-border pt-3">
             <Avatar user={user} />
             <span className="text-sm text-text-primary">{user.name}</span>
           </div>
           <NavLink
-            to={Routes.SETTINGS}
+            to={ROUTES.SETTINGS}
             className="block w-full text-left py-3 text-base text-text-primary"
           >
             {LABELS.SETTINGS}
