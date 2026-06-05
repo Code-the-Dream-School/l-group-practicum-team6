@@ -64,11 +64,7 @@ export default function PlayerPage() {
 
   return (
     <VisualizerPlayerLayout>
-      {!id ? (
-        <PlayerMessage>Visualizer not found</PlayerMessage>
-      ) : (
-        <PlayerPageContent key={id} id={id} />
-      )}
+      {!id ? <PlayerMessage>Visualizer not found</PlayerMessage> : <PlayerPageContent id={id} />}
     </VisualizerPlayerLayout>
   );
 }

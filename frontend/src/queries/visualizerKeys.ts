@@ -12,4 +12,5 @@ export const visualizerQueryKeys = {
   detail: (id: string, isDemo = false) =>
     [...visualizerQueryKeys.all, 'detail', isDemo ? 'demo' : id] as const,
   saved: () => [...visualizerQueryKeys.all, 'saved'] as const,
+  playbackContext: () => [...visualizerQueryKeys.all, 'playback-context'] as const,
 };

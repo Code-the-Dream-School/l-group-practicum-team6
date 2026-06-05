@@ -48,11 +48,7 @@ export default function ExplorePage() {
   const handleSearchDebounced = useCallback(() => {
     setPage(1);
   }, []);
-  const debouncedSearch = useDebouncedValue(
-    searchInput.trim(),
-    SEARCH_DEBOUNCE_MS,
-    handleSearchDebounced
-  );
+  const search = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS, handleSearchDebounced);
   const [selectedTag, setSelectedTag] = useState('');
 
   const {
@@ -63,7 +59,7 @@ export default function ExplorePage() {
   } = useVisualizerListQuery({
     page,
     limit: PAGE_SIZE,
-    search: debouncedSearch || undefined,
+    search: search || undefined,
     tag: selectedTag || undefined,
   });
 
@@ -113,6 +109,19 @@ export default function ExplorePage() {
     setSelectedTag(tag.toLowerCase());
     setPage(1);
   }
+
+  const explorePlaybackContext = useMemo(
+    () => ({
+      source: 'explore' as const,
+      filters: {
+        page,
+        limit: PAGE_SIZE,
+        search: search || undefined,
+        tag: selectedTag || undefined,
+      },
+    }),
+    [page, search, selectedTag]
+  );
 
   const showEmptyState = !isLoading && visuals.length === 0;
   const showPagination = !isLoading && visuals.length > 0 && totalPages > 1;
@@ -200,6 +209,7 @@ export default function ExplorePage() {
                     isDemo={visual.isDemo}
                     canSave={canSave && !visual.isDemo}
                     isSaved={savedVisualIds.includes(visual._id)}
+                    playbackContext={visual.isDemo ? undefined : explorePlaybackContext}
                     onToggleSave={handleToggleSave}
                   />
                 ))}

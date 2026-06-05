@@ -5,6 +5,7 @@ import PlayerControlBar from './player/PlayerControlBar';
 import VisualInfoCard from './player/VisualInfoCard';
 import { useToast } from '../context/useToast';
 import { useFavoriteVisual } from '../hooks/useFavoriteVisual';
+import { useVisualizerPlayback } from '../hooks/useVisualizerPlayback';
 import { useFullscreen } from '../hooks/useFullscreen';
 import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useAudioAnalyzer, type AudioAnalyzerStatus } from '../hooks/useAudioAnalyzer';
@@ -78,6 +79,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
   const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, {
     enabled: canFavorite,
   });
+  const { goNext, goPrevious } = useVisualizerPlayback(visual.id);
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
@@ -189,6 +191,8 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
               showFavorite={canFavorite}
               showPlaybackControls={canFavorite}
               onTogglePlay={togglePlay}
+              onPrevious={goPrevious}
+              onNext={goNext}
               onToggleFavorite={() => void toggleFavorite()}
               onFullscreen={() => void handleToggleFullscreen()}
               onSelectDevice={selectDevice}

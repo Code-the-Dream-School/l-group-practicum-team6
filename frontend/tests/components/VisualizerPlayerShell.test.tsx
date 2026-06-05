@@ -52,6 +52,17 @@ vi.mock('../../src/hooks/useFavoriteVisual', () => ({
   }),
 }));
 
+const mockGoNext = vi.fn();
+const mockGoPrevious = vi.fn();
+
+vi.mock('../../src/hooks/useVisualizerPlayback', () => ({
+  useVisualizerPlayback: () => ({
+    goNext: mockGoNext,
+    goPrevious: mockGoPrevious,
+    isNavigating: false,
+  }),
+}));
+
 const visual = {
   id: 'visual-1',
   name: 'Aurora Wave',
@@ -63,6 +74,8 @@ describe('VisualizerPlayer fullscreen', () => {
   beforeEach(() => {
     vi.useRealTimers();
     mockMicStatus = 'active';
+    mockGoNext.mockReset();
+    mockGoPrevious.mockReset();
     mockToggleFullscreen.mockReset();
     mockToggleMic.mockReset();
     mockSelectDevice.mockReset();
@@ -150,6 +163,16 @@ describe('VisualizerPlayer fullscreen', () => {
 
     expect(screen.getByTestId('player-pause-overlay')).toHaveClass('opacity-100');
   });
+
+  it('wires previous and next playback controls', () => {
+    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+
+    fireEvent.click(screen.getByLabelText('Previous visual'));
+    fireEvent.click(screen.getByLabelText('Next visual'));
+
+    expect(mockGoPrevious).toHaveBeenCalledTimes(1);
+    expect(mockGoNext).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('VisualizerPlayer controls visibility', () => {
@@ -158,6 +181,8 @@ describe('VisualizerPlayer controls visibility', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     mockMicStatus = 'active';
+    mockGoNext.mockReset();
+    mockGoPrevious.mockReset();
     mockUseFullscreen.mockReturnValue({
       targetRef: playerTargetRef,
       isFullscreen: false,
