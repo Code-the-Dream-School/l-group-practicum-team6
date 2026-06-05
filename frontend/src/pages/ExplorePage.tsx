@@ -1,22 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
+import type { VisualizerListItem } from '@sonix/shared';
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
 import VisualizerCard from '../components/VisualizerCard';
-import {
-  buildVisualizerImageEndpoint,
-  getSavedVisuals,
-  listVisualizers,
-  removeVisual,
-  saveVisual,
-} from '../api';
+import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual, saveVisual } from '../api';
+import { useVisualizerListQuery } from '../hooks/useVisualizerListQuery';
 import { useVisualizerTagsQuery } from '../hooks/useVisualizerTagsQuery';
 import searchIcon from '../assets/icons/search.svg';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import type { VisualizerListItem } from '@sonix/shared';
 import { TOAST_MESSAGES } from '../constants/messages';
 
 const PAGE_SIZE = 8;
@@ -44,12 +39,9 @@ export default function ExplorePage() {
   const { user } = useAuth();
   const toast = useToast();
   const canSave = Boolean(user);
-  const [visuals, setVisuals] = useState<ExploreVisualizer[]>([]);
   const { data: categories = [] } = useVisualizerTagsQuery();
   const [savedVisualIds, setSavedVisualIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const handleSearchDebounced = useCallback(() => {
     setPage(1);
@@ -60,6 +52,28 @@ export default function ExplorePage() {
     handleSearchDebounced
   );
   const [selectedTag, setSelectedTag] = useState('');
+
+  const {
+    data: visualizerList,
+    isPending: isListPending,
+    isError: isListError,
+    error: listError,
+  } = useVisualizerListQuery({
+    page,
+    limit: PAGE_SIZE,
+    search: debouncedSearch || undefined,
+    tag: selectedTag || undefined,
+  });
+
+  const visuals = (visualizerList?.visuals ?? []) as ExploreVisualizer[];
+  const totalPages = visualizerList?.totalPages ?? 1;
+  const isLoading = isListPending;
+
+  useEffect(() => {
+    if (!isListError || !listError) return;
+
+    toast.error(getToastErrorMessage(listError, TOAST_MESSAGES.VISUALIZER.LOAD_FAILED));
+  }, [isListError, listError, toast]);
 
   useEffect(() => {
     let cancelled = false;
@@ -90,43 +104,6 @@ export default function ExplorePage() {
       cancelled = true;
     };
   }, [user, toast]);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadVisualizers() {
-      setIsLoading(true);
-
-      try {
-        const response = await listVisualizers({
-          page,
-          limit: PAGE_SIZE,
-          search: debouncedSearch || undefined,
-          tag: selectedTag || undefined,
-        });
-
-        if (cancelled) return;
-
-        setVisuals(response.data as ExploreVisualizer[]);
-        setTotalPages(Math.max(response.pages, 1));
-      } catch (error) {
-        if (cancelled) return;
-
-        setVisuals([]);
-        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_FAILED));
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    void loadVisualizers();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [page, debouncedSearch, selectedTag, toast]);
 
   async function handleToggleSave(id: string) {
     if (!canSave) return;
