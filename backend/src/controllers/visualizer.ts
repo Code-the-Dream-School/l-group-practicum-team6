@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { NotFoundError } from '../errors';
+import { BadRequestError, NotFoundError } from '../errors';
 import Visualizer from '../models/Visualizer';
 import { API_ERROR_MESSAGES, VISUALIZER_PAGINATION } from '../constants';
+import { validateObjectId } from '../utils/objectIdValidation';
 
 // GET /api/v1/visualizers, public endpoint.
 export const getAllVisualizers = async (req: Request, res: Response) => {
@@ -71,6 +72,14 @@ export const getTags = async (_req: Request, res: Response) => {
 
 // GET /api/v1/visualizers/:id, protected endpoint, requires the authenticate middleware on the route.
 export const getVisualizerById = async (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  if (typeof id !== 'string') {
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
+  }
+
+  validateObjectId(id, API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
+
   const visualizer = await Visualizer.findById(req.params.id);
 
   if (!visualizer) throw new NotFoundError(API_ERROR_MESSAGES.VISUALIZER_NOT_FOUND);
