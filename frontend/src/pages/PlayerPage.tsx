@@ -49,7 +49,7 @@ function PlayerPageContent({ id }: { id: string }) {
     return <PlayerMessage>Unable to load visualizer</PlayerMessage>;
   }
 
-  return <VisualizerPlayer glsl={glsl} visual={visual} />;
+  return <VisualizerPlayer glsl={glsl} visual={visual} showPlaybackControls />;
 }
 
 export default function PlayerPage() {

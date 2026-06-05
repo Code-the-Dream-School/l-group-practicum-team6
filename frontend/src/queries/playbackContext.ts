@@ -1,16 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '../lib/queryClient';
-import { type VisualizerListFilters, visualizerQueryKeys } from './visualizerKeys';
+import { type VisualizerFilters, visualizerQueryKeys } from './visualizerKeys';
 
-export const DEFAULT_EXPLORE_FILTERS: VisualizerListFilters = {
+const PLAYBACK_CONTEXT_STALE_MS = 60_000;
+const PLAYBACK_CONTEXT_GC_MS = 30 * 60_000;
+
+export const DEFAULT_EXPLORE_FILTERS: VisualizerFilters = {
   page: 1,
   limit: 8,
 };
 
 export type ExplorePlaybackContext = {
   source: 'explore';
-  filters: VisualizerListFilters;
+  filters: VisualizerFilters;
 };
 
 export type PlaybackContext = ExplorePlaybackContext;
@@ -27,8 +30,8 @@ export function usePlaybackContext() {
   return useQuery({
     queryKey: visualizerQueryKeys.playbackContext(),
     queryFn: () => getPlaybackContext() ?? { source: 'explore', filters: DEFAULT_EXPLORE_FILTERS },
-    staleTime: Infinity,
-    gcTime: Infinity,
+    staleTime: PLAYBACK_CONTEXT_STALE_MS,
+    gcTime: PLAYBACK_CONTEXT_GC_MS,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

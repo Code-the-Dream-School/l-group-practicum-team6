@@ -16,11 +16,16 @@ import { startVisualPreview } from '../utils/visualPreview';
 type VisualizerPlayerProps = {
   glsl: string;
   visual: PlayerVisual;
+  showPlaybackControls?: boolean;
 };
 
 const PAUSE_OVERLAY_MS = 500;
 
-export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
+export function VisualizerPlayer({
+  glsl,
+  visual,
+  showPlaybackControls = !visual.isDemo,
+}: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
   const toast = useToast();
@@ -189,7 +194,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
               isFavorited={isFavorited}
               isMicEnabled={isMicEnabled}
               showFavorite={canFavorite}
-              showPlaybackControls={canFavorite}
+              showPlaybackControls={showPlaybackControls}
               onTogglePlay={togglePlay}
               onPrevious={goPrevious}
               onNext={goNext}

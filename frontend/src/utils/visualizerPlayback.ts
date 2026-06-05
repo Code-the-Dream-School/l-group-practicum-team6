@@ -1,7 +1,7 @@
 import type { VisualizerListItem } from '@sonix/shared';
 
-export function getNonDemoVisualIds(visuals: VisualizerListItem[]): string[] {
-  return visuals.filter((visual) => !visual.isDemo).map((visual) => visual._id);
+export function getVisualIds(visuals: VisualizerListItem[]): string[] {
+  return visuals.map((visual) => visual._id);
 }
 
 export function getLoopedIdOnPage(

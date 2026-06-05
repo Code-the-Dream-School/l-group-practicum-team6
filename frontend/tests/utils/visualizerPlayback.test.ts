@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getBoundaryPageTargetId,
   getLoopedIdOnPage,
-  getNonDemoVisualIds,
+  getVisualIds,
   getWrappedPage,
 } from '../../src/utils/visualizerPlayback';
 
@@ -15,8 +15,8 @@ const visuals = [
 ];
 
 describe('visualizerPlayback utils', () => {
-  it('filters demo visuals from playlist ids', () => {
-    expect(getNonDemoVisualIds(visuals)).toEqual(['a', 'b', 'c']);
+  it('includes demo visuals in playlist ids', () => {
+    expect(getVisualIds(visuals)).toEqual(['a', 'b', 'demo', 'c']);
   });
 
   it('resolves adjacent ids on the same page', () => {

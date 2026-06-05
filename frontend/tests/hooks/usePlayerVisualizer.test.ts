@@ -20,6 +20,41 @@ describe('usePlayerVisualizer', () => {
     getVisualizer.mockReset();
   });
 
+  it('does not show loading when switching to a prefetched visualizer id', async () => {
+    getVisualizer.mockImplementation(async (id: string) => ({
+      data: {
+        _id: id,
+        name: id === 'visual-1' ? 'Pulse Waves' : 'Wave Flow',
+        glsl: `shader-${id}`,
+        source: '',
+        isDemo: false,
+        tags: ['abstract'],
+      },
+    }));
+
+    const { result, rerender } = renderHook(({ activeId }) => usePlayerVisualizer(activeId), {
+      wrapper: QueryClientTestProvider,
+      initialProps: { activeId: 'visual-1' },
+    });
+
+    await waitFor(() => {
+      expect(result.current.glsl).toBe('shader-visual-1');
+    });
+
+    const { loadVisualizer } = await import('../../src/hooks/usePreviewGlsl');
+    await loadVisualizer('visual-2');
+    getVisualizer.mockClear();
+
+    rerender({ activeId: 'visual-2' });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.glsl).toBe('shader-visual-2');
+
+    await waitFor(() => {
+      expect(getVisualizer).not.toHaveBeenCalled();
+    });
+  });
+
   it('skips a second network call when glsl was cached from card preview', async () => {
     getVisualizer.mockResolvedValue({
       data: {

@@ -205,11 +205,11 @@ export default function ExplorePage() {
                     thumbnailUrl={
                       visual.imageUrl ? buildVisualizerImageEndpoint(visual._id) : undefined
                     }
-                    playPath={visual.isDemo ? '/visualizer/demo' : `/visualizer/${visual._id}`}
+                    playPath={`/visualizer/${visual._id}`}
                     isDemo={visual.isDemo}
                     canSave={canSave && !visual.isDemo}
                     isSaved={savedVisualIds.includes(visual._id)}
-                    playbackContext={visual.isDemo ? undefined : explorePlaybackContext}
+                    playbackContext={explorePlaybackContext}
                     onToggleSave={handleToggleSave}
                   />
                 ))}

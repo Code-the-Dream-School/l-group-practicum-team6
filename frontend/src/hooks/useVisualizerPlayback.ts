@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { ROUTES } from '@sonix/shared';
@@ -8,12 +8,13 @@ import {
   setPlaybackContext,
   usePlaybackContext,
 } from '../queries/playbackContext';
+import { prefetchPlayback } from '../queries/prefetchPlayback';
 import { fetchVisualizerList } from '../queries/visualizerList';
 import { visualizerQueryKeys } from '../queries/visualizerKeys';
 import {
   getBoundaryPageTargetId,
   getLoopedIdOnPage,
-  getNonDemoVisualIds,
+  getVisualIds,
   getWrappedPage,
 } from '../utils/visualizerPlayback';
 import { useVisualizerListQuery } from './useVisualizerListQuery';
@@ -32,10 +33,25 @@ export function useVisualizerPlayback(currentId: string) {
   const filters = context.source === 'explore' ? context.filters : DEFAULT_EXPLORE_FILTERS;
   const { data: listData, isPending: isListPending } = useVisualizerListQuery(filters);
 
-  const idsOnPage = getNonDemoVisualIds(listData?.visuals ?? []);
+  const idsOnPage = getVisualIds(listData?.visuals ?? []);
   const currentIndex = idsOnPage.indexOf(currentId);
   const currentPage = filters.page;
   const totalPages = listData?.totalPages ?? 1;
+
+  useEffect(() => {
+    if (isListPending || totalPages < 1) {
+      return;
+    }
+
+    void prefetchPlayback({
+      queryClient,
+      idsOnPage,
+      currentIndex,
+      currentPage,
+      totalPages,
+      filters,
+    });
+  }, [currentIndex, currentPage, filters, idsOnPage, isListPending, queryClient, totalPages]);
 
   const navigateToVisualizer = useCallback(
     (id: string) => {
@@ -66,7 +82,7 @@ export function useVisualizerPlayback(currentId: string) {
           queryKey: visualizerQueryKeys.list(nextFilters),
           queryFn: () => fetchVisualizerList(nextFilters),
         });
-        const boundaryIds = getNonDemoVisualIds(result.visuals);
+        const boundaryIds = getVisualIds(result.visuals);
         const targetId = getBoundaryPageTargetId(boundaryIds, direction);
 
         if (!targetId) {
