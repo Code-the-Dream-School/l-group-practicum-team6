@@ -64,6 +64,7 @@ vi.mock('../../src/utils/visualPreview', () => ({
   startVisualPreview: vi.fn(() => vi.fn()),
 }));
 
+import { queryClient } from '../../src/lib/queryClient';
 import { QueryClientTestProvider } from '../../src/test/queryClient';
 import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
 import ExplorePage from '../../src/pages/ExplorePage';
@@ -74,10 +75,13 @@ import PlayerPage from '../../src/pages/PlayerPage';
 import { Routes as RoutePaths } from '../../src/routes/paths';
 import { useAuth } from '../../src/context/useAuth';
 
-function renderWithRouter(ui: React.ReactElement) {
+function renderWithRouter(
+  ui: React.ReactElement,
+  { initialEntries = ['/'] }: { initialEntries?: string[] } = {}
+) {
   return render(
     <QueryClientTestProvider>
-      <MemoryRouter>{ui}</MemoryRouter>
+      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
     </QueryClientTestProvider>
   );
 }
@@ -93,6 +97,7 @@ const guestAuth = {
 
 describe('basic pages', () => {
   beforeEach(() => {
+    queryClient.clear();
     vi.mocked(useAuth).mockReturnValue(guestAuth);
   });
   it('renders LandingPage', () => {
@@ -122,11 +127,7 @@ describe('basic pages', () => {
   });
 
   it('renders DemoPlayerPage', async () => {
-    render(
-      <MemoryRouter initialEntries={['/visualizer/demo']}>
-        <DemoPlayerPage />
-      </MemoryRouter>
-    );
+    renderWithRouter(<DemoPlayerPage />, { initialEntries: ['/visualizer/demo'] });
 
     await waitFor(() => {
       expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
@@ -156,12 +157,11 @@ describe('basic pages', () => {
       updateProfile: vi.fn(),
     });
 
-    render(
-      <MemoryRouter initialEntries={['/visualizer/visual123']}>
-        <Routes>
-          <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
-        </Routes>
-      </MemoryRouter>
+    renderWithRouter(
+      <Routes>
+        <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
+      </Routes>,
+      { initialEntries: ['/visualizer/visual123'] }
     );
 
     await waitFor(() => {
