@@ -4,6 +4,7 @@ import type { ApiResponse, User } from '@sonix/shared';
 import type { AuthContextValue } from './auth-context';
 
 import { API_ROUTES } from '@sonix/shared';
+import { clearSavedVisualsCache } from '../lib/clearSavedVisualsCache';
 import { AuthContext } from './auth-context';
 
 async function readApiError(res: Response, fallback: string): Promise<string> {
@@ -59,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const body = (await res.json()) as ApiResponse<User>;
     if (!body?.data) throw new Error('Invalid login response');
+    clearSavedVisualsCache();
     setUser(body.data);
   }, []);
 
@@ -74,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     const body = (await res.json()) as ApiResponse<User>;
     if (!body?.data) throw new Error('Invalid registration response');
+    clearSavedVisualsCache();
     setUser(body.data);
   }, []);
 
@@ -103,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (e) {
       console.error('Failed to logout', e);
     } finally {
+      clearSavedVisualsCache();
       setUser(null);
     }
   }, []);

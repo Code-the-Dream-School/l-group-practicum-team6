@@ -3,36 +3,27 @@ import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import VisualizerCard from '../components/VisualizerCard';
 import { useToast } from '../context/useToast';
-import { buildVisualizerImageEndpoint, getSavedVisuals, removeVisual } from '../api';
-import type { SavedVisual } from '../api/users';
+import { buildVisualizerImageEndpoint } from '../api';
+import { useRemoveVisualMutation } from '../hooks/useSavedVisualMutations';
+import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { ROUTES } from '@sonix/shared';
-import { TOAST_MESSAGES } from '@sonix/shared';
+import { LABELS, TOAST_MESSAGES, ROUTES } from '@sonix/shared';
 
 type SortOption = 'recent' | 'az' | 'za';
 
 export default function MyVisualsPage() {
   const toast = useToast();
-  const [savedVisuals, setSavedVisuals] = useState<SavedVisual[]>([]);
   const [sortOption, setSortOption] = useState<SortOption>('recent');
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: savedVisuals = [], isPending: isLoading, isError, error } = useSavedVisualsQuery();
+  const removeMutation = useRemoveVisualMutation();
 
   useEffect(() => {
-    async function loadSavedVisuals() {
-      try {
-        const response = await getSavedVisuals();
-        setSavedVisuals(response.data);
-      } catch (error) {
-        toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    if (!isError || !error) return;
 
-    void loadSavedVisuals();
-  }, [toast]);
+    toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
+  }, [isError, error, toast]);
 
   const sortedVisuals = useMemo(() => {
     const visuals = [...savedVisuals];
@@ -50,25 +41,18 @@ export default function MyVisualsPage() {
     );
   }, [savedVisuals, sortOption]);
 
-  async function handleRemoveVisual(visualizerId: string) {
-    const previousVisuals = savedVisuals;
+  function buildVisualizerPath(id: string): string {
+    return ROUTES.VISUALIZER.replace(':id', encodeURIComponent(id));
+  }
 
-    setSavedVisuals((currentVisuals) =>
-      currentVisuals.filter((savedVisual) => savedVisual.visualizerId._id !== visualizerId)
-    );
+  async function handleRemoveVisual(visualizerId: string) {
     setConfirmRemoveId(null);
 
     try {
-      await removeVisual(visualizerId);
-      toast.success(TOAST_MESSAGES.VISUALIZER.REMOVED_FROM_FAVORITES);
-    } catch (error) {
-      setSavedVisuals(previousVisuals);
-      toast.error(getToastErrorMessage(error, 'Could not remove visualizer. Please try again.'));
+      await removeMutation.mutateAsync(visualizerId);
+    } catch {
+      // Toast is handled in the mutation hook.
     }
-  }
-
-  function buildVisualizerPath(id: string): string {
-    return ROUTES.VISUALIZER.replace(':id', encodeURIComponent(id));
   }
 
   return (
@@ -79,7 +63,7 @@ export default function MyVisualsPage() {
         <div className="w-full max-w-4xl">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-xl font-semibold tracking-tight">My Favorites</h1>
+              <h1 className="text-xl font-semibold tracking-tight">{LABELS.MY_VISUALS}</h1>
             </div>
 
             <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import type { User } from '@sonix/shared';
 
+import { LABELS } from '@sonix/shared';
 import { ROUTES } from '@sonix/shared';
 import { Avatar } from './Avatar';
 
@@ -53,7 +54,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               onClick={() => setOpen(false)}
               className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
             >
-              Settings
+              {LABELS.SETTINGS}
             </NavLink>
             <button
               type="button"
@@ -61,7 +62,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
               onClick={() => handleLogout()}
               className="block w-full px-4 py-2 text-left text-sm text-text-primary hover:bg-surface cursor-pointer"
             >
-              Log Out
+              {LABELS.LOG_OUT}
             </button>
           </div>
         </>

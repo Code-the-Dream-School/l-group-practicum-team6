@@ -1,97 +1,57 @@
-import { useEffect, useState } from 'react';
-import type { Visualizer } from '@sonix/shared';
+import { useEffect } from 'react';
 
-import { getDemoVisualizer, getVisualizer } from '../api';
+import { queryClient } from '../lib/queryClient';
+import {
+  fetchVisualizerDetail,
+  type PlayerVisual,
+  type VisualizerDetail,
+} from '../queries/visualizerDetail';
+import { visualizerQueryKeys } from '../queries/visualizerKeys';
+import { useVisualizerQuery } from './useVisualizerQuery';
 
-export type PlayerVisual = {
-  id: string;
-  name: string;
-  tags: string[];
-  isDemo?: boolean;
-};
-
-type VisualizerCacheEntry = {
-  glsl: string;
-  visual: PlayerVisual;
-};
-
-const glslCache = new Map<string, string>();
-const visualMetaCache = new Map<string, PlayerVisual>();
-const pendingRequests = new Map<string, Promise<VisualizerCacheEntry>>();
-
-function getCacheKey(id: string, isDemo: boolean): string {
-  return isDemo ? '__demo__' : id;
-}
-
-function toPlayerVisual(visualizer: Visualizer): PlayerVisual {
-  return {
-    id: visualizer._id,
-    name: visualizer.name,
-    tags: visualizer.tags ?? [],
-    isDemo: visualizer.isDemo,
-  };
-}
+export type { PlayerVisual };
 
 export function getCachedVisualizerGlsl(id: string, isDemo = false): string | null {
-  return glslCache.get(getCacheKey(id, isDemo)) ?? null;
+  return (
+    queryClient.getQueryData<VisualizerDetail>(visualizerQueryKeys.detail(id, isDemo))?.glsl ?? null
+  );
 }
 
 export function getCachedPlayerVisual(id: string, isDemo = false): PlayerVisual | null {
-  return visualMetaCache.get(getCacheKey(id, isDemo)) ?? null;
+  return (
+    queryClient.getQueryData<VisualizerDetail>(visualizerQueryKeys.detail(id, isDemo))?.visual ??
+    null
+  );
 }
 
 export function cacheVisualizerGlsl(id: string, glsl: string, isDemo = false): void {
-  glslCache.set(getCacheKey(id, isDemo), glsl);
+  const queryKey = visualizerQueryKeys.detail(id, isDemo);
+  const existing = queryClient.getQueryData<VisualizerDetail>(queryKey);
+
+  queryClient.setQueryData<VisualizerDetail>(queryKey, {
+    glsl,
+    visual: existing?.visual ?? {
+      id,
+      name: '',
+      tags: [],
+      isDemo,
+    },
+  });
 }
 
-export async function loadVisualizer(id: string, isDemo = false): Promise<VisualizerCacheEntry> {
-  const cacheKey = getCacheKey(id, isDemo);
-  const cachedGlsl = glslCache.get(cacheKey);
-  const cachedVisual = visualMetaCache.get(cacheKey);
-
-  if (cachedGlsl && cachedVisual) {
-    return { glsl: cachedGlsl, visual: cachedVisual };
-  }
-
-  const pending = pendingRequests.get(cacheKey);
-
-  if (pending) {
-    return pending;
-  }
-
-  const request = (async (): Promise<VisualizerCacheEntry> => {
-    const response = isDemo ? await getDemoVisualizer() : await getVisualizer(id);
-    const entry: VisualizerCacheEntry = {
-      glsl: response.data.glsl,
-      visual: toPlayerVisual(response.data),
-    };
-
-    glslCache.set(cacheKey, entry.glsl);
-    visualMetaCache.set(cacheKey, entry.visual);
-    return entry;
-  })();
-
-  const tracked = request.finally(() => {
-    pendingRequests.delete(cacheKey);
+export async function loadVisualizer(id: string, isDemo = false): Promise<VisualizerDetail> {
+  return queryClient.ensureQueryData({
+    queryKey: visualizerQueryKeys.detail(id, isDemo),
+    queryFn: () => fetchVisualizerDetail(id, isDemo),
   });
-
-  pendingRequests.set(cacheKey, tracked);
-  return tracked;
 }
 
 export async function loadVisualizerGlsl(id: string, isDemo = false): Promise<string> {
-  const cacheKey = getCacheKey(id, isDemo);
-  const cached = glslCache.get(cacheKey);
-
-  if (cached) {
-    return cached;
-  }
-
   const { glsl } = await loadVisualizer(id, isDemo);
   return glsl;
 }
 
-type UsePreviewGlslOptions = {
+type PreviewGlslOptions = {
   enabled: boolean;
   previewGlsl?: string;
   isDemo?: boolean;
@@ -99,47 +59,24 @@ type UsePreviewGlslOptions = {
 
 export function usePreviewGlsl(
   id: string,
-  { enabled, previewGlsl, isDemo = false }: UsePreviewGlslOptions
+  { enabled, previewGlsl, isDemo = false }: PreviewGlslOptions
 ): string | null {
-  const cacheKey = getCacheKey(id, isDemo);
-  const cachedGlsl = previewGlsl ?? glslCache.get(cacheKey) ?? null;
-  const [fetchedGlsl, setFetchedGlsl] = useState<string | null>(null);
-
   useEffect(() => {
     if (previewGlsl) {
-      glslCache.set(cacheKey, previewGlsl);
+      cacheVisualizerGlsl(id, previewGlsl, isDemo);
     }
-  }, [previewGlsl, cacheKey]);
+  }, [previewGlsl, id, isDemo]);
 
-  useEffect(() => {
-    if (previewGlsl || !enabled || glslCache.has(cacheKey)) {
-      return;
-    }
+  const { data } = useVisualizerQuery(id, {
+    isDemo,
+    enabled: enabled && !previewGlsl,
+  });
 
-    let cancelled = false;
-
-    void loadVisualizerGlsl(id, isDemo)
-      .then((glsl) => {
-        if (!cancelled) {
-          setFetchedGlsl(glsl);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setFetchedGlsl(null);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled, id, previewGlsl, isDemo, cacheKey]);
-
-  return cachedGlsl ?? fetchedGlsl;
+  return previewGlsl ?? data?.glsl ?? null;
 }
 
 export function clearPreviewGlslCache() {
-  glslCache.clear();
-  visualMetaCache.clear();
-  pendingRequests.clear();
+  queryClient.removeQueries({
+    predicate: (query) => query.queryKey[0] === 'visualizers' && query.queryKey[1] === 'detail',
+  });
 }

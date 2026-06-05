@@ -1,5 +1,8 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { queryClient } from '../../src/lib/queryClient';
+import { QueryClientTestProvider } from '../../src/test/queryClient';
 import {
   clearPreviewGlslCache,
   getCachedVisualizerGlsl,
@@ -10,13 +13,14 @@ import {
 const getVisualizer = vi.fn();
 const getDemoVisualizer = vi.fn();
 
-vi.mock('../../src/api', () => ({
+vi.mock('../../src/api/visualizers', () => ({
   getVisualizer: (...args: unknown[]) => getVisualizer(...args),
   getDemoVisualizer: (...args: unknown[]) => getDemoVisualizer(...args),
 }));
 
 describe('usePreviewGlsl', () => {
   afterEach(() => {
+    queryClient.clear();
     clearPreviewGlslCache();
     getVisualizer.mockReset();
     getDemoVisualizer.mockReset();
@@ -34,6 +38,7 @@ describe('usePreviewGlsl', () => {
     });
 
     const { rerender } = renderHook(({ enabled }) => usePreviewGlsl('visual-1', { enabled }), {
+      wrapper: QueryClientTestProvider,
       initialProps: { enabled: true },
     });
 
@@ -50,12 +55,16 @@ describe('usePreviewGlsl', () => {
   });
 
   it('uses previewGlsl prop without fetching', async () => {
-    renderHook(() =>
-      usePreviewGlsl('visual-1', {
-        enabled: true,
-        previewGlsl: 'inline shader',
-      })
+    const { result } = renderHook(
+      () =>
+        usePreviewGlsl('visual-1', {
+          enabled: true,
+          previewGlsl: 'inline shader',
+        }),
+      { wrapper: QueryClientTestProvider }
     );
+
+    expect(result.current).toBe('inline shader');
 
     await waitFor(() => {
       expect(getVisualizer).not.toHaveBeenCalled();

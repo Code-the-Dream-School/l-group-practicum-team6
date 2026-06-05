@@ -1,11 +1,11 @@
 export const RATE_LIMIT = {
-  WINDOW_MS: 15 * 60 * 1000,
-  GLOBAL_MAX_PRODUCTION: 100,
+  WINDOW_MS: 1 * 60 * 1000,
+  GLOBAL_MAX_PRODUCTION: 50,
   GLOBAL_MAX_NON_PRODUCTION: 1000,
-  AUTH_MAX_PRODUCTION: 20,
+  AUTH_MAX_PRODUCTION: 50,
   AUTH_MAX_NON_PRODUCTION: 1000,
   GLOBAL_MESSAGE: 'Too many requests, please try again later.',
-  AUTH_MESSAGE: 'Too many requests from this IP, please try again after 15 minutes',
+  AUTH_MESSAGE: 'Too many requests from this IP, please try again after 1 minutes',
 } as const;
 
 export const AUTH_CONSTANTS = {

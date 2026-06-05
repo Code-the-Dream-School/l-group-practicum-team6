@@ -2,6 +2,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { queryClient } from '../../src/lib/queryClient';
+import { QueryClientTestProvider } from '../../src/test/queryClient';
+
 const mockToast = {
   success: vi.fn(),
   error: vi.fn(),
@@ -29,17 +32,25 @@ vi.mock('../../src/context/useToast', () => ({
 const getSavedVisuals = vi.fn();
 const removeVisual = vi.fn();
 
-vi.mock('../../src/api', async () => {
-  const actual = await vi.importActual<typeof import('../../src/api')>('../../src/api');
+vi.mock('../../src/api/users', () => ({
+  getSavedVisuals: (...args: unknown[]) => getSavedVisuals(...args),
+}));
 
-  return {
-    ...actual,
-    getSavedVisuals: (...args: unknown[]) => getSavedVisuals(...args),
-    removeVisual: (...args: unknown[]) => removeVisual(...args),
-  };
-});
+vi.mock('../../src/api', () => ({
+  removeVisual: (...args: unknown[]) => removeVisual(...args),
+}));
 
 import MyVisualsPage from '../../src/pages/MyVisualsPage';
+
+function renderMyVisualsPage() {
+  return render(
+    <QueryClientTestProvider>
+      <MemoryRouter>
+        <MyVisualsPage />
+      </MemoryRouter>
+    </QueryClientTestProvider>
+  );
+}
 
 const savedVisuals = [
   {
@@ -72,6 +83,7 @@ const savedVisuals = [
 
 describe('MyVisualsPage', () => {
   beforeEach(() => {
+    queryClient.clear();
     getSavedVisuals.mockReset();
     removeVisual.mockReset();
     mockToast.success.mockReset();
@@ -84,21 +96,13 @@ describe('MyVisualsPage', () => {
   it('shows a loading state before favorites are fetched', () => {
     getSavedVisuals.mockReturnValue(new Promise(() => undefined));
 
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     expect(screen.getByText(/Loading your saved visualizers/i)).toBeInTheDocument();
   });
 
   it('renders saved visualizers after loading', async () => {
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
@@ -109,11 +113,7 @@ describe('MyVisualsPage', () => {
   it('shows a toast and falls back to empty state when loading fails', async () => {
     getSavedVisuals.mockRejectedValue(new Error('network'));
 
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith('Unable to load saved visualizers');
@@ -124,11 +124,7 @@ describe('MyVisualsPage', () => {
   it('shows an empty state when there are no favorites', async () => {
     getSavedVisuals.mockResolvedValue({ data: [] });
 
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText(/No favorites yet/i)).toBeInTheDocument();
@@ -140,11 +136,7 @@ describe('MyVisualsPage', () => {
   });
 
   it('sorts favorites alphabetically', async () => {
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
@@ -158,11 +150,11 @@ describe('MyVisualsPage', () => {
   });
 
   it('removes a favorite after confirmation', async () => {
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    getSavedVisuals.mockResolvedValueOnce({ data: savedVisuals }).mockResolvedValue({
+      data: savedVisuals.filter((saved) => saved.visualizerId._id !== 'visual-b'),
+    });
+
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
@@ -172,7 +164,7 @@ describe('MyVisualsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
 
     await waitFor(() => {
-      expect(removeVisual).toHaveBeenCalledWith('visual-b');
+      expect(removeVisual).toHaveBeenCalledWith('visual-b', expect.anything());
       expect(screen.queryByText('Beta Visual')).not.toBeInTheDocument();
     });
     expect(mockToast.success).toHaveBeenCalledWith('Visualizer removed from favorites.');
@@ -181,11 +173,7 @@ describe('MyVisualsPage', () => {
   it('restores favorites and shows a toast when removal fails', async () => {
     removeVisual.mockRejectedValue(new Error('failed'));
 
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
@@ -195,19 +183,13 @@ describe('MyVisualsPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Confirm' }));
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith(
-        'Could not remove visualizer. Please try again.'
-      );
+      expect(mockToast.error).toHaveBeenCalledWith('Unable to remove visualizer');
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
     });
   });
 
   it('cancels removal when the user dismisses the confirmation', async () => {
-    render(
-      <MemoryRouter>
-        <MyVisualsPage />
-      </MemoryRouter>
-    );
+    renderMyVisualsPage();
 
     await waitFor(() => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();

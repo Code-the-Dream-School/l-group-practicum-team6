@@ -1,3 +1,5 @@
+export const API_BASE_PATH = '/api/v1';
+
 export interface User {
   _id: string;
   name: string;
@@ -75,8 +77,6 @@ export const TOAST_MESSAGES = {
   },
 } as const;
 
-export const API_BASE_PATH = '/api/v1';
-
 export const API_ROUTES = {
   HEALTH: `${API_BASE_PATH}/health`,
   AUTH: `${API_BASE_PATH}/auth`,
@@ -110,4 +110,14 @@ export const API_ROUTES = {
   IMAGES_USER: `${API_BASE_PATH}/images/users/user`,
   IMAGES_USER_BY_ID: `${API_BASE_PATH}/images/users/:id`,
   IMAGES_VISUALIZER_BY_ID: `${API_BASE_PATH}/images/visualizers/:id`,
+} as const;
+
+export const LABELS = {
+  EXPLORE: 'Explore',
+  MY_VISUALS: 'My Visuals',
+  SETTINGS: 'Settings',
+  LOG_OUT: 'Log Out',
+  LOG_IN: 'Log In',
+  SIGN_UP: 'Sign Up',
+  SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
 } as const;

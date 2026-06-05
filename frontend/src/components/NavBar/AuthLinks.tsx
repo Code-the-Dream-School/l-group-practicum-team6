@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { LABELS } from '@sonix/shared';
 import { ROUTES } from '@sonix/shared';
 
 type AuthLinksProps = {
@@ -14,7 +15,7 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
         to={ROUTES.SIGNUP}
         className={stacked ? 'btn-primary justify-center text-center' : 'btn-primary'}
       >
-        Sign Up to unlock all visualizers
+        {LABELS.SIGN_UP_CTA}
       </Link>
     );
   }
@@ -23,10 +24,10 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
     return (
       <>
         <Link to={ROUTES.LOGIN} className="btn-ghost justify-center">
-          Log In
+          {LABELS.LOG_IN}
         </Link>
         <Link to={ROUTES.SIGNUP} className="btn-primary justify-center">
-          Sign Up
+          {LABELS.SIGN_UP}
         </Link>
       </>
     );
@@ -35,10 +36,10 @@ export function AuthLinks({ variant = 'default', stacked = false }: AuthLinksPro
   return (
     <>
       <Link to={ROUTES.LOGIN} className="btn-ghost">
-        Log In
+        {LABELS.LOG_IN}
       </Link>
       <Link to={ROUTES.SIGNUP} className="btn-primary">
-        Sign Up
+        {LABELS.SIGN_UP}
       </Link>
     </>
   );
