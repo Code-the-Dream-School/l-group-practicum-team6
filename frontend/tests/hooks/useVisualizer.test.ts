@@ -21,6 +21,14 @@ vi.mock('three', () => {
     set = vi.fn();
   }
 
+  class MockVector3 {
+    set = vi.fn();
+  }
+
+  class MockVector4 {
+    set = vi.fn();
+  }
+
   class MockWebGLRenderer {
     setPixelRatio = vi.fn();
     setSize = mockSetSize;
@@ -72,6 +80,8 @@ vi.mock('three', () => {
     Mesh: MockMesh,
     DataTexture: MockDataTexture,
     Vector2: MockVector2,
+    Vector3: MockVector3,
+    Vector4: MockVector4,
     RedFormat: 1028,
     LinearFilter: 9729,
   };

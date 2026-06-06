@@ -37,6 +37,75 @@ export interface UserVisual {
 
 export type ApiResponse<T> = { data: T };
 
+export interface GenerateVisualizerRequest {
+  systemInstruction: {
+    parts: Array<{ text: string }>;
+  };
+  contents: Array<{
+    role: string;
+    parts: Array<{ text: string }>;
+  }>;
+  generationConfig: {
+    temperature: number;
+    maxOutputTokens: number;
+  };
+}
+
+export const DEFAULT_SYSTEM_PROMPT = `
+You are an expert GLSL fragment shader author for a WebGL2 audio visualizer.
+Generate a complete fragment shader that reacts to live microphone audio via a 2D FFT texture.
+
+## Required declarations (exact uniform names)
+
+\`\`\`glsl
+precision highp float;
+precision highp int;
+
+uniform vec3      iResolution;
+uniform float     iTime;
+uniform float     iTimeDelta;
+uniform float     iFrameRate;
+uniform int       iFrame;
+uniform float     iChannelTime[4];
+uniform vec3      iChannelResolution[4];
+uniform vec4      iMouse;
+uniform vec4      iDate;
+uniform sampler2D iChannel0;
+out vec4 fragColor;
+\`\`\`
+
+## Audio sampling
+
+Use this pattern (or an equivalent getAudio helper):
+
+\`\`\`glsl
+float getAudio(float freq) {
+    return texture(iChannel0, vec2(fract(freq), 0.25)).x;
+}
+\`\`\`
+
+Sample bass (~0.05), mids (~0.4), treble (~0.8) to drive motion, color, and glow.
+
+## Entry point
+
+Implement \`void mainImage(out vec4 fragColor, in vec2 fragCoord)\` for all rendering logic, then:
+
+\`\`\`glsl
+void main() {
+    mainImage(fragColor, gl_FragCoord.xy);
+}
+\`\`\`
+
+## Technical rules
+
+- GLSL 300 es / WebGL2 only.
+- Do NOT include a #version directive.
+- Normalize coordinates with iResolution.y for aspect-correct visuals.
+- Use iTime for animation; iMouse is optional.
+- Output ONLY the raw fragment shader source code.
+- No markdown fences, no explanations, no comments outside the shader unless brief and inside the GLSL.
+`.trim();
+
 export interface ApiError {
   error: {
     message: string;
@@ -49,6 +118,7 @@ export const ROUTES = {
   SIGNUP: '/signup',
   EXPLORE: '/explore',
   ADMIN_VISUALS: '/admin/visualizers',
+  ADMIN_VISUALS_CREATE: '/admin/visualizers/create',
   VISUALIZER_DEMO: '/visualizer/demo',
   VISUALIZER: '/visualizer/:id',
   MY_VISUALS: '/my-visuals',
@@ -105,6 +175,7 @@ export const API_ROUTES = {
   // Admin Visualizer Management
   ADMIN_VISUALIZERS: `${API_BASE_PATH}/admin/visualizers`,
   ADMIN_VISUALIZERS_BY_ID: `${API_BASE_PATH}/admin/visualizers/:id`,
+  ADMIN_VISUALIZERS_GENERATE: `${API_BASE_PATH}/admin/visualizers/generate`,
 
   // Images
   CURRENT_USER_IMAGE: `${API_BASE_PATH}/images/users/current`,
@@ -120,4 +191,5 @@ export const LABELS = {
   LOG_IN: 'Log In',
   SIGN_UP: 'Sign Up',
   SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
+  CREATE_VISUALIZER: 'Create',
 } as const;

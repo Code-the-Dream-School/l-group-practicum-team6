@@ -1,4 +1,9 @@
-import { API_ROUTES, type ApiResponse, type Visualizer } from '@sonix/shared';
+import {
+  API_ROUTES,
+  type ApiResponse,
+  type GenerateVisualizerRequest,
+  type Visualizer,
+} from '@sonix/shared';
 import { buildAdminVisualizerEndpoint } from './endpoints';
 import { apiFetch } from './client';
 
@@ -10,6 +15,31 @@ export type AdminVisualizerPayload = {
   isDemo?: boolean;
   tags?: string[];
 };
+
+export function generateVisualiser(
+  userPrompt: string,
+  systemPrompt: string
+): Promise<ApiResponse<Visualizer>> {
+  const payload: GenerateVisualizerRequest = {
+    systemInstruction: {
+      parts: [{ text: systemPrompt }],
+    },
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: userPrompt }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 8192,
+    },
+  };
+  return apiFetch<ApiResponse<Visualizer>>(API_ROUTES.ADMIN_VISUALIZERS_GENERATE, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
 
 export function createAdminVisualizer(
   payload: Required<Pick<AdminVisualizerPayload, 'name' | 'glsl'>> & AdminVisualizerPayload

@@ -1,5 +1,5 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import type { VisualizerListItem } from '@sonix/shared';
+import { type VisualizerListItem } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
@@ -262,16 +262,6 @@ export default function AdminVisualizersPage() {
                 required
               />
             </label>
-
-            {/* <label className="grid gap-1 text-sm">
-              <span className="text-text-secondary">Source</span>
-              <input
-                type="text"
-                value={form.source}
-                onChange={(event) => setForm((prev) => ({ ...prev, source: event.target.value }))}
-                className="input-field"
-              />
-            </label> */}
 
             <label className="grid gap-1 text-sm">
               <span className="text-text-secondary">Image URL</span>
