@@ -47,11 +47,17 @@ export async function generateShader(payload: GenerateVisualizerRequest): Promis
   }
 
   const data = (await response.json()) as GeminiResponse;
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-  if (!text) {
+  if (!raw) {
     throw new Error('Gemini returned no shader content');
   }
+
+  // Strip markdown code fences Gemini sometimes adds despite instructions
+  const text = raw
+    .replace(/^```(?:glsl)?\s*\n?/, '')
+    .replace(/\n?```\s*$/, '')
+    .trim();
 
   return text;
 }

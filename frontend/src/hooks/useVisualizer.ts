@@ -48,9 +48,18 @@ export function useVisualizer(
     audioTexture.needsUpdate = true;
 
     const uniforms = {
-      uTime: { value: 0 },
-      uResolution: { value: new THREE.Vector2() },
-      uAudio: { value: audioTexture },
+      iTime: { value: 0 },
+      iTimeDelta: { value: 0 },
+      iFrameRate: { value: 60 },
+      iFrame: { value: 0 },
+      iResolution: { value: new THREE.Vector3() },
+      iMouse: { value: new THREE.Vector4() },
+      iDate: { value: new THREE.Vector4() },
+      iChannelTime: { value: [0, 0, 0, 0] },
+      iChannelResolution: {
+        value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()],
+      },
+      iChannel0: { value: audioTexture },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -74,7 +83,7 @@ export function useVisualizer(
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(width, height);
-      uniforms.uResolution.value.set(width, height);
+      uniforms.iResolution.value.set(width, height, 1);
     }
 
     const resizeObserver = new ResizeObserver(resize);
@@ -84,8 +93,24 @@ export function useVisualizer(
     const startTime = performance.now();
     let animationFrameId = 0;
 
+    let lastTime = performance.now();
     function animate(now: number) {
-      uniforms.uTime.value = (now - startTime) * 0.001;
+      const elapsed = (now - startTime) * 0.001;
+      const delta = (now - lastTime) * 0.001;
+      lastTime = now;
+
+      uniforms.iTime.value = elapsed;
+      uniforms.iTimeDelta.value = delta;
+      uniforms.iFrame.value += 1;
+      uniforms.iFrameRate.value = delta > 0 ? 1 / delta : 60;
+
+      const d = new Date();
+      uniforms.iDate.value.set(
+        d.getFullYear(),
+        d.getMonth(),
+        d.getDate(),
+        d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds() + d.getMilliseconds() * 0.001
+      );
 
       const data = getAudioData();
       const copyLength = Math.min(data.length, AUDIO_TEXTURE_WIDTH);
