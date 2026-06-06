@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getAllVisualizers,
@@ -115,18 +116,21 @@ describe('Visualizer Controller', () => {
 
   describe('getVisualizerById', () => {
     it('should return visualizer if found by id', async () => {
-      const mockVisualizer = { _id: '123', name: 'V1' };
-      req.params = { id: '123' };
+      const id = new mongoose.Types.ObjectId().toString();
+      const mockVisualizer = { _id: id, name: 'V1' };
+      req.params = { id };
       mockedVisualizer.findById.mockResolvedValue(mockVisualizer as any);
 
       await getVisualizerById(req as Request, res as Response);
 
+      expect(mockedVisualizer.findById).toHaveBeenCalledWith(id);
       expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
       expect(res.json).toHaveBeenCalledWith({ data: mockVisualizer });
     });
 
     it('should throw NotFoundError if visualizer not found by id', async () => {
-      req.params = { id: '999' };
+      const id = new mongoose.Types.ObjectId().toString();
+      req.params = { id };
       mockedVisualizer.findById.mockResolvedValue(null);
 
       await expect(getVisualizerById(req as Request, res as Response)).rejects.toThrow(

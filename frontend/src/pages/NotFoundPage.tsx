@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
@@ -29,6 +29,10 @@ const bars = [
 ];
 
 export default function NotFoundPage() {
+  const location = useLocation();
+  const state = location.state as { message?: string } | undefined;
+  const message = state?.message || "The page you are looking for doesn't\u00A0exist";
+
   const [showTeam, setShowTeam] = useState(false);
 
   return (
@@ -61,10 +65,7 @@ export default function NotFoundPage() {
             404
           </p>
 
-          <h1 className="mt-8 text-2xl font-semibold md:text-3xl">
-            The page you are looking for <br />
-            doesn't exist
-          </h1>
+          <h1 className="mt-8 text-2xl font-semibold md:text-3xl">{message}</h1>
 
           <p className="mt-4 text-sm leading-6 text-text-secondary">
             The sonic frequency you're searching for is out of range. <br />
