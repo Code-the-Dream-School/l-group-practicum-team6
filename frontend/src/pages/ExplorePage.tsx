@@ -207,7 +207,7 @@ export default function ExplorePage() {
                     }
                     playPath={`/visualizer/${visual._id}`}
                     isDemo={visual.isDemo}
-                    canSave={canSave && !visual.isDemo}
+                    canSave={canSave}
                     isSaved={savedVisualIds.includes(visual._id)}
                     playbackContext={explorePlaybackContext}
                     onToggleSave={handleToggleSave}

@@ -6,8 +6,7 @@ import shuffleIcon from '../../assets/icons/shuffle.svg';
 
 type PlaybackControlsProps = {
   isPlaying: boolean;
-  isFavorited: boolean;
-  showFavorite?: boolean;
+  isFavorited?: boolean;
   onShuffle?: () => void;
   onPrevious?: () => void;
   onTogglePlay?: () => void;
@@ -17,13 +16,12 @@ type PlaybackControlsProps = {
 
 export default function PlaybackControls({
   isPlaying,
-  isFavorited,
-  showFavorite = true,
+  isFavorited = false,
   onShuffle = () => {},
   onPrevious = () => {},
   onTogglePlay = () => {},
   onNext = () => {},
-  onToggleFavorite = () => {},
+  onToggleFavorite,
 }: PlaybackControlsProps) {
   return (
     <div className="flex items-center gap-6" data-testid="playback-controls">
@@ -67,7 +65,7 @@ export default function PlaybackControls({
         <img src={nextIcon} alt="" className="h-5 w-5" />
       </button>
 
-      {showFavorite && (
+      {onToggleFavorite && (
         <button
           type="button"
           aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}

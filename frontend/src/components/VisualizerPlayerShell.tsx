@@ -40,8 +40,6 @@ export function VisualizerPlayer({
   const [isPlaying, setIsPlaying] = useState(true);
   const isShaderPlayingRef = useRef(true);
   const pauseShaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const canFavorite = !visual.isDemo;
-
   const scheduleShaderPause = useCallback(() => {
     if (pauseShaderTimeoutRef.current) {
       clearTimeout(pauseShaderTimeoutRef.current);
@@ -81,9 +79,7 @@ export function VisualizerPlayer({
       }
     };
   }, []);
-  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, {
-    enabled: canFavorite,
-  });
+  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id);
   const { goNext, goPrevious } = useVisualizerPlayback(visual.id);
 
   const handleToggleFullscreen = useCallback(async () => {
@@ -103,7 +99,7 @@ export function VisualizerPlayer({
 
       const key = event.key.toLowerCase();
 
-      if (key === 'f') {
+      if (key === 'f' || key === 'enter') {
         event.preventDefault();
         void handleToggleFullscreen();
         return;
@@ -115,9 +111,25 @@ export function VisualizerPlayer({
         return;
       }
 
-      if (key === 's') {
+      if (key === ' ' || key === 'space') {
         event.preventDefault();
         togglePlay();
+        return;
+      }
+
+      if (!showPlaybackControls) {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goPrevious();
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goNext();
       }
     }
 
@@ -126,7 +138,7 @@ export function VisualizerPlayer({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleToggleFullscreen, toggleMic, togglePlay]);
+  }, [goNext, goPrevious, handleToggleFullscreen, showPlaybackControls, toggleMic, togglePlay]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -193,7 +205,6 @@ export function VisualizerPlayer({
               isPlaying={isPlaying}
               isFavorited={isFavorited}
               isMicEnabled={isMicEnabled}
-              showFavorite={canFavorite}
               showPlaybackControls={showPlaybackControls}
               onTogglePlay={togglePlay}
               onPrevious={goPrevious}

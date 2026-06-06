@@ -141,17 +141,17 @@ describe('VisualizerPlayer fullscreen', () => {
     expect(mockToggleFavorite).toHaveBeenCalledTimes(1);
   });
 
-  it('toggles play and pause with the s shortcut', () => {
+  it('toggles play and pause with the space shortcut', () => {
     render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     const overlay = screen.getByTestId('player-pause-overlay');
     expect(overlay).toHaveClass('opacity-0');
 
-    fireEvent.keyDown(document, { key: 's' });
+    fireEvent.keyDown(document, { key: ' ' });
 
     expect(overlay).toHaveClass('opacity-100');
 
-    fireEvent.keyDown(document, { key: 's' });
+    fireEvent.keyDown(document, { key: ' ' });
 
     expect(overlay).toHaveClass('opacity-0');
   });
@@ -172,6 +172,50 @@ describe('VisualizerPlayer fullscreen', () => {
 
     expect(mockGoPrevious).toHaveBeenCalledTimes(1);
     expect(mockGoNext).toHaveBeenCalledTimes(1);
+  });
+
+  it('navigates visuals with left and right arrow shortcuts', () => {
+    render(<VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />);
+
+    fireEvent.keyDown(document, { key: 'ArrowLeft' });
+    fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).toHaveBeenCalledTimes(1);
+    expect(mockGoNext).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores arrow shortcuts when playback controls are hidden', () => {
+    render(
+      <VisualizerPlayer
+        glsl="void main() {}"
+        visual={{ ...visual, isDemo: true }}
+        showPlaybackControls={false}
+      />
+    );
+
+    fireEvent.keyDown(document, { key: 'ArrowLeft' });
+    fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).not.toHaveBeenCalled();
+    expect(mockGoNext).not.toHaveBeenCalled();
+  });
+
+  it('ignores arrow shortcuts when focus is in an input', () => {
+    render(
+      <>
+        <input aria-label="Search" />
+        <VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />
+      </>
+    );
+
+    const input = screen.getByLabelText('Search');
+    input.focus();
+
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).not.toHaveBeenCalled();
+    expect(mockGoNext).not.toHaveBeenCalled();
   });
 });
 
