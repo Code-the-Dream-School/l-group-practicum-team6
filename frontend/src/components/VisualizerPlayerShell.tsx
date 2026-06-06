@@ -80,7 +80,7 @@ export function VisualizerPlayer({
     };
   }, []);
   const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id);
-  const { goNext, goPrevious } = useVisualizerPlayback(visual.id);
+  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id);
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
@@ -207,6 +207,8 @@ export function VisualizerPlayer({
               isMicEnabled={isMicEnabled}
               showPlaybackControls={showPlaybackControls}
               onTogglePlay={togglePlay}
+              isShuffled={isShuffled}
+              onShuffle={() => void toggleShuffle()}
               onPrevious={goPrevious}
               onNext={goNext}
               onToggleFavorite={() => void toggleFavorite()}

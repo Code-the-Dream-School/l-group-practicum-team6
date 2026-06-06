@@ -71,6 +71,12 @@ describe('PlayerControlBar', () => {
     expect(screen.queryByLabelText('Exit fullscreen')).not.toBeInTheDocument();
   });
 
+  it('reflects shuffle enabled state on the shuffle button', () => {
+    render(<PlayerControlBar isShuffled onShuffle={vi.fn()} />);
+
+    expect(screen.getByLabelText('Shuffle')).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('calls onFullscreen when fullscreen button is clicked', () => {
     const onFullscreen = vi.fn();
 

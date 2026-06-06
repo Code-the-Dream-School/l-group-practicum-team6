@@ -13,4 +13,5 @@ export const visualizerQueryKeys = {
     [...visualizerQueryKeys.all, 'detail', isDemo ? 'demo' : id] as const,
   saved: () => [...visualizerQueryKeys.all, 'saved'] as const,
   playbackContext: () => [...visualizerQueryKeys.all, 'playback-context'] as const,
+  playbackShuffle: () => [...visualizerQueryKeys.all, 'playback-shuffle'] as const,
 };

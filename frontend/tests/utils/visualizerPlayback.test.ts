@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  getBoundaryPageTargetId,
+  getTargetId,
   getLoopedIdOnPage,
+  getLoopedVisualId,
   getVisualIds,
   getWrappedPage,
 } from '../../src/utils/visualizerPlayback';
@@ -42,9 +43,17 @@ describe('visualizerPlayback utils', () => {
     expect(getWrappedPage(2, 'previous', 3)).toBe(1);
   });
 
+  it('loops within a flat playlist', () => {
+    const ids = ['a', 'b', 'c'];
+
+    expect(getLoopedVisualId(ids, 2, 'next')).toBe('a');
+    expect(getLoopedVisualId(ids, 0, 'previous')).toBe('c');
+    expect(getLoopedVisualId(ids, 1, 'next')).toBe('c');
+  });
+
   it('picks the first or last id when crossing page boundaries', () => {
-    expect(getBoundaryPageTargetId(['x', 'y', 'z'], 'next')).toBe('x');
-    expect(getBoundaryPageTargetId(['x', 'y', 'z'], 'previous')).toBe('z');
-    expect(getBoundaryPageTargetId([], 'next')).toBeNull();
+    expect(getTargetId(['x', 'y', 'z'], 'next')).toBe('x');
+    expect(getTargetId(['x', 'y', 'z'], 'previous')).toBe('z');
+    expect(getTargetId([], 'next')).toBeNull();
   });
 });

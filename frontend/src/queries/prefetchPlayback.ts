@@ -4,8 +4,9 @@ import { fetchVisualizerDetail } from './visualizerDetail';
 import { fetchVisualizerList, type VisualizerResult } from './visualizerList';
 import { type VisualizerFilters, visualizerQueryKeys } from './visualizerKeys';
 import {
-  getBoundaryPageTargetId,
+  getTargetId,
   getLoopedIdOnPage,
+  getLoopedVisualId,
   getVisualIds,
   getWrappedPage,
 } from '../utils/visualizerPlayback';
@@ -54,7 +55,26 @@ async function prefetchPage(
     return null;
   }
 
-  return getBoundaryPageTargetId(getVisualIds(listResult.visuals), direction);
+  return getTargetId(getVisualIds(listResult.visuals), direction);
+}
+
+type prefetchFavPlaybackOptions = {
+  queryClient: QueryClient;
+  ids: string[];
+  currentIndex: number;
+};
+
+export function prefetchFavPlayback({
+  queryClient,
+  ids,
+  currentIndex,
+}: prefetchFavPlaybackOptions): void {
+  if (ids.length === 0) {
+    return;
+  }
+
+  prefetchDetail(queryClient, getLoopedVisualId(ids, currentIndex, 'next'));
+  prefetchDetail(queryClient, getLoopedVisualId(ids, currentIndex, 'previous'));
 }
 
 export async function prefetchPlayback({

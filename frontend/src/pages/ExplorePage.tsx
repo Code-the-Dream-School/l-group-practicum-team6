@@ -110,7 +110,7 @@ export default function ExplorePage() {
     setPage(1);
   }
 
-  const explorePlaybackContext = useMemo(
+  const ExploreContext = useMemo(
     () => ({
       source: 'explore' as const,
       filters: {
@@ -209,7 +209,7 @@ export default function ExplorePage() {
                     isDemo={visual.isDemo}
                     canSave={canSave}
                     isSaved={savedVisualIds.includes(visual._id)}
-                    playbackContext={explorePlaybackContext}
+                    playbackContext={ExploreContext}
                     onToggleSave={handleToggleSave}
                   />
                 ))}

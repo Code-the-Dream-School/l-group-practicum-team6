@@ -42,10 +42,26 @@ export function getWrappedPage(
   return currentPage <= 1 ? totalPages : currentPage - 1;
 }
 
-export function getBoundaryPageTargetId(
+export function getLoopedVisualId(
   ids: string[],
+  currentIndex: number,
   direction: 'next' | 'previous'
 ): string | null {
+  if (ids.length === 0) {
+    return null;
+  }
+
+  if (currentIndex < 0) {
+    return direction === 'next' ? (ids[0] ?? null) : (ids[ids.length - 1] ?? null);
+  }
+
+  const offset = direction === 'next' ? 1 : -1;
+  const nextIndex = (currentIndex + offset + ids.length) % ids.length;
+
+  return ids[nextIndex] ?? null;
+}
+
+export function getTargetId(ids: string[], direction: 'next' | 'previous'): string | null {
   if (ids.length === 0) {
     return null;
   }

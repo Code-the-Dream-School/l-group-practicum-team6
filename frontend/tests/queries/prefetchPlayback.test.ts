@@ -12,7 +12,7 @@ vi.mock('../../src/api/visualizers', () => ({
   listVisualizers: (...args: unknown[]) => listVisualizers(...args),
 }));
 
-import { prefetchPlayback } from '../../src/queries/prefetchPlayback';
+import { prefetchFavPlayback, prefetchPlayback } from '../../src/queries/prefetchPlayback';
 
 describe('prefetchPlayback', () => {
   beforeEach(() => {
@@ -63,6 +63,23 @@ describe('prefetchPlayback', () => {
 
     expect(getVisualizer).toHaveBeenCalledWith('a');
     expect(getVisualizer).toHaveBeenCalledWith('c');
+    expect(listVisualizers).not.toHaveBeenCalled();
+  });
+
+  it('prefetches wrapped favorites neighbors', async () => {
+    const queryClient = createTestQueryClient();
+
+    prefetchFavPlayback({
+      queryClient,
+      ids: ['a', 'b', 'c'],
+      currentIndex: 1,
+    });
+
+    await vi.waitFor(() => {
+      expect(getVisualizer).toHaveBeenCalledWith('a');
+      expect(getVisualizer).toHaveBeenCalledWith('c');
+    });
+
     expect(listVisualizers).not.toHaveBeenCalled();
   });
 
