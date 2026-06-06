@@ -69,17 +69,16 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByLabelText('Display Name')).toHaveValue('Test User');
     expect(screen.getByLabelText('Email Address')).toHaveValue('test@example.com');
-    expect(screen.getByRole('button', { name: 'Update Password' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
   });
 
-  it('shows a toast error when display name is empty on blur', async () => {
+  it('does not save and keeps the button disabled when display name is empty', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('Display Name'), { target: { value: '   ' } });
-    fireEvent.blur(screen.getByLabelText('Display Name'));
 
-    expect(mockToast.error).toHaveBeenCalledWith('Display name cannot be empty');
+    expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled();
     expect(mockUpdateProfile).not.toHaveBeenCalled();
   });
 
@@ -88,10 +87,10 @@ describe('SettingsPage', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('Display Name'), { target: { value: '  New Name  ' } });
-    fireEvent.blur(screen.getByLabelText('Display Name'));
+    fireEvent.click(screen.getByRole('button', { name: 'Update Name' }));
 
     await waitFor(() => expect(mockUpdateProfile).toHaveBeenCalledWith({ name: 'New Name' }));
-    expect(mockToast.success).toHaveBeenCalledWith('Profile updated successfully.');
+    expect(mockToast.success).toHaveBeenCalledWith('Name updated successfully.');
   });
 
   it('shows password mismatch toast and blocks submit', async () => {
@@ -107,7 +106,7 @@ describe('SettingsPage', () => {
     fireEvent.blur(screen.getByLabelText('Confirm Password'));
 
     expect(mockToast.error).toHaveBeenCalledWith('New password and Confirm Password do not match');
-    expect(screen.getByRole('button', { name: 'Update Password' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled();
     expect(global.fetch).not.toHaveBeenCalled();
   });
 

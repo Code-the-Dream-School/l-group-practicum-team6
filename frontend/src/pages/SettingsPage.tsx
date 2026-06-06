@@ -15,57 +15,58 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const [profileState, setProfileState] = useState({
-    saving: false,
-  });
+  const [displayName, setDisplayName] = useState(user?.name ?? '');
   const [passwordForm, setPasswordForm] = useState({
     current: '',
     new: '',
     confirm: '',
-    saving: false,
   });
+  const [saving, setSaving] = useState(false);
+  const [syncedName, setSyncedName] = useState(user?.name ?? '');
   const [deleteState, setDeleteState] = useState({
     isOpen: false,
     password: '',
     deleting: false,
   });
 
+  // Reset the field when the loaded user's name changes (e.g. after fetch/save).
+  if ((user?.name ?? '') !== syncedName) {
+    setSyncedName(user?.name ?? '');
+    setDisplayName(user?.name ?? '');
+  }
+
   const email = user?.email ?? '';
   const initial = getInitial(user?.name ?? '');
+
+  const trimmedName = displayName.trim();
+  const nameDirty = trimmedName !== (user?.name ?? '');
+  const willUpdateName = nameDirty && trimmedName !== '';
+
   const passwordsMismatch =
     Boolean(passwordForm.new) &&
     Boolean(passwordForm.confirm) &&
     passwordForm.new !== passwordForm.confirm;
-  const disableUpdatePassword =
-    passwordForm.saving ||
-    !passwordForm.current ||
-    !passwordForm.new ||
-    !passwordForm.confirm ||
-    passwordsMismatch;
-  const disableDeleteAccount = deleteState.deleting || !deleteState.password;
+  const passwordTouched = Boolean(passwordForm.current || passwordForm.new || passwordForm.confirm);
+  const passwordComplete =
+    Boolean(passwordForm.current && passwordForm.new && passwordForm.confirm) && !passwordsMismatch;
+  const willUpdatePassword = passwordComplete;
 
-  async function handleSaveProfile(nextDisplayName: string) {
-    const trimmedName = nextDisplayName.trim();
-
-    if (!trimmedName) {
-      toast.error('Display name cannot be empty');
-      return;
-    }
-
-    if (trimmedName === (user?.name ?? '')) {
-      return;
-    }
-
-    setProfileState((prev) => ({ ...prev, saving: true }));
-    try {
-      await updateProfile({ name: trimmedName });
-      toast.success('Profile updated successfully.');
-    } catch (err) {
-      toast.error(getToastErrorMessage(err, 'Failed to save changes'));
-    } finally {
-      setProfileState((prev) => ({ ...prev, saving: false }));
-    }
+  let updateLabel = 'Update';
+  if (willUpdateName && willUpdatePassword) {
+    updateLabel = 'Update Name + Password';
+  } else if (willUpdatePassword) {
+    updateLabel = 'Update Password';
+  } else if (willUpdateName) {
+    updateLabel = 'Update Name';
   }
+
+  const disableUpdate =
+    saving ||
+    passwordsMismatch ||
+    (passwordTouched && !passwordComplete) ||
+    (!willUpdateName && !willUpdatePassword);
+
+  const disableDeleteAccount = deleteState.deleting || !deleteState.password;
 
   function validatePasswordMatch() {
     if (passwordForm.new && passwordForm.confirm && passwordForm.new !== passwordForm.confirm) {
@@ -73,31 +74,45 @@ export default function SettingsPage() {
     }
   }
 
-  async function handleUpdatePassword() {
-    if (passwordForm.new !== passwordForm.confirm) {
-      toast.error('New password and Confirm Password do not match');
+  async function handleSave() {
+    if (passwordTouched && !passwordComplete) {
+      toast.error(
+        passwordsMismatch
+          ? 'New password and Confirm Password do not match'
+          : 'Please fill in all password fields'
+      );
       return;
     }
 
-    setPasswordForm((prev) => ({ ...prev, saving: true }));
+    if (!willUpdateName && !willUpdatePassword) {
+      return;
+    }
 
+    setSaving(true);
     try {
-      await changePassword({
-        currentPassword: passwordForm.current,
-        newPassword: passwordForm.new,
-      });
+      if (willUpdateName) {
+        await updateProfile({ name: trimmedName });
+      }
 
-      setPasswordForm({
-        current: '',
-        new: '',
-        confirm: '',
-        saving: false,
-      });
-      toast.success('Password updated successfully.');
+      if (willUpdatePassword) {
+        await changePassword({
+          currentPassword: passwordForm.current,
+          newPassword: passwordForm.new,
+        });
+        setPasswordForm({ current: '', new: '', confirm: '' });
+      }
+
+      const message =
+        willUpdateName && willUpdatePassword
+          ? 'Name and password updated successfully.'
+          : willUpdatePassword
+            ? 'Password updated successfully.'
+            : 'Name updated successfully.';
+      toast.success(message);
     } catch (err) {
-      toast.error(getToastErrorMessage(err, 'Failed to update password'));
+      toast.error(getToastErrorMessage(err, 'Failed to save changes'));
     } finally {
-      setPasswordForm((prev) => ({ ...prev, saving: false }));
+      setSaving(false);
     }
   }
 
@@ -189,17 +204,16 @@ export default function SettingsPage() {
                         role="tooltip"
                         className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 hidden w-56 -translate-x-1/2 rounded-lg border border-primary-border bg-surface px-3 py-2 text-xs leading-5 text-text-secondary shadow-lg group-hover:block group-focus-within:block"
                       >
-                        Your display name is auto-saved when you leave this field.
+                        Your display name is saved when you click the update button.
                       </span>
                     </span>
                   </div>
                   <input
                     id="display-name"
                     type="text"
-                    key={user?.name ?? ''}
-                    defaultValue={user?.name ?? ''}
-                    onBlur={(ev) => {
-                      void handleSaveProfile(ev.target.value);
+                    value={displayName}
+                    onChange={(ev) => {
+                      setDisplayName(ev.target.value);
                     }}
                     className="input-field focus-visible:border-primary"
                   />
@@ -221,10 +235,6 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
-
-              {profileState.saving ? (
-                <p className="text-sm text-text-secondary">Saving...</p>
-              ) : null}
             </div>
 
             <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
@@ -297,11 +307,11 @@ export default function SettingsPage() {
 
               <button
                 type="button"
-                onClick={handleUpdatePassword}
-                disabled={disableUpdatePassword}
-                className="btn-primary h-10 w-full max-w-[240px] cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={handleSave}
+                disabled={disableUpdate}
+                className="btn-primary h-10 w-full max-w-70 cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {passwordForm.saving ? 'Updating...' : 'Update Password'}
+                {saving ? 'Updating...' : updateLabel}
               </button>
 
               <div className="pt-8">
