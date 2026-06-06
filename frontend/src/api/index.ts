@@ -30,4 +30,5 @@ export {
   createAdminVisualizer,
   updateAdminVisualizer,
   deleteAdminVisualizer,
+  generateVisualiser,
 } from './adminVisualizers';

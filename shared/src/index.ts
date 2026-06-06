@@ -37,6 +37,10 @@ export interface UserVisual {
 
 export type ApiResponse<T> = { data: T };
 
+export interface GenerateVisualizerRequest {
+  prompt: string;
+}
+
 export interface ApiError {
   error: {
     message: string;
@@ -49,6 +53,7 @@ export const ROUTES = {
   SIGNUP: '/signup',
   EXPLORE: '/explore',
   ADMIN_VISUALS: '/admin/visualizers',
+  ADMIN_VISUALS_CREATE: '/admin/visualizers/create',
   VISUALIZER_DEMO: '/visualizer/demo',
   VISUALIZER: '/visualizer/:id',
   MY_VISUALS: '/my-visuals',
@@ -105,6 +110,7 @@ export const API_ROUTES = {
   // Admin Visualizer Management
   ADMIN_VISUALIZERS: `${API_BASE_PATH}/admin/visualizers`,
   ADMIN_VISUALIZERS_BY_ID: `${API_BASE_PATH}/admin/visualizers/:id`,
+  ADMIN_VISUALIZERS_GENERATE: `${API_BASE_PATH}/admin/visualizers/generate`,
 
   // Images
   CURRENT_USER_IMAGE: `${API_BASE_PATH}/images/users/current`,
@@ -120,4 +126,5 @@ export const LABELS = {
   LOG_IN: 'Log In',
   SIGN_UP: 'Sign Up',
   SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
+  CREATE_VISUALIZER: 'Create',
 } as const;

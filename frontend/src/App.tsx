@@ -10,6 +10,7 @@ import MyVisualsPage from './pages/MyVisualsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SettingsPage from './pages/SettingsPage';
 import AdminVisualizersPage from './pages/AdminVisualizersPage';
+import CreateVisualizerPage from './pages/CreateVisualizerPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import GuestRoute from './routes/GuestRoute';
 import { ROUTES as RoutePaths } from '@sonix/shared';
@@ -73,6 +74,15 @@ function App() {
             <ProtectedRoute>
               <SettingsPage />
             </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.ADMIN_VISUALS_CREATE}
+          element={
+            <AdminRoute>
+              <CreateVisualizerPage />
+            </AdminRoute>
           }
         />
 
