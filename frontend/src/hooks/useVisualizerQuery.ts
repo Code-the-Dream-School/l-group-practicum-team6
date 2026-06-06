@@ -1,8 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { fetchVisualizerDetail, visualizerQueryKeys } from '../queries/visualizerDetail';
-
-const VISUALIZER_DETAIL_STALE_MS = 5 * 60_000;
 
 export type VisualizerOptions = {
   isDemo?: boolean;
@@ -17,6 +15,7 @@ export function useVisualizerQuery(
     queryKey: visualizerQueryKeys.detail(id, isDemo),
     queryFn: () => fetchVisualizerDetail(id, isDemo),
     enabled: enabled && (isDemo || Boolean(id)),
-    staleTime: VISUALIZER_DETAIL_STALE_MS,
+    staleTime: 5 * 60000,
+    placeholderData: keepPreviousData,
   });
 }

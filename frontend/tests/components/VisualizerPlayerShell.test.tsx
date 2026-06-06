@@ -52,6 +52,17 @@ vi.mock('../../src/hooks/useFavoriteVisual', () => ({
   }),
 }));
 
+const mockGoNext = vi.fn();
+const mockGoPrevious = vi.fn();
+
+vi.mock('../../src/hooks/useVisualizerPlayback', () => ({
+  useVisualizerPlayback: () => ({
+    goNext: mockGoNext,
+    goPrevious: mockGoPrevious,
+    isNavigating: false,
+  }),
+}));
+
 const visual = {
   id: 'visual-1',
   name: 'Aurora Wave',
@@ -63,6 +74,8 @@ describe('VisualizerPlayer fullscreen', () => {
   beforeEach(() => {
     vi.useRealTimers();
     mockMicStatus = 'active';
+    mockGoNext.mockReset();
+    mockGoPrevious.mockReset();
     mockToggleFullscreen.mockReset();
     mockToggleMic.mockReset();
     mockSelectDevice.mockReset();
@@ -128,17 +141,17 @@ describe('VisualizerPlayer fullscreen', () => {
     expect(mockToggleFavorite).toHaveBeenCalledTimes(1);
   });
 
-  it('toggles play and pause with the s shortcut', () => {
+  it('toggles play and pause with the space shortcut', () => {
     render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     const overlay = screen.getByTestId('player-pause-overlay');
     expect(overlay).toHaveClass('opacity-0');
 
-    fireEvent.keyDown(document, { key: 's' });
+    fireEvent.keyDown(document, { key: ' ' });
 
     expect(overlay).toHaveClass('opacity-100');
 
-    fireEvent.keyDown(document, { key: 's' });
+    fireEvent.keyDown(document, { key: ' ' });
 
     expect(overlay).toHaveClass('opacity-0');
   });
@@ -150,6 +163,60 @@ describe('VisualizerPlayer fullscreen', () => {
 
     expect(screen.getByTestId('player-pause-overlay')).toHaveClass('opacity-100');
   });
+
+  it('wires previous and next playback controls', () => {
+    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+
+    fireEvent.click(screen.getByLabelText('Previous visual'));
+    fireEvent.click(screen.getByLabelText('Next visual'));
+
+    expect(mockGoPrevious).toHaveBeenCalledTimes(1);
+    expect(mockGoNext).toHaveBeenCalledTimes(1);
+  });
+
+  it('navigates visuals with left and right arrow shortcuts', () => {
+    render(<VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />);
+
+    fireEvent.keyDown(document, { key: 'ArrowLeft' });
+    fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).toHaveBeenCalledTimes(1);
+    expect(mockGoNext).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores arrow shortcuts when playback controls are hidden', () => {
+    render(
+      <VisualizerPlayer
+        glsl="void main() {}"
+        visual={{ ...visual, isDemo: true }}
+        showPlaybackControls={false}
+      />
+    );
+
+    fireEvent.keyDown(document, { key: 'ArrowLeft' });
+    fireEvent.keyDown(document, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).not.toHaveBeenCalled();
+    expect(mockGoNext).not.toHaveBeenCalled();
+  });
+
+  it('ignores arrow shortcuts when focus is in an input', () => {
+    render(
+      <>
+        <input aria-label="Search" />
+        <VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />
+      </>
+    );
+
+    const input = screen.getByLabelText('Search');
+    input.focus();
+
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+
+    expect(mockGoPrevious).not.toHaveBeenCalled();
+    expect(mockGoNext).not.toHaveBeenCalled();
+  });
 });
 
 describe('VisualizerPlayer controls visibility', () => {
@@ -158,6 +225,8 @@ describe('VisualizerPlayer controls visibility', () => {
   beforeEach(() => {
     vi.useFakeTimers();
     mockMicStatus = 'active';
+    mockGoNext.mockReset();
+    mockGoPrevious.mockReset();
     mockUseFullscreen.mockReturnValue({
       targetRef: playerTargetRef,
       isFullscreen: false,

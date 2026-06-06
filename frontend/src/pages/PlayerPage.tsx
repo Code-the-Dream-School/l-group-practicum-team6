@@ -61,7 +61,7 @@ function PlayerPageContent({ id }: { id: string }) {
     return <PlayerMessage>Unable to load visualizer</PlayerMessage>;
   }
 
-  return <VisualizerPlayer glsl={glsl} visual={visual} />;
+  return <VisualizerPlayer glsl={glsl} visual={visual} showPlaybackControls />;
 }
 
 export default function PlayerPage() {
@@ -76,11 +76,7 @@ export default function PlayerPage() {
 
   return (
     <VisualizerPlayerLayout>
-      {!id ? (
-        <PlayerMessage>Visualizer not found</PlayerMessage>
-      ) : (
-        <PlayerPageContent key={id} id={id} />
-      )}
+      {!id ? <PlayerMessage>Visualizer not found</PlayerMessage> : <PlayerPageContent id={id} />}
     </VisualizerPlayerLayout>
   );
 }

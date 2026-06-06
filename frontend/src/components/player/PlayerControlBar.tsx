@@ -10,7 +10,7 @@ type PlayerControlBarProps = {
   selectedDeviceId?: string;
   isPlaying?: boolean;
   isFavorited?: boolean;
-  showFavorite?: boolean;
+  isShuffled?: boolean;
   showPlaybackControls?: boolean;
   onTogglePlay?: () => void;
   onToggleFavorite?: () => void;
@@ -29,7 +29,7 @@ export default function PlayerControlBar({
   selectedDeviceId = defaultAudioDevices[0].deviceId,
   isPlaying: isPlayingProp,
   isFavorited: isFavoritedProp,
-  showFavorite = true,
+  isShuffled = false,
   showPlaybackControls = true,
   onTogglePlay,
   onToggleFavorite,
@@ -84,12 +84,12 @@ export default function PlayerControlBar({
             <PlaybackControls
               isPlaying={isPlaying}
               isFavorited={isFavorited}
-              showFavorite={showFavorite}
+              isShuffled={isShuffled}
               onShuffle={onShuffle}
               onPrevious={onPrevious}
               onTogglePlay={handleTogglePlay}
               onNext={onNext}
-              onToggleFavorite={handleToggleFavorite}
+              onToggleFavorite={onToggleFavorite ? handleToggleFavorite : undefined}
             />
           </div>
         )}

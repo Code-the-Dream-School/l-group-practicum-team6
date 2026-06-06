@@ -9,12 +9,11 @@ import { useSavedVisualsQuery } from '../hooks/useSavedVisualsQuery';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { LABELS, TOAST_MESSAGES, ROUTES } from '@sonix/shared';
-
-type SortOption = 'recent' | 'az' | 'za';
+import { sortSavedVisuals, type FavoritesSortOption } from '../utils/savedVisuals';
 
 export default function MyVisualsPage() {
   const toast = useToast();
-  const [sortOption, setSortOption] = useState<SortOption>('recent');
+  const [sortOption, setSortOption] = useState<FavoritesSortOption>('recent');
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const { data: savedVisuals = [], isPending: isLoading, isError, error } = useSavedVisualsQuery();
   const removeMutation = useRemoveVisualMutation();
@@ -25,21 +24,18 @@ export default function MyVisualsPage() {
     toast.error(getToastErrorMessage(error, TOAST_MESSAGES.VISUALIZER.LOAD_SAVED_FAILED));
   }, [isError, error, toast]);
 
-  const sortedVisuals = useMemo(() => {
-    const visuals = savedVisuals.filter((saved) => saved.visualizerId);
+  const sortedVisuals = useMemo(
+    () => sortSavedVisuals(savedVisuals, sortOption),
+    [savedVisuals, sortOption]
+  );
 
-    if (sortOption === 'az') {
-      return visuals.sort((a, b) => a.visualizerId.name.localeCompare(b.visualizerId.name));
-    }
-
-    if (sortOption === 'za') {
-      return visuals.sort((a, b) => b.visualizerId.name.localeCompare(a.visualizerId.name));
-    }
-
-    return visuals.sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [savedVisuals, sortOption]);
+  const FavoritesContext = useMemo(
+    () => ({
+      source: 'favorites' as const,
+      sort: sortOption,
+    }),
+    [sortOption]
+  );
 
   function buildVisualizerPath(id: string): string {
     return ROUTES.VISUALIZER.replace(':id', encodeURIComponent(id));
@@ -70,7 +66,7 @@ export default function MyVisualsPage() {
               Sort by
               <select
                 value={sortOption}
-                onChange={(event) => setSortOption(event.target.value as SortOption)}
+                onChange={(event) => setSortOption(event.target.value as FavoritesSortOption)}
                 className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
               >
                 <option value="recent">Recently Saved</option>
@@ -117,13 +113,10 @@ export default function MyVisualsPage() {
                           ? buildVisualizerImageEndpoint(visualizer._id)
                           : undefined
                       }
-                      playPath={
-                        visualizer.isDemo
-                          ? ROUTES.VISUALIZER_DEMO
-                          : buildVisualizerPath(visualizer._id)
-                      }
+                      playPath={buildVisualizerPath(visualizer._id)}
                       isDemo={visualizer.isDemo}
                       previewGlsl={visualizer.glsl}
+                      playbackContext={FavoritesContext}
                     />
 
                     {confirmRemoveId === visualizer._id ? (

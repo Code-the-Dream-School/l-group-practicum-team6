@@ -3,11 +3,12 @@ import pauseIcon from '../../assets/icons/pause.svg';
 import playIcon from '../../assets/icons/play.svg';
 import previousIcon from '../../assets/icons/previous.svg';
 import shuffleIcon from '../../assets/icons/shuffle.svg';
+import shuffleIconActive from '../../assets/icons/shuffled.svg';
 
 type PlaybackControlsProps = {
   isPlaying: boolean;
-  isFavorited: boolean;
-  showFavorite?: boolean;
+  isFavorited?: boolean;
+  isShuffled?: boolean;
   onShuffle?: () => void;
   onPrevious?: () => void;
   onTogglePlay?: () => void;
@@ -17,23 +18,24 @@ type PlaybackControlsProps = {
 
 export default function PlaybackControls({
   isPlaying,
-  isFavorited,
-  showFavorite = true,
+  isFavorited = false,
+  isShuffled = false,
   onShuffle = () => {},
   onPrevious = () => {},
   onTogglePlay = () => {},
   onNext = () => {},
-  onToggleFavorite = () => {},
+  onToggleFavorite,
 }: PlaybackControlsProps) {
   return (
     <div className="flex items-center gap-6" data-testid="playback-controls">
       <button
         type="button"
         aria-label="Shuffle"
+        aria-pressed={isShuffled}
         onClick={onShuffle}
-        className="cursor-pointer transition hover:opacity-80 outline-none"
+        className={'cursor-pointer transition hover:opacity-80 outline-none'}
       >
-        <img src={shuffleIcon} alt="" className="h-5 w-5" />
+        <img src={isShuffled ? shuffleIconActive : shuffleIcon} alt="" className="h-5 w-5" />
       </button>
 
       <button
@@ -67,7 +69,7 @@ export default function PlaybackControls({
         <img src={nextIcon} alt="" className="h-5 w-5" />
       </button>
 
-      {showFavorite && (
+      {onToggleFavorite && (
         <button
           type="button"
           aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}

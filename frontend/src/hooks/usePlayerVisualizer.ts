@@ -9,6 +9,6 @@ export function usePlayerVisualizer(id: string, { isDemo = false }: VisualizerOp
     glsl: data?.glsl ?? null,
     visual: data?.visual ?? null,
     error,
-    isLoading: isPending,
+    isLoading: isPending && !data,
   };
 }

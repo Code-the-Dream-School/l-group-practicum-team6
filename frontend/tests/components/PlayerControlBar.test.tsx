@@ -52,10 +52,16 @@ describe('PlayerControlBar', () => {
     expect(screen.queryByTestId('control-bar-center')).not.toBeInTheDocument();
   });
 
-  it('hides favorite control when showFavorite is false', () => {
-    render(<PlayerControlBar showFavorite={false} />);
+  it('hides favorite control when onToggleFavorite is not provided', () => {
+    render(<PlayerControlBar />);
 
     expect(screen.queryByLabelText(/favorite/i)).not.toBeInTheDocument();
+  });
+
+  it('shows favorite control when onToggleFavorite is provided', () => {
+    render(<PlayerControlBar onToggleFavorite={vi.fn()} />);
+
+    expect(screen.getByLabelText('Add to favorites')).toBeInTheDocument();
   });
 
   it('renders fullscreen button with a static label', () => {
@@ -63,6 +69,12 @@ describe('PlayerControlBar', () => {
 
     expect(screen.getByLabelText('Fullscreen')).toBeInTheDocument();
     expect(screen.queryByLabelText('Exit fullscreen')).not.toBeInTheDocument();
+  });
+
+  it('reflects shuffle enabled state on the shuffle button', () => {
+    render(<PlayerControlBar isShuffled onShuffle={vi.fn()} />);
+
+    expect(screen.getByLabelText('Shuffle')).toHaveAttribute('aria-pressed', 'true');
   });
 
   it('calls onFullscreen when fullscreen button is clicked', () => {

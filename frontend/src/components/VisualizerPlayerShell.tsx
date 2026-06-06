@@ -5,6 +5,7 @@ import PlayerControlBar from './player/PlayerControlBar';
 import VisualInfoCard from './player/VisualInfoCard';
 import { useToast } from '../context/useToast';
 import { useFavoriteVisual } from '../hooks/useFavoriteVisual';
+import { useVisualizerPlayback } from '../hooks/useVisualizerPlayback';
 import { useFullscreen } from '../hooks/useFullscreen';
 import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useAudioAnalyzer, type AudioAnalyzerStatus } from '../hooks/useAudioAnalyzer';
@@ -15,11 +16,16 @@ import { startVisualPreview } from '../utils/visualPreview';
 type VisualizerPlayerProps = {
   glsl: string;
   visual: PlayerVisual;
+  showPlaybackControls?: boolean;
 };
 
 const PAUSE_OVERLAY_MS = 500;
 
-export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
+export function VisualizerPlayer({
+  glsl,
+  visual,
+  showPlaybackControls = !visual.isDemo,
+}: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
   const toast = useToast();
@@ -34,8 +40,6 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const isShaderPlayingRef = useRef(true);
   const pauseShaderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const canFavorite = !visual.isDemo;
-
   const scheduleShaderPause = useCallback(() => {
     if (pauseShaderTimeoutRef.current) {
       clearTimeout(pauseShaderTimeoutRef.current);
@@ -75,9 +79,8 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
       }
     };
   }, []);
-  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, {
-    enabled: canFavorite,
-  });
+  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id);
+  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id);
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
@@ -96,7 +99,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
 
       const key = event.key.toLowerCase();
 
-      if (key === 'f') {
+      if (key === 'f' || key === 'enter') {
         event.preventDefault();
         void handleToggleFullscreen();
         return;
@@ -108,9 +111,25 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
         return;
       }
 
-      if (key === 's') {
+      if (key === ' ' || key === 'space') {
         event.preventDefault();
         togglePlay();
+        return;
+      }
+
+      if (!showPlaybackControls) {
+        return;
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goPrevious();
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goNext();
       }
     }
 
@@ -119,7 +138,7 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleToggleFullscreen, toggleMic, togglePlay]);
+  }, [goNext, goPrevious, handleToggleFullscreen, showPlaybackControls, toggleMic, togglePlay]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -186,9 +205,12 @@ export function VisualizerPlayer({ glsl, visual }: VisualizerPlayerProps) {
               isPlaying={isPlaying}
               isFavorited={isFavorited}
               isMicEnabled={isMicEnabled}
-              showFavorite={canFavorite}
-              showPlaybackControls={canFavorite}
+              showPlaybackControls={showPlaybackControls}
               onTogglePlay={togglePlay}
+              isShuffled={isShuffled}
+              onShuffle={() => void toggleShuffle()}
+              onPrevious={goPrevious}
+              onNext={goNext}
               onToggleFavorite={() => void toggleFavorite()}
               onFullscreen={() => void handleToggleFullscreen()}
               onSelectDevice={selectDevice}

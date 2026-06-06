@@ -1,21 +1,19 @@
 import type { VisualizerListItem } from '@sonix/shared';
 
 import { listVisualizers } from '../api/visualizers';
-import { type VisualizerListFilters, visualizerQueryKeys } from './visualizerKeys';
+import { type VisualizerFilters, visualizerQueryKeys } from './visualizerKeys';
 
 export { visualizerQueryKeys };
-export type { VisualizerListFilters };
+export type { VisualizerFilters };
 
-export type VisualizerListResult = {
+export type VisualizerResult = {
   visuals: VisualizerListItem[];
   totalPages: number;
   page: number;
   total: number;
 };
 
-export async function fetchVisualizerList(
-  filters: VisualizerListFilters
-): Promise<VisualizerListResult> {
+export async function fetchVisualizerList(filters: VisualizerFilters): Promise<VisualizerResult> {
   const response = await listVisualizers({
     page: filters.page,
     limit: filters.limit,

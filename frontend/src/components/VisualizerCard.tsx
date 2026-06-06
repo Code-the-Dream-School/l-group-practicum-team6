@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { usePreviewGlsl } from '../hooks/usePreviewGlsl';
+import { setPlaybackContext, type PlaybackContext } from '../queries/playbackContext';
 import {
   activateVisualPreview,
   deactivateVisualPreview,
@@ -18,6 +19,7 @@ interface VisualizerCardProps {
   isDemo?: boolean;
   isSaved?: boolean;
   canSave?: boolean;
+  playbackContext?: PlaybackContext;
   onToggleSave?: (id: string) => void;
 }
 
@@ -31,6 +33,7 @@ export default function VisualizerCard({
   isDemo = false,
   isSaved = false,
   canSave = false,
+  playbackContext,
   onToggleSave,
 }: VisualizerCardProps) {
   const previewRef = useRef<HTMLDivElement | null>(null);
@@ -70,12 +73,19 @@ export default function VisualizerCard({
     deactivateVisualPreview(id);
   }
 
+  function handlePlayClick() {
+    if (playbackContext) {
+      setPlaybackContext(playbackContext);
+    }
+  }
+
   return (
     <article className="group overflow-hidden rounded-2xl border border-white/8 bg-[#070711] shadow-[0_0_22px_rgba(124,92,252,0.10)] transition duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:border-[#00D4FF]/80 hover:shadow-[0_0_26px_rgba(0,212,255,0.45),0_0_70px_rgba(124,92,252,0.35)]">
       <Link
         to={playPath}
         aria-label={`Open ${name}`}
         className="relative block aspect-[1.35] cursor-pointer overflow-hidden bg-linear-to-br from-[#7C5CFC]/30 via-[#00D4FF]/12 to-[#050509] leading-none"
+        onClick={handlePlayClick}
         onMouseEnter={activatePreview}
         onMouseLeave={deactivatePreview}
       >
@@ -136,6 +146,7 @@ export default function VisualizerCard({
 
             <Link
               to={playPath}
+              onClick={handlePlayClick}
               className="inline-flex items-center justify-center rounded-full border border-[#7C5CFC]/45 bg-white/4 px-4 py-2 text-xs font-semibold text-white/85 transition hover:border-[#00D4FF]/50 hover:bg-[#7C5CFC]/25 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#00D4FF]"
             >
               Play

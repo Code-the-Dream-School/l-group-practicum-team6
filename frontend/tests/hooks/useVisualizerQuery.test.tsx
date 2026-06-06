@@ -43,6 +43,58 @@ describe('useVisualizerQuery', () => {
     expect(getVisualizer).toHaveBeenCalledWith('visual-1');
   });
 
+  it('keeps previous visualizer data while the next id is loading', async () => {
+    let resolveSecond: ((value: unknown) => void) | undefined;
+
+    getVisualizer.mockImplementation((id: string) => {
+      if (id === 'visual-1') {
+        return Promise.resolve({
+          data: {
+            _id: 'visual-1',
+            name: 'Pulse Waves',
+            glsl: 'shader-1',
+            source: '',
+            isDemo: false,
+            tags: ['abstract'],
+          },
+        });
+      }
+
+      return new Promise((resolve) => {
+        resolveSecond = resolve;
+      });
+    });
+
+    const { result, rerender } = renderHook(({ activeId }) => useVisualizerQuery(activeId), {
+      wrapper: QueryClientTestProvider,
+      initialProps: { activeId: 'visual-1' },
+    });
+
+    await waitFor(() => {
+      expect(result.current.data?.visual.id).toBe('visual-1');
+    });
+
+    rerender({ activeId: 'visual-2' });
+
+    expect(result.current.data?.visual.id).toBe('visual-1');
+    expect(result.current.isFetching).toBe(true);
+
+    resolveSecond?.({
+      data: {
+        _id: 'visual-2',
+        name: 'Wave Flow',
+        glsl: 'shader-2',
+        source: '',
+        isDemo: false,
+        tags: ['fluid'],
+      },
+    });
+
+    await waitFor(() => {
+      expect(result.current.data?.visual.id).toBe('visual-2');
+    });
+  });
+
   it('fetches the demo visualizer when isDemo is true', async () => {
     getDemoVisualizer.mockResolvedValue({
       data: {
