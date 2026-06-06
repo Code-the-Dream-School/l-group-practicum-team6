@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import Image from '../../src/models/Image';
-
-let mongoServer: MongoMemoryServer;
+import { connectTestDatabase, disconnectTestDatabase } from '../helpers/mongoMemoryServer';
 
 describe('Image Model', () => {
   beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-
-    await mongoose.connect(mongoServer.getUri());
+    await connectTestDatabase();
 
     await Image.collection.dropIndexes().catch(() => {
       // ignore if indexes do not exist yet
@@ -17,15 +13,14 @@ describe('Image Model', () => {
 
     // Recreate indexes from the current schema
     await Image.syncIndexes();
-  });
+  }, 120000);
 
   beforeEach(async () => {
     await Image.deleteMany({});
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
+    await disconnectTestDatabase();
   });
 
   it('finds an image by owner type and owner ID', async () => {

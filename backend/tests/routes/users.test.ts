@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
 import User from '../../src/models/User';
 import UserVisual from '../../src/models/UserVisual';
 import Visualizer from '../../src/models/Visualizer';
+import { connectTestDatabase, disconnectTestDatabase } from '../helpers/mongoMemoryServer';
 
-let mongoServer: MongoMemoryServer;
 let app: typeof import('../../src/app').default;
 
 const password = 'password123';
@@ -36,11 +35,10 @@ describe('User routes', () => {
 
     app = (await import('../../src/app')).default;
 
-    mongoServer = await MongoMemoryServer.create();
-    await mongoose.connect(mongoServer.getUri());
+    await connectTestDatabase();
     await User.syncIndexes();
     await UserVisual.syncIndexes();
-  });
+  }, 120000);
 
   beforeEach(async () => {
     await User.deleteMany({});
@@ -49,8 +47,7 @@ describe('User routes', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
+    await disconnectTestDatabase();
     delete process.env.JWT_SECRET;
     delete process.env.JWT_LIFETIME;
   });

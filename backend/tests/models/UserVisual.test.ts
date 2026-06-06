@@ -1,25 +1,22 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import User from '../../src/models/User';
 import UserVisual from '../../src/models/UserVisual';
 import Visualizer from '../../src/models/Visualizer';
 
-let mongoServer: MongoMemoryServer;
+import { connectTestDatabase, disconnectTestDatabase } from '../helpers/mongoMemoryServer';
 
 describe('UserVisual Model', () => {
   beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-
-    await mongoose.connect(mongoServer.getUri());
+    await connectTestDatabase();
 
     await UserVisual.collection.dropIndexes().catch(() => {
       // ignore if indexes do not exist yet
     });
 
     await UserVisual.syncIndexes();
-  });
+  }, 120000);
 
   beforeEach(async () => {
     await UserVisual.deleteMany({});
@@ -28,8 +25,7 @@ describe('UserVisual Model', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
+    await disconnectTestDatabase();
   });
 
   it('creates a saved visual with userId, visualizerId, and savedAt', async () => {
