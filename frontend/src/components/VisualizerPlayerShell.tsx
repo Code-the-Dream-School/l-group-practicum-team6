@@ -17,6 +17,7 @@ type VisualizerPlayerProps = {
   glsl: string;
   visual: PlayerVisual;
   showPlaybackControls?: boolean;
+  captureRef?: { current: ((blob: Blob) => void) | null };
 };
 
 const PAUSE_OVERLAY_MS = 500;
@@ -25,6 +26,7 @@ export function VisualizerPlayer({
   glsl,
   visual,
   showPlaybackControls = !visual.isDemo,
+  captureRef,
 }: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
@@ -150,7 +152,8 @@ export function VisualizerPlayer({
       getAudioData,
       true,
       undefined,
-      () => isShaderPlayingRef.current
+      () => isShaderPlayingRef.current,
+      captureRef
     );
   }, [glsl, getAudioData]);
 

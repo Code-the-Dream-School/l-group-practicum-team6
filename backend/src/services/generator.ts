@@ -53,6 +53,10 @@ export async function generateShader(payload: GenerateVisualizerRequest): Promis
     throw new Error('Gemini returned no shader content');
   }
 
+  if (!raw.includes('void main()')) {
+    throw new Error('Gemini returned an incomplete shader (output token limit hit)');
+  }
+
   // Strip markdown code fences Gemini sometimes adds despite instructions
   const text = raw
     .replace(/^```(?:glsl)?\s*\n?/, '')

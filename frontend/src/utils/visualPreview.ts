@@ -74,7 +74,8 @@ export function startVisualPreview(
   getAudioData?: () => Uint8Array,
   immersive = false,
   onReady?: () => void,
-  getIsPlaying?: () => boolean
+  getIsPlaying?: () => boolean,
+  captureRef?: { current: ((blob: Blob) => void) | null }
 ) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('webgl2', {
@@ -261,6 +262,14 @@ export function startVisualPreview(
     );
 
     renderer.render(scene, camera);
+
+    if (captureRef?.current) {
+      const cb = captureRef.current;
+      captureRef.current = null;
+      canvas.toBlob((blob) => {
+        if (blob) cb(blob);
+      }, 'image/png');
+    }
 
     if (!hasNotifiedReady) {
       hasNotifiedReady = true;

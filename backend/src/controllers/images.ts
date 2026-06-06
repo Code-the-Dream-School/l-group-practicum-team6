@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 import Image from '../models/Image';
 import User from '../models/User';
+import Visualizer from '../models/Visualizer';
 import type { AuthRequest } from '../middleware/authentication';
 import { BadRequestError, NotFoundError } from '../errors';
 import { uploadBufferToGridFS, deleteGridFSFile, openGridFSDownloadStream } from '../utils/gridfs';
@@ -97,6 +98,51 @@ export async function deleteUserImage(req: AuthRequest, res: Response) {
   await User.findByIdAndUpdate(userId, { $unset: { image: '' } });
 
   res.status(StatusCodes.NO_CONTENT).send();
+}
+
+export async function uploadVisualizerImage(req: Request, res: Response) {
+  if (!req.file) {
+    throw new BadRequestError(API_ERROR_MESSAGES.PLEASE_PROVIDE_IMAGE);
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(String(req.params.visualizerId))) {
+    throw new BadRequestError(API_ERROR_MESSAGES.INVALID_VISUALIZER_ID);
+  }
+
+  const visualizerId = new mongoose.Types.ObjectId(String(req.params.visualizerId));
+
+  const existingImage = await Image.findOne({
+    ownerType: IMAGE_OWNER_TYPES.VISUALIZER,
+    ownerId: visualizerId,
+  });
+
+  const newFileId = await uploadBufferToGridFS(
+    req.file.buffer,
+    req.file.originalname,
+    req.file.mimetype,
+    GRIDFS_BUCKETS.IMAGES
+  );
+
+  if (existingImage) {
+    await deleteGridFSFile(existingImage.fileId, GRIDFS_BUCKETS.IMAGES);
+  }
+
+  const imageRecord = await Image.findOneAndUpdate(
+    { ownerType: IMAGE_OWNER_TYPES.VISUALIZER, ownerId: visualizerId },
+    {
+      ownerType: IMAGE_OWNER_TYPES.VISUALIZER,
+      ownerId: visualizerId,
+      fileId: newFileId,
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
+      size: req.file.size,
+    },
+    { new: true, upsert: true, runValidators: true }
+  );
+
+  await Visualizer.findByIdAndUpdate(visualizerId, { imageUrl: imageRecord._id });
+
+  res.status(StatusCodes.OK).json({ data: { imageId: imageRecord._id } });
 }
 
 export async function getVisualizerImage(req: Request, res: Response) {

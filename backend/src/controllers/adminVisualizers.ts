@@ -24,10 +24,17 @@ export const generateVisualizer = async (req: Request, res: Response) => {
 
   const glsl = await generateShader(body);
 
+  const tags = userPrompt
+    .split(/\W+/)
+    .filter((w) => w.length > 2)
+    .map((w) => w.toLowerCase());
+
   const visualizer = await Visualizer.create({
-    name: `AI Generated - ${new Date().toISOString()}`,
+    name: `AI Generated - ${userPrompt} - ${new Date().toISOString().split('T')[0]}`,
     glsl,
     isDemo: false,
+    tags,
+    source: `Generated with User prompt: ${userPrompt}`,
   });
   res.status(StatusCodes.CREATED).json({ data: visualizer });
 };

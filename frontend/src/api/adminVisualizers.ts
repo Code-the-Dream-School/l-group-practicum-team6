@@ -33,6 +33,7 @@ export function generateVisualiser(
     generationConfig: {
       temperature: 0.7,
       maxOutputTokens: 8192,
+      // maxOutputTokens: 16384, // Request a higher token limit to reduce chance of incomplete shader generation
     },
   };
   return apiFetch<ApiResponse<Visualizer>>(API_ROUTES.ADMIN_VISUALIZERS_GENERATE, {

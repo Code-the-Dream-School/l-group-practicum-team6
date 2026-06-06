@@ -1,11 +1,11 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { VisualizerPlayer } from '../components/VisualizerPlayerShell';
-import { generateVisualiser, updateAdminVisualizer } from '../api';
+import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 
@@ -32,6 +32,7 @@ export default function CreateVisualizerPage() {
   const [generatedId, setGeneratedId] = useState<string | null>(null);
   const [generatedGlsl, setGeneratedGlsl] = useState<string>('');
   const [form, setForm] = useState<FormState>({ name: '', tags: '', isDemo: false });
+  const captureRef = useRef<((blob: Blob) => void) | null>(null);
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
@@ -47,6 +48,12 @@ export default function CreateVisualizerPage() {
         isDemo: visualizer.isDemo,
       });
       toast.success('Shader generated — review and save.');
+      setTimeout(() => {
+        captureRef.current = (blob) => {
+          const file = new File([blob], 'preview.png', { type: 'image/png' });
+          void uploadVisualizerImage(visualizer._id, file);
+        };
+      }, 3000);
     } catch (error) {
       toast.error(getToastErrorMessage(error, 'Failed to generate visualizer.'));
     } finally {
@@ -131,8 +138,14 @@ export default function CreateVisualizerPage() {
             <div className="mb-4 h-56 overflow-hidden rounded-xl">
               <VisualizerPlayer
                 glsl={generatedGlsl}
-                visual={{ id: generatedId, name: form.name, tags: [], isDemo: false }}
+                visual={{
+                  id: generatedId,
+                  name: form.name,
+                  tags: toTagArray(form.tags),
+                  isDemo: form.isDemo,
+                }}
                 showPlaybackControls={false}
+                captureRef={captureRef}
               />
             </div>
 
