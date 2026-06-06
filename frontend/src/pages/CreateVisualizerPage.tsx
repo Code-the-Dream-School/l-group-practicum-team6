@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES } from '@sonix/shared';
+import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
@@ -37,7 +37,7 @@ export default function CreateVisualizerPage() {
     if (!prompt.trim()) return;
     setGenerating(true);
     try {
-      const response = await generateVisualiser(prompt.trim());
+      const response = await generateVisualiser(prompt.trim(), DEFAULT_SYSTEM_PROMPT);
       const visualizer = response.data;
       setGeneratedId(visualizer._id);
       setGeneratedGlsl(visualizer.glsl ?? '');

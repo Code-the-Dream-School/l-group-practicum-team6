@@ -11,12 +11,18 @@ import { deleteImage } from '../services/imageStorage';
 import { generateShader } from '../services/generator';
 
 export const generateVisualizer = async (req: Request, res: Response) => {
-  const { prompt } = req.body as GenerateVisualizerRequest;
-  if (!prompt) {
+  const body = req.body as GenerateVisualizerRequest;
+  const userPrompt = body.contents?.[0]?.parts?.[0]?.text;
+  const systemPrompt = body.systemInstruction?.parts?.[0]?.text;
+
+  if (!userPrompt) {
     throw new BadRequestError('Please provide a prompt');
   }
+  if (!systemPrompt) {
+    throw new BadRequestError('Please provide a system prompt');
+  }
 
-  const glsl = await generateShader(prompt);
+  const glsl = await generateShader(body);
 
   const visualizer = await Visualizer.create({
     name: `AI Generated - ${new Date().toISOString()}`,

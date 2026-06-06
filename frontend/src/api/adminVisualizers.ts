@@ -16,8 +16,25 @@ export type AdminVisualizerPayload = {
   tags?: string[];
 };
 
-export function generateVisualiser(userPrompt: string): Promise<ApiResponse<Visualizer>> {
-  const payload: GenerateVisualizerRequest = { prompt: userPrompt };
+export function generateVisualiser(
+  userPrompt: string,
+  systemPrompt: string
+): Promise<ApiResponse<Visualizer>> {
+  const payload: GenerateVisualizerRequest = {
+    systemInstruction: {
+      parts: [{ text: systemPrompt }],
+    },
+    contents: [
+      {
+        role: 'user',
+        parts: [{ text: userPrompt }],
+      },
+    ],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 8192,
+    },
+  };
   return apiFetch<ApiResponse<Visualizer>>(API_ROUTES.ADMIN_VISUALIZERS_GENERATE, {
     method: 'POST',
     body: JSON.stringify(payload),
