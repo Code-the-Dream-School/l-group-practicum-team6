@@ -15,6 +15,30 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 }
 `;
 
+const e2eVisualizers = [
+  {
+    name: 'E2E Demo Visualizer',
+    source: 'E2E seed',
+    glsl: e2eShader,
+    isDemo: true,
+    tags: ['demo', 'shader'],
+  },
+  {
+    name: 'E2E Plasma Visualizer',
+    source: 'E2E seed',
+    glsl: e2eShader,
+    isDemo: false,
+    tags: ['abstract', 'shader'],
+  },
+  {
+    name: 'E2E Waveform Visualizer',
+    source: 'E2E seed',
+    glsl: e2eShader,
+    isDemo: false,
+    tags: ['reactive', 'waveform'],
+  },
+];
+
 async function main(): Promise<void> {
   const mongoUri = process.env.MONGO_URI;
 
@@ -25,32 +49,16 @@ async function main(): Promise<void> {
 
   await connectDB(mongoUri);
 
-  await UserVisual.deleteMany({});
-  await Visualizer.deleteMany({});
+  const e2eNames = e2eVisualizers.map((visualizer) => visualizer.name);
+  const existingE2EVisualizers = await Visualizer.find({ name: { $in: e2eNames } }).select('_id');
 
-  await Visualizer.insertMany([
-    {
-      name: 'E2E Demo Visualizer',
-      source: 'E2E seed',
-      glsl: e2eShader,
-      isDemo: true,
-      tags: ['demo', 'shader'],
-    },
-    {
-      name: 'E2E Plasma Visualizer',
-      source: 'E2E seed',
-      glsl: e2eShader,
-      isDemo: false,
-      tags: ['abstract', 'shader'],
-    },
-    {
-      name: 'E2E Waveform Visualizer',
-      source: 'E2E seed',
-      glsl: e2eShader,
-      isDemo: false,
-      tags: ['reactive', 'waveform'],
-    },
-  ]);
+  await UserVisual.deleteMany({
+    visualizerId: { $in: existingE2EVisualizers.map((visualizer) => visualizer._id) },
+  });
+
+  await Visualizer.deleteMany({ name: { $in: e2eNames } });
+
+  await Visualizer.insertMany(e2eVisualizers);
 
   console.log('Seeded E2E visualizers');
 
