@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import VisualizerCard from '../components/VisualizerCard';
 import { useToast } from '../context/useToast';
 import { buildVisualizerImageEndpoint } from '../api';
@@ -155,6 +156,8 @@ export default function MyVisualsPage() {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

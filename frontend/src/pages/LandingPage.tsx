@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 
 function LandingPage() {
   return (
@@ -234,15 +235,9 @@ function LandingPage() {
             </div>
           </div>
         </section>
-
-        <footer className="flex items-center justify-between border-t border-white/5 px-6 py-6 text-sm text-white/30">
-          <p>© 2025 Sonix</p>
-
-          <Link to="/about" className="hover:text-white/60">
-            About
-          </Link>
-        </footer>
       </main>
+
+      <Footer />
     </div>
   );
 }

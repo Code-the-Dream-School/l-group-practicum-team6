@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import { LABELS } from '@sonix/shared';
 import LoaderSpinner from '../components/LoaderSpinner';
 import Pagination from '../components/Pagination';
@@ -225,6 +226,8 @@ export default function ExplorePage() {
           )}
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }
