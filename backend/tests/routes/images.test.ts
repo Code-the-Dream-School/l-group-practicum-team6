@@ -70,7 +70,7 @@ describe('Image routes', () => {
     const { agent } = await createAuthenticatedAgent();
 
     const res = await agent
-      .post('/api/v1/images/users/user')
+      .post('/api/v1/images/users/current')
       .attach('image', Buffer.from('fake pdf'), {
         filename: 'test.pdf',
         contentType: 'application/pdf',
@@ -85,7 +85,7 @@ describe('Image routes', () => {
 
     const largeBuffer = Buffer.alloc(5 * 1024 * 1024 + 1);
 
-    const res = await agent.post('/api/v1/images/users/user').attach('image', largeBuffer, {
+    const res = await agent.post('/api/v1/images/users/current').attach('image', largeBuffer, {
       filename: 'large.png',
       contentType: 'image/png',
     });
@@ -106,7 +106,7 @@ describe('Image routes', () => {
     const { user, agent } = await createAuthenticatedAgent();
 
     const res = await agent
-      .post('/api/v1/images/users/user')
+      .post('/api/v1/images/users/current')
       .attach('image', Buffer.from('fake image'), {
         filename: 'avatar.png',
         contentType: 'image/png',
@@ -128,7 +128,7 @@ describe('Image routes', () => {
   it('streams an existing user image and sets Content-Type', async () => {
     const { user, agent } = await createAuthenticatedAgent();
 
-    await agent.post('/api/v1/images/users/user').attach('image', Buffer.from('fake image'), {
+    await agent.post('/api/v1/images/users/current').attach('image', Buffer.from('fake image'), {
       filename: 'avatar.png',
       contentType: 'image/png',
     });
@@ -142,7 +142,7 @@ describe('Image routes', () => {
   it('replaces old avatar without leaving duplicate Image records', async () => {
     const { user, agent } = await createAuthenticatedAgent();
 
-    await agent.post('/api/v1/images/users/user').attach('image', Buffer.from('first image'), {
+    await agent.post('/api/v1/images/users/current').attach('image', Buffer.from('first image'), {
       filename: 'first.png',
       contentType: 'image/png',
     });
@@ -154,7 +154,7 @@ describe('Image routes', () => {
 
     expect(firstImage).toBeTruthy();
 
-    await agent.post('/api/v1/images/users/user').attach('image', Buffer.from('second image'), {
+    await agent.post('/api/v1/images/users/current').attach('image', Buffer.from('second image'), {
       filename: 'second.png',
       contentType: 'image/png',
     });
@@ -173,12 +173,12 @@ describe('Image routes', () => {
   it('deletes user avatar image', async () => {
     const { user, agent } = await createAuthenticatedAgent();
 
-    await agent.post('/api/v1/images/users/user').attach('image', Buffer.from('avatar image'), {
+    await agent.post('/api/v1/images/users/current').attach('image', Buffer.from('avatar image'), {
       filename: 'avatar.png',
       contentType: 'image/png',
     });
 
-    const res = await agent.delete('/api/v1/images/users/user');
+    const res = await agent.delete('/api/v1/images/users/current');
 
     expect(res.status).toBe(204);
 

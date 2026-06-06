@@ -105,11 +105,11 @@ export default function MyVisualsPage() {
                 return (
                   <div key={savedVisual._id} className="space-y-3">
                     <VisualizerCard
-                      id={visualizer._id}
-                      name={visualizer.name}
+                      id={visualizer && visualizer._id}
+                      name={visualizer && visualizer.name}
                       tags={['Saved']}
                       thumbnailUrl={
-                        visualizer.imageUrl
+                        visualizer && visualizer.imageUrl
                           ? buildVisualizerImageEndpoint(visualizer._id)
                           : undefined
                       }
@@ -119,7 +119,7 @@ export default function MyVisualsPage() {
                       playbackContext={FavoritesContext}
                     />
 
-                    {confirmRemoveId === visualizer._id ? (
+                    {confirmRemoveId === (visualizer && visualizer._id) ? (
                       <div className="rounded-2xl border border-white/10 bg-white/4 px-4 py-3 text-sm text-text-secondary">
                         <p>Remove from collection?</p>
                         <div className="mt-3 flex gap-3">
