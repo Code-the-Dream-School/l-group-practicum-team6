@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 
 import LoaderSpinner from '../components/LoaderSpinner';
 import {
@@ -38,6 +38,18 @@ function PlayerPageContent({ id }: { id: string }) {
       <div className="flex h-full items-center justify-center px-6">
         <LoaderSpinner label="Loading visualizer…" labelClassName="text-sm text-white/70 pt-2" />
       </div>
+    );
+  }
+
+  if (error instanceof ApiError && error.status === 404) {
+    return (
+      <Navigate
+        to="/404"
+        replace
+        state={{
+          message: error.message,
+        }}
+      />
     );
   }
 

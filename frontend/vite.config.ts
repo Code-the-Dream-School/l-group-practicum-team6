@@ -15,7 +15,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://localhost:5001',
+      // Proxy /api to the backend. Defaults to the local dev server on 5001;
+      // e2e overrides VITE_PROXY_TARGET to hit its own isolated backend instance.
+      '/api': process.env.VITE_PROXY_TARGET ?? 'http://localhost:5001',
     },
   },
   test: {

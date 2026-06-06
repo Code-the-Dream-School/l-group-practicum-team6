@@ -74,7 +74,10 @@ export default function ExplorePage() {
   const saveMutation = useSaveVisualMutation();
   const removeMutation = useRemoveVisualMutation();
   const savedVisualIds = useMemo(
-    () => savedVisuals?.map((savedVisual) => savedVisual.visualizerId._id) ?? [],
+    () =>
+      savedVisuals
+        ?.map((savedVisual) => savedVisual.visualizerId?._id)
+        .filter((id): id is string => Boolean(id)) ?? [],
     [savedVisuals]
   );
 
