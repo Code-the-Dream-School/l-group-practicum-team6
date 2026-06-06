@@ -16,10 +16,16 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 `;
 
 async function main(): Promise<void> {
-  const mongoUri = process.env.MONGO_URI;
+  const mongoUri = process.env.MONGO_URI_E2E ?? process.env.MONGO_URI_TEST;
 
   if (!mongoUri) {
-    console.error('MONGO_URI environment variable is not set');
+    console.error('MONGO_URI_E2E (or MONGO_URI_TEST) environment variable is not set');
+    process.exit(1);
+  }
+
+  // Safety guard: never wipe the main database, even if misconfigured.
+  if (mongoUri === process.env.MONGO_URI) {
+    console.error('E2E seed refusing to run: target URI matches MONGO_URI (main database)');
     process.exit(1);
   }
 

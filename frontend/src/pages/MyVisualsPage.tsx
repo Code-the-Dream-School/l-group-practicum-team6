@@ -26,7 +26,7 @@ export default function MyVisualsPage() {
   }, [isError, error, toast]);
 
   const sortedVisuals = useMemo(() => {
-    const visuals = [...savedVisuals];
+    const visuals = savedVisuals.filter((saved) => saved.visualizerId);
 
     if (sortOption === 'az') {
       return visuals.sort((a, b) => a.visualizerId.name.localeCompare(b.visualizerId.name));

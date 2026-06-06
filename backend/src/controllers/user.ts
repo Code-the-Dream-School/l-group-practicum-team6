@@ -111,8 +111,11 @@ export const getUserVisuals = async (req: AuthRequest, res: Response) => {
     'visualizerId'
   );
 
+  // Drop saves whose referenced visualizer was deleted (populate -> null)
+  const liveVisuals = visuals.filter((visual) => visual.visualizerId);
+
   // respond
-  res.status(StatusCodes.OK).json({ data: visuals });
+  res.status(StatusCodes.OK).json({ data: liveVisuals });
 };
 
 // Add visual collection
