@@ -77,16 +77,19 @@ const NavBar = () => {
               >
                 {LABELS.MY_VISUALS}
               </NavLink>
-              <NavLink
-                to={ROUTES.ADMIN_VISUALS_CREATE}
-                className={({ isActive }) =>
-                  isActive
-                    ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
-                    : 'text-sm font-medium text-text-secondary hover:text-text-primary'
-                }
-              >
-                {LABELS.CREATE_VISUALIZER}
-              </NavLink>
+
+              {user.isAdmin && (
+                <NavLink
+                  to={ROUTES.ADMIN_VISUALS_CREATE}
+                  className={({ isActive }) =>
+                    isActive
+                      ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
+                      : 'text-sm font-medium text-text-secondary hover:text-text-primary'
+                  }
+                >
+                  {LABELS.CREATE_VISUALIZER}
+                </NavLink>
+              )}
             </nav>
           )}
         </div>
