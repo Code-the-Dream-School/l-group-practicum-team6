@@ -333,11 +333,17 @@ describe('useVisualizerPlayback', () => {
       await result.current.toggleShuffle();
     });
 
+    await waitFor(() => {
+      expect(result.current.isShuffled).toBe(true);
+    });
+
     await act(async () => {
       await result.current.toggleShuffle();
     });
 
-    expect(result.current.isShuffled).toBe(false);
+    await waitFor(() => {
+      expect(result.current.isShuffled).toBe(false);
+    });
 
     act(() => {
       result.current.goNext();
