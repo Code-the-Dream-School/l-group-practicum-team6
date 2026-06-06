@@ -89,12 +89,12 @@ export const API_ROUTES = {
   AUTH_LOGOUT: `${API_BASE_PATH}/auth/logout`,
 
   // User Profile
-  USER: `${API_BASE_PATH}/users/user`,
-  USER_PASSWORD: `${API_BASE_PATH}/users/user/password`,
+  CURRENT_USER: `${API_BASE_PATH}/users/current`,
+  CURRENT_USER_PASSWORD: `${API_BASE_PATH}/users/current/password`,
 
   // User Visuals Collection
-  USER_VISUALS: `${API_BASE_PATH}/users/current/visuals`,
-  USER_VISUALS_BY_ID: `${API_BASE_PATH}/users/current/visuals/:id`,
+  CURRENT_USER_VISUALS: `${API_BASE_PATH}/users/current/visuals`,
+  CURRENT_USER_VISUALS_BY_ID: `${API_BASE_PATH}/users/current/visuals/:id`,
 
   // Visualizer Catalog
   VISUALIZERS: `${API_BASE_PATH}/visualizers`,
@@ -107,9 +107,9 @@ export const API_ROUTES = {
   ADMIN_VISUALIZERS_BY_ID: `${API_BASE_PATH}/admin/visualizers/:id`,
 
   // Images
-  IMAGES_USER: `${API_BASE_PATH}/images/users/user`,
-  IMAGES_USER_BY_ID: `${API_BASE_PATH}/images/users/:id`,
-  IMAGES_VISUALIZER_BY_ID: `${API_BASE_PATH}/images/visualizers/:id`,
+  CURRENT_USER_IMAGE: `${API_BASE_PATH}/images/users/current`,
+  USER_IMAGE_BY_ID: `${API_BASE_PATH}/images/users/:id`,
+  VISUALIZER_IMAGES_BY_ID: `${API_BASE_PATH}/images/visualizers/:id`,
 } as const;
 
 export const LABELS = {

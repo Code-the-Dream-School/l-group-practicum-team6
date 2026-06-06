@@ -15,7 +15,7 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import type { VisualizerListItem } from '@sonix/shared';
+import { VisualizerListItem } from '@sonix/shared';
 import { TOAST_MESSAGES } from '@sonix/shared';
 
 const PAGE_SIZE = 8;

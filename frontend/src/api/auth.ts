@@ -7,7 +7,7 @@ type AuthData = {
 };
 
 export function getUser(): Promise<ApiResponse<AuthData>> {
-  return apiFetch<ApiResponse<AuthData>>(API_ROUTES.USER);
+  return apiFetch<ApiResponse<AuthData>>(API_ROUTES.CURRENT_USER);
 }
 
 export function login(email: string, password: string): Promise<ApiResponse<AuthData>> {
