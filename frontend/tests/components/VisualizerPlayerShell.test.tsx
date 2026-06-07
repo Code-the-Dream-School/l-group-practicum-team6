@@ -141,7 +141,7 @@ describe('VisualizerPlayer fullscreen', () => {
   it('selects a microphone from the device dropdown', () => {
     render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
-    fireEvent.click(screen.getByLabelText('Select microphone'));
+    fireEvent.click(screen.getByLabelText('Select audio source'));
     fireEvent.click(screen.getByRole('option', { name: 'USB Microphone' }));
 
     expect(mockSelectDevice).toHaveBeenCalledWith('usb');

@@ -1,8 +1,11 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { TAB_CAPTURE_DEVICE_ID } from '../../src/utils/audioDevices';
+
 const getByteFrequencyData = vi.fn();
 const trackStop = vi.fn();
+const videoTrackStop = vi.fn();
 const connect = vi.fn();
 const close = vi.fn();
 const resume = vi.fn().mockResolvedValue(undefined);
@@ -10,6 +13,16 @@ const mockAudioTrack = {
   stop: trackStop,
   enabled: true,
   getSettings: () => ({ deviceId: 'builtin-mic' }),
+};
+const mockVideoTrack = {
+  stop: videoTrackStop,
+  enabled: true,
+};
+const mockDisplayAudioTrack = {
+  stop: trackStop,
+  enabled: true,
+  onended: null as (() => void) | null,
+  getSettings: () => ({}),
 };
 
 function createAnalyser() {
@@ -35,10 +48,12 @@ describe('useAudioAnalyzer', () => {
     vi.resetModules();
     getByteFrequencyData.mockReset();
     trackStop.mockReset();
+    videoTrackStop.mockReset();
     connect.mockReset();
     close.mockReset();
     resume.mockClear();
     mockAudioTrack.enabled = true;
+    mockDisplayAudioTrack.onended = null;
 
     Object.defineProperty(global.navigator, 'mediaDevices', {
       configurable: true,
@@ -46,6 +61,11 @@ describe('useAudioAnalyzer', () => {
         getUserMedia: vi.fn().mockResolvedValue({
           getTracks: () => [mockAudioTrack],
           getAudioTracks: () => [mockAudioTrack],
+        }),
+        getDisplayMedia: vi.fn().mockResolvedValue({
+          getTracks: () => [mockVideoTrack, mockDisplayAudioTrack],
+          getVideoTracks: () => [mockVideoTrack],
+          getAudioTracks: () => [mockDisplayAudioTrack],
         }),
         enumerateDevices: vi.fn().mockResolvedValue([
           { kind: 'audioinput', deviceId: 'builtin-mic', label: 'Built-in Microphone' },
@@ -197,5 +217,69 @@ describe('useAudioAnalyzer', () => {
 
     expect(trackStop).toHaveBeenCalled();
     expect(close).toHaveBeenCalled();
+  });
+
+  it('connects to tab capture and stops video tracks', async () => {
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+    });
+
+    result.current.selectDevice(TAB_CAPTURE_DEVICE_ID);
+
+    await waitFor(() => {
+      expect(navigator.mediaDevices.getDisplayMedia).toHaveBeenCalledWith({
+        audio: true,
+        video: true,
+      });
+      expect(videoTrackStop).toHaveBeenCalled();
+      expect(result.current.selectedDeviceId).toBe(TAB_CAPTURE_DEVICE_ID);
+      expect(result.current.status).toBe('active');
+    });
+  });
+
+  it('falls back to the last microphone when tab capture is denied', async () => {
+    vi.mocked(navigator.mediaDevices.getDisplayMedia).mockRejectedValueOnce(new Error('denied'));
+
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+    });
+
+    result.current.selectDevice(TAB_CAPTURE_DEVICE_ID);
+
+    await waitFor(() => {
+      expect(navigator.mediaDevices.getUserMedia).toHaveBeenLastCalledWith({
+        audio: { deviceId: { exact: 'builtin-mic' } },
+      });
+      expect(result.current.selectedDeviceId).toBe('builtin-mic');
+      expect(result.current.status).toBe('active');
+    });
+  });
+
+  it('falls back to the last microphone when tab sharing ends', async () => {
+    const { useAudioAnalyzer } = await import('../../src/hooks/useAudioAnalyzer');
+    const { result } = renderHook(() => useAudioAnalyzer());
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+    });
+
+    result.current.selectDevice(TAB_CAPTURE_DEVICE_ID);
+
+    await waitFor(() => {
+      expect(result.current.selectedDeviceId).toBe(TAB_CAPTURE_DEVICE_ID);
+    });
+
+    mockDisplayAudioTrack.onended?.();
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('active');
+      expect(result.current.selectedDeviceId).toBe('builtin-mic');
+    });
   });
 });

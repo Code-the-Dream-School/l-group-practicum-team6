@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useRef, useState, type MutableRefObject } from 'react';
 
-import { formatDeviceLabel, mapAudioInputs, type AudioInputDevice } from '../utils/audioDevices';
+import {
+  formatDeviceLabel,
+  isTabCaptureDevice,
+  mapAudioInputs,
+  TAB_CAPTURE_DEVICE_ID,
+  TAB_CAPTURE_LABEL,
+  type AudioInputDevice,
+} from '../utils/audioDevices';
 
 const FFT_SIZE = 256;
 const FREQUENCY_BIN_COUNT = FFT_SIZE / 2;
 
-export type AudioAnalyzerStatus = 'idle' | 'connecting' | 'active' | 'denied' | 'error';
+export type AudioAnalyzerStatus = 'idle' | 'connecting' | 'active' | 'denied' | 'error' | 'ended';
 
 export type { AudioInputDevice };
 export { formatDeviceLabel };
@@ -26,6 +33,47 @@ function teardown(
   }
 }
 
+async function acquireStream(deviceId?: string): Promise<MediaStream> {
+  if (deviceId && isTabCaptureDevice(deviceId)) {
+    if (!navigator.mediaDevices?.getDisplayMedia) {
+      throw new Error('Display media is not available');
+    }
+
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      audio: true,
+      video: true,
+    });
+
+    stream.getVideoTracks().forEach((track) => track.stop());
+
+    if (stream.getAudioTracks().length === 0) {
+      stream.getTracks().forEach((track) => track.stop());
+      throw new Error('No audio tracks in display media stream');
+    }
+
+    return stream;
+  }
+
+  return navigator.mediaDevices.getUserMedia({
+    audio: deviceId ? { deviceId: { exact: deviceId } } : true,
+  });
+}
+
+function setupAnalyser(stream: MediaStream): {
+  audioContext: AudioContext;
+  analyser: AnalyserNode;
+} {
+  const audioContext = new AudioContext();
+  const source = audioContext.createMediaStreamSource(stream);
+  const analyser = audioContext.createAnalyser();
+
+  analyser.fftSize = FFT_SIZE;
+  analyser.smoothingTimeConstant = 0.8;
+  source.connect(analyser);
+
+  return { audioContext, analyser };
+}
+
 export function useAudioAnalyzer() {
   const [status, setStatus] = useState<AudioAnalyzerStatus>('idle');
   const [isMicEnabled, setIsMicEnabled] = useState(true);
@@ -38,6 +86,7 @@ export function useAudioAnalyzer() {
   const isMicEnabledRef = useRef(isMicEnabled);
   const connectGenerationRef = useRef(0);
   const connectRef = useRef<(deviceId?: string) => Promise<void>>(async () => {});
+  const lastMicDeviceIdRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     isMicEnabledRef.current = isMicEnabled;
@@ -57,8 +106,14 @@ export function useAudioAnalyzer() {
 
     async function connect(deviceId?: string) {
       const generation = ++connectGenerationRef.current;
+      const isTabCapture = deviceId !== undefined && isTabCaptureDevice(deviceId);
 
       if (!navigator.mediaDevices?.getUserMedia) {
+        setStatus('error');
+        return;
+      }
+
+      if (isTabCapture && !navigator.mediaDevices.getDisplayMedia) {
         setStatus('error');
         return;
       }
@@ -67,40 +122,47 @@ export function useAudioAnalyzer() {
       setStatus('connecting');
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: deviceId ? { deviceId: { exact: deviceId } } : true,
-        });
+        const stream = await acquireStream(deviceId);
 
         if (cancelled || generation !== connectGenerationRef.current) {
           stream.getTracks().forEach((track) => track.stop());
           return;
         }
 
-        const audioContext = new AudioContext();
+        const { audioContext, analyser } = setupAnalyser(stream);
+
         if (audioContext.state === 'suspended') {
           await audioContext.resume();
         }
 
-        const source = audioContext.createMediaStreamSource(stream);
-        const analyser = audioContext.createAnalyser();
-
-        analyser.fftSize = FFT_SIZE;
-        analyser.smoothingTimeConstant = 0.8;
-        source.connect(analyser);
-
         stream.getAudioTracks().forEach((track) => {
           track.enabled = isMicEnabledRef.current;
+
+          if (isTabCapture) {
+            track.onended = () => {
+              if (generation !== connectGenerationRef.current) {
+                return;
+              }
+
+              setStatus('ended');
+              void connectRef.current(lastMicDeviceIdRef.current);
+            };
+          }
         });
 
         streamRef.current = stream;
         audioContextRef.current = audioContext;
         analyserRef.current = analyser;
 
-        if (deviceId) {
+        if (isTabCapture) {
+          setSelectedDeviceId(TAB_CAPTURE_DEVICE_ID);
+        } else if (deviceId) {
+          lastMicDeviceIdRef.current = deviceId;
           setSelectedDeviceId(deviceId);
         } else {
           const activeDeviceId = stream.getAudioTracks()[0]?.getSettings().deviceId ?? '';
           if (activeDeviceId) {
+            lastMicDeviceIdRef.current = activeDeviceId;
             setSelectedDeviceId(activeDeviceId);
           }
         }
@@ -108,9 +170,17 @@ export function useAudioAnalyzer() {
         await refreshDevices();
         setStatus('active');
       } catch {
-        if (!cancelled) {
-          setStatus('denied');
+        if (cancelled) {
+          return;
         }
+
+        if (isTabCapture) {
+          setStatus('denied');
+          void connectRef.current(lastMicDeviceIdRef.current);
+          return;
+        }
+
+        setStatus('denied');
       }
     }
 
@@ -162,7 +232,9 @@ export function useAudioAnalyzer() {
 
   const selectedDevice =
     devices.find((device) => device.deviceId === selectedDeviceId) ?? devices[0];
-  const selectedDeviceLabel = formatDeviceLabel(selectedDevice?.label ?? 'Microphone');
+  const selectedDeviceLabel = isTabCaptureDevice(selectedDeviceId)
+    ? formatDeviceLabel(TAB_CAPTURE_LABEL)
+    : formatDeviceLabel(selectedDevice?.label ?? 'Microphone');
 
   return {
     getAudioData,
