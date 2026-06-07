@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DEFAULT_SYSTEM_PROMPT } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import LoaderSpinner from '../components/LoaderSpinner';
 import VisualizerCard from '../components/VisualizerCard';
 import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
@@ -181,6 +182,8 @@ export default function CreateVisualizerPage() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
