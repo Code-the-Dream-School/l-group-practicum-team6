@@ -176,14 +176,14 @@ function LandingPage() {
           <h2 className="text-3xl font-semibold">Engineered for Every Stage</h2>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center p-6">
+            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/performance.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Live Performance</h3>
                 <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Stage ready</p>
               </div>
             </div>
 
-            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center p-6">
+            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/streaming.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Streaming</h3>
                 <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">
@@ -192,14 +192,14 @@ function LandingPage() {
               </div>
             </div>
 
-            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center p-6">
+            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/focus.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Meditation & Focus</h3>
                 <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Wellness</p>
               </div>
             </div>
 
-            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=1200&auto=format&fit=crop')] bg-cover bg-center p-6">
+            <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/events.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Events & Venues</h3>
                 <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">
