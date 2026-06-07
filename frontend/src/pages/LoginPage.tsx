@@ -88,7 +88,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-3 top-3 text-text-secondary"
+                  className="absolute right-3 top-3 cursor-pointer text-text-secondary"
                 >
                   <img
                     src={showPassword ? eyeOffIcon : eyeIcon}

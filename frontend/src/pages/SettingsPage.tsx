@@ -188,7 +188,7 @@ export default function SettingsPage() {
                         type="button"
                         aria-describedby="display-name-tooltip"
                         aria-label={SETTINGS_LABELS.DISPLAY_NAME_INFO_ARIA}
-                        className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-primary-border bg-surface text-[10px] leading-none text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
+                        className="inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-full border border-primary-border bg-surface text-[10px] leading-none text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
                       >
                         {SETTINGS_LABELS.INFO_ICON}
                       </button>

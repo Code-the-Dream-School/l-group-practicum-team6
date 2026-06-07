@@ -127,14 +127,14 @@ export default function MyVisualsPage() {
                           <button
                             type="button"
                             onClick={() => void handleRemoveVisual(visualizer._id)}
-                            className="rounded-full border border-red-300/30 bg-red-500/10 px-4 py-2 text-red-100 transition hover:bg-red-500/20"
+                            className="cursor-pointer rounded-full border border-red-300/30 bg-red-500/10 px-4 py-2 text-red-100 transition hover:bg-red-500/20"
                           >
                             Confirm
                           </button>
                           <button
                             type="button"
                             onClick={() => setConfirmRemoveId(null)}
-                            className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-text-primary transition hover:bg-white/10"
+                            className="cursor-pointer rounded-full border border-white/10 bg-white/6 px-4 py-2 text-text-primary transition hover:bg-white/10"
                           >
                             Cancel
                           </button>
@@ -144,7 +144,7 @@ export default function MyVisualsPage() {
                       <button
                         type="button"
                         onClick={() => setConfirmRemoveId(visualizer._id)}
-                        className="w-full rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-red-300/30 hover:bg-red-500/10 hover:text-red-100"
+                        className="w-full cursor-pointer rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm font-semibold text-text-secondary transition hover:border-red-300/30 hover:bg-red-500/10 hover:text-red-100"
                       >
                         Remove
                       </button>

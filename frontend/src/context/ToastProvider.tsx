@@ -124,7 +124,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: str
           type="button"
           aria-label="Dismiss notification"
           onClick={() => onDismiss(toast.id)}
-          className="btn-ghost !rounded-md !border-transparent !px-2 !py-1 !text-xs !leading-none"
+          className="btn-ghost cursor-pointer !rounded-md !border-transparent !px-2 !py-1 !text-xs !leading-none"
         >
           x
         </button>

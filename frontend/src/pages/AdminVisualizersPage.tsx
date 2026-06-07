@@ -245,7 +245,7 @@ export default function AdminVisualizersPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="btn-ghost border-primary-border text-sm font-medium text-text-secondary transition hover:border-primary-light hover:text-text-primary"
+                className="btn-ghost cursor-pointer border-primary-border text-sm font-medium text-text-secondary transition hover:border-primary-light hover:text-text-primary"
               >
                 Cancel Edit
               </button>
@@ -319,7 +319,7 @@ export default function AdminVisualizersPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="btn-primary mt-2 w-fit text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-primary mt-2 w-fit cursor-pointer text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? 'Saving...' : selectedId ? 'Update Visualizer' : 'Create Visualizer'}
             </button>
@@ -375,14 +375,14 @@ export default function AdminVisualizersPage() {
                         type="button"
                         onClick={() => void selectForEdit(visualizer)}
                         disabled={loadingEditId === visualizer._id}
-                        className="btn-ghost border-primary-border text-sm font-medium text-text-primary transition hover:border-primary-light disabled:cursor-not-allowed disabled:opacity-60"
+                        className="btn-ghost cursor-pointer border-primary-border text-sm font-medium text-text-primary transition hover:border-primary-light disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         {loadingEditId === visualizer._id ? 'Loading...' : 'Edit'}
                       </button>
                       <button
                         type="button"
                         onClick={() => void handleDelete(visualizer._id)}
-                        className="btn-ghost border-error text-sm font-medium text-error transition hover:bg-error/10"
+                        className="btn-ghost cursor-pointer border-error text-sm font-medium text-error transition hover:bg-error/10"
                       >
                         Delete
                       </button>
