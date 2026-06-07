@@ -163,12 +163,17 @@ export function VisualizerPlayer({
     lastToastStatusRef.current = status;
 
     if (status === 'connecting') {
-      toast.info('Connecting microphone...');
+      toast.info('Connecting audio source...');
       return;
     }
 
     if (status === 'denied') {
-      toast.error('Microphone access was blocked. Enable it in browser settings');
+      toast.error('Audio access was blocked. Check browser permissions.');
+      return;
+    }
+
+    if (status === 'ended') {
+      toast.info('Tab or screen sharing ended');
       return;
     }
 
