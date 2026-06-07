@@ -7,8 +7,13 @@ import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
 import { getInitial } from './../utils/getInitial';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { ROUTES } from '@sonix/shared';
-import { LABELS } from '@sonix/shared';
+import {
+  ROUTES,
+  LABELS,
+  TOAST_MESSAGES,
+  PASSWORD_MIN_LENGTH,
+  SETTINGS_LABELS,
+} from '@sonix/shared';
 
 export default function SettingsPage() {
   const { user, updateProfile, logout } = useAuth();
@@ -21,7 +26,8 @@ export default function SettingsPage() {
     new: '',
     confirm: '',
   });
-  const [saving, setSaving] = useState(false);
+  const [savingName, setSavingName] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
   const [syncedName, setSyncedName] = useState(user?.name ?? '');
   const [deleteState, setDeleteState] = useState({
     isOpen: false,
@@ -41,78 +47,63 @@ export default function SettingsPage() {
   const trimmedName = displayName.trim();
   const nameDirty = trimmedName !== (user?.name ?? '');
   const willUpdateName = nameDirty && trimmedName !== '';
+  const disableUpdateName = savingName || !willUpdateName;
 
   const passwordsMismatch =
     Boolean(passwordForm.new) &&
     Boolean(passwordForm.confirm) &&
     passwordForm.new !== passwordForm.confirm;
-  const passwordTouched = Boolean(passwordForm.current || passwordForm.new || passwordForm.confirm);
+  const newPasswordTooShort =
+    Boolean(passwordForm.new) && passwordForm.new.length < PASSWORD_MIN_LENGTH;
   const passwordComplete =
-    Boolean(passwordForm.current && passwordForm.new && passwordForm.confirm) && !passwordsMismatch;
-  const willUpdatePassword = passwordComplete;
-
-  let updateLabel = 'Update';
-  if (willUpdateName && willUpdatePassword) {
-    updateLabel = 'Update Name + Password';
-  } else if (willUpdatePassword) {
-    updateLabel = 'Update Password';
-  } else if (willUpdateName) {
-    updateLabel = 'Update Name';
-  }
-
-  const disableUpdate =
-    saving ||
-    passwordsMismatch ||
-    (passwordTouched && !passwordComplete) ||
-    (!willUpdateName && !willUpdatePassword);
+    Boolean(passwordForm.current && passwordForm.new && passwordForm.confirm) &&
+    !passwordsMismatch &&
+    !newPasswordTooShort;
+  const disableUpdatePassword = savingPassword || !passwordComplete;
 
   const disableDeleteAccount = deleteState.deleting || !deleteState.password;
 
   function validatePasswordMatch() {
     if (passwordForm.new && passwordForm.confirm && passwordForm.new !== passwordForm.confirm) {
-      toast.error('New password and Confirm Password do not match');
+      toast.error(TOAST_MESSAGES.SETTINGS.PASSWORD_MISMATCH);
     }
   }
 
-  async function handleSave() {
-    if (passwordTouched && !passwordComplete) {
-      toast.error(
-        passwordsMismatch
-          ? 'New password and Confirm Password do not match'
-          : 'Please fill in all password fields'
-      );
-      return;
+  function validateNewPassword() {
+    if (passwordForm.new && passwordForm.new.length < PASSWORD_MIN_LENGTH) {
+      toast.error(TOAST_MESSAGES.SETTINGS.PASSWORD_MIN_LENGTH);
     }
+  }
 
-    if (!willUpdateName && !willUpdatePassword) {
-      return;
-    }
+  async function handleUpdateName() {
+    if (disableUpdateName) return;
 
-    setSaving(true);
+    setSavingName(true);
     try {
-      if (willUpdateName) {
-        await updateProfile({ name: trimmedName });
-      }
-
-      if (willUpdatePassword) {
-        await changePassword({
-          currentPassword: passwordForm.current,
-          newPassword: passwordForm.new,
-        });
-        setPasswordForm({ current: '', new: '', confirm: '' });
-      }
-
-      const message =
-        willUpdateName && willUpdatePassword
-          ? 'Name and password updated successfully.'
-          : willUpdatePassword
-            ? 'Password updated successfully.'
-            : 'Name updated successfully.';
-      toast.success(message);
+      await updateProfile({ name: trimmedName });
+      toast.success(TOAST_MESSAGES.SETTINGS.NAME_UPDATED);
     } catch (err) {
-      toast.error(getToastErrorMessage(err, 'Failed to save changes'));
+      toast.error(getToastErrorMessage(err, TOAST_MESSAGES.SETTINGS.NAME_UPDATE_FAILED));
     } finally {
-      setSaving(false);
+      setSavingName(false);
+    }
+  }
+
+  async function handleUpdatePassword() {
+    if (disableUpdatePassword) return;
+
+    setSavingPassword(true);
+    try {
+      await changePassword({
+        currentPassword: passwordForm.current,
+        newPassword: passwordForm.new,
+      });
+      setPasswordForm({ current: '', new: '', confirm: '' });
+      toast.success(TOAST_MESSAGES.SETTINGS.PASSWORD_UPDATED);
+    } catch (err) {
+      toast.error(getToastErrorMessage(err, TOAST_MESSAGES.SETTINGS.PASSWORD_UPDATE_FAILED));
+    } finally {
+      setSavingPassword(false);
     }
   }
 
@@ -150,7 +141,7 @@ export default function SettingsPage() {
       await logout();
       navigate(ROUTES.HOME);
     } catch (err) {
-      toast.error(getToastErrorMessage(err, 'Failed to delete account'));
+      toast.error(getToastErrorMessage(err, TOAST_MESSAGES.SETTINGS.DELETE_FAILED));
     } finally {
       setDeleteState((prev) => ({ ...prev, deleting: false }));
     }
@@ -170,14 +161,16 @@ export default function SettingsPage() {
         <section className="w-full rounded-xl border border-primary-border bg-surface p-12">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">Profile</h2>
+              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
+                {SETTINGS_LABELS.PROFILE}
+              </h2>
 
               <div className="flex flex-col gap-2">
                 <div className="glass-card h-20 w-20 justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[32px] font-semibold leading-8 text-text-primary">
                   {initial}
                 </div>
                 <p className="text-xs leading-[19.2px] text-text-secondary">
-                  Avatar is generated from your name and account ID.
+                  {SETTINGS_LABELS.AVATAR_HINT}
                 </p>
               </div>
 
@@ -188,23 +181,23 @@ export default function SettingsPage() {
                       htmlFor="display-name"
                       className="text-xs font-medium leading-[19.2px] text-text-secondary"
                     >
-                      Display Name
+                      {SETTINGS_LABELS.DISPLAY_NAME}
                     </label>
                     <span className="group relative inline-flex items-center">
                       <button
                         type="button"
                         aria-describedby="display-name-tooltip"
-                        aria-label="Display name auto-save info"
+                        aria-label={SETTINGS_LABELS.DISPLAY_NAME_INFO_ARIA}
                         className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-primary-border bg-surface text-[10px] leading-none text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
                       >
-                        i
+                        {SETTINGS_LABELS.INFO_ICON}
                       </button>
                       <span
                         id="display-name-tooltip"
                         role="tooltip"
                         className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-20 hidden w-56 -translate-x-1/2 rounded-lg border border-primary-border bg-surface px-3 py-2 text-xs leading-5 text-text-secondary shadow-lg group-hover:block group-focus-within:block"
                       >
-                        Your display name is saved when you click the update button.
+                        {SETTINGS_LABELS.DISPLAY_NAME_TOOLTIP}
                       </span>
                     </span>
                   </div>
@@ -224,7 +217,7 @@ export default function SettingsPage() {
                     htmlFor="email-address"
                     className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
-                    Email Address
+                    {SETTINGS_LABELS.EMAIL_ADDRESS}
                   </label>
                   <input
                     id="email-address"
@@ -235,13 +228,24 @@ export default function SettingsPage() {
                   />
                 </div>
               </div>
+
+              <button
+                type="button"
+                onClick={handleUpdateName}
+                disabled={disableUpdateName}
+                className="btn-primary h-10 w-full max-w-60 cursor-pointer justify-center text-sm font-medium shadow-sm shadow-primary/30 transition hover:-translate-y-px hover:brightness-110 hover:shadow-md hover:shadow-primary/50 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-primary/10 disabled:text-text-secondary disabled:shadow-none"
+              >
+                {savingName ? SETTINGS_LABELS.UPDATING : SETTINGS_LABELS.UPDATE_NAME}
+              </button>
             </div>
 
             <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">Account</h2>
+              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
+                {SETTINGS_LABELS.ACCOUNT}
+              </h2>
 
               <h3 className="pt-2 text-lg font-medium leading-[25.2px] text-text-primary">
-                Change Password
+                {SETTINGS_LABELS.CHANGE_PASSWORD}
               </h3>
 
               <div className="flex w-full max-w-[480px] flex-col gap-4 pb-2">
@@ -250,7 +254,7 @@ export default function SettingsPage() {
                     htmlFor="current-password"
                     className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
-                    Current Password
+                    {SETTINGS_LABELS.CURRENT_PASSWORD}
                   </label>
                   <input
                     id="current-password"
@@ -271,7 +275,7 @@ export default function SettingsPage() {
                     htmlFor="new-password"
                     className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
-                    New Password
+                    {SETTINGS_LABELS.NEW_PASSWORD}
                   </label>
                   <input
                     id="new-password"
@@ -280,7 +284,10 @@ export default function SettingsPage() {
                     onChange={(ev) => {
                       setPasswordForm((prev) => ({ ...prev, new: ev.target.value }));
                     }}
-                    onBlur={validatePasswordMatch}
+                    onBlur={() => {
+                      validateNewPassword();
+                      validatePasswordMatch();
+                    }}
                     className="input-field focus-visible:border-primary"
                   />
                 </div>
@@ -290,7 +297,7 @@ export default function SettingsPage() {
                     htmlFor="confirm-password"
                     className="text-xs font-medium leading-[19.2px] text-text-secondary"
                   >
-                    Confirm Password
+                    {SETTINGS_LABELS.CONFIRM_PASSWORD}
                   </label>
                   <input
                     id="confirm-password"
@@ -307,20 +314,35 @@ export default function SettingsPage() {
 
               <button
                 type="button"
-                onClick={handleSave}
-                disabled={disableUpdate}
-                className="btn-primary h-10 w-full max-w-70 cursor-pointer justify-center text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={handleUpdatePassword}
+                disabled={disableUpdatePassword}
+                className="btn-primary h-10 w-full max-w-60 cursor-pointer justify-center text-sm font-medium shadow-sm shadow-primary/30 transition hover:-translate-y-px hover:brightness-110 hover:shadow-md hover:shadow-primary/50 disabled:translate-y-0 disabled:cursor-not-allowed disabled:bg-primary/10 disabled:text-text-secondary disabled:shadow-none"
               >
-                {saving ? 'Updating...' : updateLabel}
+                {savingPassword ? SETTINGS_LABELS.UPDATING : SETTINGS_LABELS.UPDATE_PASSWORD}
               </button>
+            </div>
 
-              <div className="pt-8">
+            <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
+              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
+                {SETTINGS_LABELS.DANGER_ZONE}
+              </h2>
+
+              <div className="flex flex-col gap-4 rounded-xl border border-error/40 bg-error/5 p-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-base font-medium leading-[25.2px] text-text-primary">
+                    {SETTINGS_LABELS.DELETE_CARD_TITLE}
+                  </h3>
+                  <p className="text-xs leading-[19.2px] text-text-secondary">
+                    {SETTINGS_LABELS.DELETE_CARD_DESC}
+                  </p>
+                </div>
+
                 <button
                   type="button"
                   onClick={openDeleteModal}
-                  className="btn-ghost h-10 w-full max-w-[240px] cursor-pointer justify-center border-error text-error transition hover:bg-error/10"
+                  className="btn-ghost h-10 shrink-0 cursor-pointer justify-center border-error px-5 text-sm text-error transition hover:bg-error/10"
                 >
-                  Delete Account
+                  {SETTINGS_LABELS.DELETE_ACCOUNT}
                 </button>
               </div>
             </div>
@@ -339,11 +361,9 @@ export default function SettingsPage() {
         >
           <div className="w-full max-w-md rounded-xl border border-primary-border bg-surface p-6">
             <h3 id="delete-account-title" className="text-xl font-semibold text-text-primary">
-              Delete Account
+              {SETTINGS_LABELS.DELETE_ACCOUNT}
             </h3>
-            <p className="mt-2 text-sm text-text-secondary">
-              This action is permanent and cannot be undone. Enter your password to confirm.
-            </p>
+            <p className="mt-2 text-sm text-text-secondary">{SETTINGS_LABELS.DELETE_MODAL_DESC}</p>
 
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
@@ -351,7 +371,7 @@ export default function SettingsPage() {
                   htmlFor="delete-account-password"
                   className="text-xs font-medium leading-[19.2px] text-text-secondary"
                 >
-                  Current Password
+                  {SETTINGS_LABELS.CURRENT_PASSWORD}
                 </label>
                 <input
                   id="delete-account-password"
@@ -375,7 +395,7 @@ export default function SettingsPage() {
                 disabled={deleteState.deleting}
                 className="btn-ghost h-10 cursor-pointer px-4 text-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancel
+                {SETTINGS_LABELS.CANCEL}
               </button>
 
               <button
@@ -384,7 +404,7 @@ export default function SettingsPage() {
                 disabled={disableDeleteAccount}
                 className="btn-ghost h-10 cursor-pointer justify-center border-error px-4 text-sm text-error transition hover:bg-error/10 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {deleteState.deleting ? 'Deleting...' : 'Delete Account'}
+                {deleteState.deleting ? SETTINGS_LABELS.DELETING : SETTINGS_LABELS.DELETE_ACCOUNT}
               </button>
             </div>
           </div>

@@ -145,6 +145,15 @@ export const TOAST_MESSAGES = {
     SAVE_FAILED: 'Unable to save visualizer',
     REMOVE_FAILED: 'Unable to remove visualizer',
   },
+  SETTINGS: {
+    NAME_UPDATED: 'Name updated successfully.',
+    PASSWORD_UPDATED: 'Password updated successfully.',
+    PASSWORD_MISMATCH: 'New password and Confirm Password do not match',
+    PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters',
+    NAME_UPDATE_FAILED: 'Failed to save changes',
+    PASSWORD_UPDATE_FAILED: 'Failed to update password',
+    DELETE_FAILED: 'Failed to delete account',
+  },
 } as const;
 
 export const API_ROUTES = {
@@ -192,4 +201,33 @@ export const LABELS = {
   SIGN_UP: 'Sign Up',
   SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
   CREATE_VISUALIZER: 'Create',
+} as const;
+
+export const PASSWORD_MIN_LENGTH = 8;
+
+export const SETTINGS_LABELS = {
+  PROFILE: 'Profile',
+  ACCOUNT: 'Account',
+  CHANGE_PASSWORD: 'Change Password',
+  DANGER_ZONE: 'Danger Zone',
+  AVATAR_HINT: 'Avatar is generated from your name and account ID.',
+  DISPLAY_NAME: 'Display Name',
+  DISPLAY_NAME_INFO_ARIA: 'Display name info',
+  DISPLAY_NAME_TOOLTIP: 'Your display name is saved when you click the update button.',
+  INFO_ICON: 'i',
+  EMAIL_ADDRESS: 'Email Address',
+  CURRENT_PASSWORD: 'Current Password',
+  NEW_PASSWORD: 'New Password',
+  CONFIRM_PASSWORD: 'Confirm Password',
+  UPDATE_NAME: 'Update Name',
+  UPDATE_PASSWORD: 'Update Password',
+  UPDATING: 'Updating...',
+  DELETING: 'Deleting...',
+  CANCEL: 'Cancel',
+  DELETE_ACCOUNT: 'Delete Account',
+  DELETE_CARD_TITLE: 'Delete account',
+  DELETE_CARD_DESC:
+    'Permanently delete your account and all associated data. This action cannot be undone.',
+  DELETE_MODAL_DESC:
+    'This action is permanent and cannot be undone. Enter your password to confirm.',
 } as const;

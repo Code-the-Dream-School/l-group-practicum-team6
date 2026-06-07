@@ -69,16 +69,17 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByLabelText('Display Name')).toHaveValue('Test User');
     expect(screen.getByLabelText('Email Address')).toHaveValue('test@example.com');
-    expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Update Name' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Update Password' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
   });
 
-  it('does not save and keeps the button disabled when display name is empty', () => {
+  it('does not save and keeps the name button disabled when display name is empty', () => {
     renderPage();
 
     fireEvent.change(screen.getByLabelText('Display Name'), { target: { value: '   ' } });
 
-    expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Update Name' })).toBeDisabled();
     expect(mockUpdateProfile).not.toHaveBeenCalled();
   });
 
@@ -106,7 +107,7 @@ describe('SettingsPage', () => {
     fireEvent.blur(screen.getByLabelText('Confirm Password'));
 
     expect(mockToast.error).toHaveBeenCalledWith('New password and Confirm Password do not match');
-    expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Update Password' })).toBeDisabled();
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
