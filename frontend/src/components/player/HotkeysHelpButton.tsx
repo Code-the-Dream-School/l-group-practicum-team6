@@ -8,7 +8,13 @@ const hotkeys = [
   ['M', 'Toggle microphone/audio input'],
 ];
 
-export default function HotkeysHelpButton() {
+export default function HotkeysHelpButton({
+  buttonClassName = 'inline-flex h-6 w-6 shrink-0 items-center justify-center border-0 bg-transparent p-0 cursor-pointer outline-none transition hover:opacity-80',
+  iconClassName = 'block h-6 w-6',
+}: {
+  buttonClassName?: string;
+  iconClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -28,15 +34,15 @@ export default function HotkeysHelpButton() {
   }, [open]);
 
   return (
-    <div className="relative">
+    <div className="relative inline-flex items-center">
       <button
         type="button"
         aria-label="Show keyboard shortcuts"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-[#2a2a3d] bg-[#1c1c28] text-4xl text-white/90 transition hover:border-[#7c5cfc]/40 hover:bg-[#252535] outline-none"
+        className={buttonClassName}
       >
-        ⌨
+        <img src="/icons/hotkeys.svg" alt="" className={iconClassName} />
       </button>
 
       {open && (

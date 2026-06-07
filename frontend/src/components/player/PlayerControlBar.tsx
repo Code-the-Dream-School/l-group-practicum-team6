@@ -25,6 +25,11 @@ type PlayerControlBarProps = {
 
 const defaultAudioDevices: AudioInputDevice[] = [{ deviceId: 'default', label: 'Microphone' }];
 
+const iconButtonClassName =
+  'inline-flex h-6 w-6 shrink-0 items-center justify-center border-0 bg-transparent p-0 cursor-pointer outline-none transition hover:opacity-80';
+
+const iconClassName = 'block h-6 w-6';
+
 export default function PlayerControlBar({
   audioDevices = defaultAudioDevices,
   selectedDeviceId = defaultAudioDevices[0].deviceId,
@@ -102,18 +107,18 @@ export default function PlayerControlBar({
         )}
 
         <div
-          className="col-start-3 row-start-1 flex items-center justify-end justify-self-end gap-2 sm:row-start-auto"
+          className="col-start-3 row-start-1 flex items-center justify-end justify-self-end gap-6 sm:row-start-auto"
           data-testid="control-bar-right"
         >
-          <HotkeysHelpButton />
+          <HotkeysHelpButton buttonClassName={iconButtonClassName} iconClassName={iconClassName} />
 
           <button
             type="button"
             aria-label="Fullscreen"
             onClick={onFullscreen ?? (() => {})}
-            className="cursor-pointer outline-none transition hover:opacity-80"
+            className={iconButtonClassName}
           >
-            <img src={fullscreenIcon} alt="" className="h-6 w-6" />
+            <img src={fullscreenIcon} alt="" className={iconClassName} />
           </button>
         </div>
       </div>
