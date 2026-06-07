@@ -4,6 +4,7 @@ import fullscreenIcon from '../../assets/icons/fullscreen.svg';
 import type { AudioInputDevice } from '../../utils/audioDevices';
 import DeviceSelectorButton from './DeviceSelectorButton';
 import PlaybackControls from './PlaybackControls';
+import HotkeysHelpButton from './HotkeysHelpButton';
 
 type PlayerControlBarProps = {
   audioDevices?: AudioInputDevice[];
@@ -69,8 +70,11 @@ export default function PlayerControlBar({
       className="pointer-events-auto absolute inset-x-0 bottom-0 z-10 border-t bg-surface border-primary-border"
       data-testid="player-control-bar"
     >
-      <div className="flex h-[75px] items-center justify-between gap-4 px-6">
-        <div className="flex min-w-0 flex-1 items-center gap-4" data-testid="control-bar-left">
+      <div className="grid min-h-[110px] grid-cols-[1fr_auto_1fr] grid-rows-2 items-center gap-2 px-4 py-2 sm:min-h-[75px] sm:grid-rows-1 sm:gap-4 sm:px-6 sm:py-0">
+        <div
+          className="col-start-1 row-start-1 flex min-w-0 items-center justify-self-start sm:row-start-auto"
+          data-testid="control-bar-left"
+        >
           <DeviceSelectorButton
             devices={audioDevices}
             selectedDeviceId={selectedDeviceId}
@@ -80,7 +84,10 @@ export default function PlayerControlBar({
         </div>
 
         {showPlaybackControls && (
-          <div className="flex shrink-0 justify-center" data-testid="control-bar-center">
+          <div
+            className="col-span-3 row-start-2 flex items-center justify-center justify-self-center sm:col-span-1 sm:col-start-2 sm:row-start-auto"
+            data-testid="control-bar-center"
+          >
             <PlaybackControls
               isPlaying={isPlaying}
               isFavorited={isFavorited}
@@ -94,7 +101,12 @@ export default function PlayerControlBar({
           </div>
         )}
 
-        <div className="flex flex-1 items-center justify-end" data-testid="control-bar-right">
+        <div
+          className="col-start-3 row-start-1 flex items-center justify-end justify-self-end gap-2 sm:row-start-auto"
+          data-testid="control-bar-right"
+        >
+          <HotkeysHelpButton />
+
           <button
             type="button"
             aria-label="Fullscreen"
