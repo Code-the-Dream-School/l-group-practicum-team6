@@ -50,6 +50,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           {user.isAdmin && (
             <NavLink
               to={ROUTES.ADMIN_VISUALS}
+              end
               className={({ isActive }) =>
                 `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
               }

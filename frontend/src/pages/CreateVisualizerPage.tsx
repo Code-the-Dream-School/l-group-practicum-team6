@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
+import { DEFAULT_SYSTEM_PROMPT } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import LoaderSpinner from '../components/LoaderSpinner';
