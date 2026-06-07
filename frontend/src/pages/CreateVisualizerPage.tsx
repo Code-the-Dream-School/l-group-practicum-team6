@@ -140,7 +140,7 @@ export default function CreateVisualizerPage() {
             type="button"
             onClick={() => void handleGenerate()}
             disabled={generating || !prompt.trim()}
-            className="btn-primary flex shrink-0 items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+            className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
           >
             <svg
               className="h-4 w-4"
@@ -162,7 +162,7 @@ export default function CreateVisualizerPage() {
               type="button"
               onClick={() => void handleSave()}
               disabled={submitting}
-              className="btn-primary flex shrink-0 items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
             >
               <svg
                 className="h-4 w-4"

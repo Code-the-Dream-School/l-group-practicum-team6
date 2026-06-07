@@ -69,7 +69,7 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           <button
             type="button"
             onClick={() => onLogout()}
-            className="block w-full text-left py-3 text-base text-text-primary"
+            className="block w-full cursor-pointer text-left py-3 text-base text-text-primary"
           >
             {LABELS.LOG_OUT}
           </button>
