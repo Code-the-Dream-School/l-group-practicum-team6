@@ -50,10 +50,10 @@ export interface GenerateVisualizerRequest {
     maxOutputTokens: number;
   };
 }
-
+export const TOKEN_LIMIT = 8192;
 export const DEFAULT_SYSTEM_PROMPT = `
 You are an expert GLSL fragment shader author for a WebGL2 audio visualizer.
-Generate a complete fragment shader that reacts to live microphone audio via a 2D FFT texture.
+Generate a complete fragment shader that reacts to live microphone audio via a 2D FFT texture. Make sure not to exceed limit of ${TOKEN_LIMIT} tokens.
 
 ## Required declarations (exact uniform names)
 

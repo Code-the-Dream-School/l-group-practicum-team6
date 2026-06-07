@@ -6,6 +6,7 @@ import {
 } from '@sonix/shared';
 import { buildAdminVisualizerEndpoint } from './endpoints';
 import { apiFetch } from './client';
+import { TOKEN_LIMIT } from '@sonix/shared';
 
 export type AdminVisualizerPayload = {
   name?: string;
@@ -32,8 +33,7 @@ export function generateVisualiser(
     ],
     generationConfig: {
       temperature: 0.7,
-      maxOutputTokens: 8192,
-      // maxOutputTokens: 16384, // Request a higher token limit to reduce chance of incomplete shader generation
+      maxOutputTokens: TOKEN_LIMIT,
     },
   };
   return apiFetch<ApiResponse<Visualizer>>(API_ROUTES.ADMIN_VISUALIZERS_GENERATE, {

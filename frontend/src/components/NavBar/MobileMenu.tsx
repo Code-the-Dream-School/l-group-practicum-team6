@@ -34,6 +34,21 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
           </NavLink>
           {user.isAdmin && (
             <NavLink
+              to={ROUTES.ADMIN_VISUALS_CREATE}
+              className={({ isActive }) =>
+                `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
+              }
+            >
+              Create
+            </NavLink>
+          )}
+
+          <div className="mt-3 flex items-center gap-3 border-t border-primary-border pt-3">
+            <Avatar user={user} />
+            <span className="text-sm text-text-primary">{user.name}</span>
+          </div>
+          {user.isAdmin && (
+            <NavLink
               to={ROUTES.ADMIN_VISUALS}
               className={({ isActive }) =>
                 `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
@@ -42,13 +57,11 @@ export function MobileMenu({ user, onLogout }: MobileMenuProps) {
               Admin
             </NavLink>
           )}
-          <div className="mt-3 flex items-center gap-3 border-t border-primary-border pt-3">
-            <Avatar user={user} />
-            <span className="text-sm text-text-primary">{user.name}</span>
-          </div>
           <NavLink
             to={ROUTES.SETTINGS}
-            className="block w-full text-left py-3 text-base text-text-primary"
+            className={({ isActive }) =>
+              `block py-3 text-base font-medium text-text-${isActive ? 'primary' : 'secondary'}`
+            }
           >
             {LABELS.SETTINGS}
           </NavLink>

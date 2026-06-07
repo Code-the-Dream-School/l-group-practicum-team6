@@ -296,6 +296,16 @@ export default function AdminVisualizersPage() {
               />
             </label>
 
+            <label className="grid gap-1 text-sm">
+              <span className="text-text-secondary">Source</span>
+              <input
+                type="text"
+                value={form.source}
+                onChange={(event) => setForm((prev) => ({ ...prev, source: event.target.value }))}
+                className="input-field"
+              />
+            </label>
+
             <label className="inline-flex items-center gap-2 text-sm text-text-secondary">
               <input
                 type="checkbox"
