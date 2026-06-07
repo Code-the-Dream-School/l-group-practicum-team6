@@ -155,7 +155,7 @@ export function VisualizerPlayer({
       () => isShaderPlayingRef.current,
       captureRef
     );
-  }, [glsl, getAudioData]);
+  }, [glsl, getAudioData, captureRef]);
 
   useEffect(() => {
     if (status === lastToastStatusRef.current) return;
@@ -190,6 +190,17 @@ export function VisualizerPlayer({
           isPlaying ? 'opacity-0' : 'opacity-100'
         }`}
       />
+      {isFullscreen && (
+        <button
+          type="button"
+          aria-label="Exit fullscreen"
+          data-testid="player-fullscreen-exit"
+          onClick={() => void handleToggleFullscreen()}
+          className="pointer-events-auto absolute right-4 bottom-4 z-20 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full  bg-black/50 outline-none backdrop-blur transition hover:bg-black/70 md:hidden"
+        >
+          <img src="/icons/fullscrnExit.svg" alt="" className="h-6 w-6 brightness-0 invert" />
+        </button>
+      )}
       {!isFullscreen && (
         <div
           data-testid="player-controls-overlay"

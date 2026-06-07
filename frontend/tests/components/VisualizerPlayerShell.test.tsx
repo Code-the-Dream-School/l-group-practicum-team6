@@ -94,7 +94,7 @@ describe('VisualizerPlayer fullscreen', () => {
     expect(screen.getByTestId('visual-info-card')).toBeInTheDocument();
   });
 
-  it('hides player chrome in fullscreen', () => {
+  it('hides player chrome in fullscreen but keeps a mobile exit control', () => {
     mockUseFullscreen.mockReturnValue({
       targetRef: { current: null },
       isFullscreen: true,
@@ -105,6 +105,21 @@ describe('VisualizerPlayer fullscreen', () => {
 
     expect(screen.queryByTestId('player-control-bar')).not.toBeInTheDocument();
     expect(screen.queryByTestId('visual-info-card')).not.toBeInTheDocument();
+    expect(screen.getByTestId('player-fullscreen-exit')).toBeInTheDocument();
+  });
+
+  it('exits fullscreen from the mobile exit control', () => {
+    mockUseFullscreen.mockReturnValue({
+      targetRef: { current: null },
+      isFullscreen: true,
+      toggleFullscreen: mockToggleFullscreen.mockResolvedValue(true),
+    });
+
+    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+
+    fireEvent.click(screen.getByLabelText('Exit fullscreen'));
+
+    expect(mockToggleFullscreen).toHaveBeenCalledTimes(1);
   });
 
   it('toggles fullscreen from the control bar without passing fullscreen state into it', () => {
