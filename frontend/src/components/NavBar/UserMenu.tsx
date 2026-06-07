@@ -27,7 +27,7 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
         aria-expanded={open}
         aria-label="User menu"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center gap-2 rounded-full cursor-pointer"
+        className="inline-flex items-center gap-2 rounded-full p-2 cursor-pointer"
       >
         <Avatar user={user} />
       </button>
