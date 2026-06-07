@@ -307,9 +307,10 @@ export default function AdminVisualizersPage() {
               />
             </label>
 
-            <label className="inline-flex items-center gap-2 text-sm text-text-secondary">
+            <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-text-secondary">
               <input
                 type="checkbox"
+                className="cursor-pointer"
                 checked={form.isDemo}
                 onChange={(event) => setForm((prev) => ({ ...prev, isDemo: event.target.checked }))}
               />

@@ -68,7 +68,7 @@ export default function MyVisualsPage() {
               <select
                 value={sortOption}
                 onChange={(event) => setSortOption(event.target.value as FavoritesSortOption)}
-                className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
+                className="cursor-pointer rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
               >
                 <option value="recent">Recently Saved</option>
                 <option value="az">A-Z</option>
