@@ -1,12 +1,10 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import request from 'supertest';
 import { beforeAll, beforeEach, afterAll, describe, expect, it } from 'vitest';
-
 import Image from '../../src/models/Image';
 import User from '../../src/models/User';
+import { connectTestDatabase, disconnectTestDatabase } from '../helpers/mongoMemoryServer';
 
-let mongoServer: MongoMemoryServer;
 let app: typeof import('../../src/app').default;
 
 describe('Image routes', () => {
@@ -16,13 +14,11 @@ describe('Image routes', () => {
 
     app = (await import('../../src/app')).default;
 
-    mongoServer = await MongoMemoryServer.create();
-
-    await mongoose.connect(mongoServer.getUri());
+    await connectTestDatabase();
 
     await Image.collection.dropIndexes().catch(() => {});
     await Image.syncIndexes();
-  });
+  }, 120000);
 
   beforeEach(async () => {
     await Image.deleteMany({});
@@ -30,8 +26,7 @@ describe('Image routes', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
+    await disconnectTestDatabase();
 
     delete process.env.JWT_SECRET;
     delete process.env.JWT_LIFETIME;

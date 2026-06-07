@@ -1,14 +1,11 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { beforeAll, afterAll, beforeEach, describe, expect, it } from 'vitest';
-
+import { connectTestDatabase, disconnectTestDatabase } from '../helpers/mongoMemoryServer';
 import {
   uploadBufferToGridFS,
   deleteGridFSFile,
   openGridFSDownloadStream,
 } from '../../src/utils/gridfs';
-
-let mongoServer: MongoMemoryServer;
 
 function getTestDB() {
   const db = mongoose.connection.db;
@@ -22,10 +19,8 @@ function getTestDB() {
 
 describe('gridfs utils', () => {
   beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-
-    await mongoose.connect(mongoServer.getUri());
-  });
+    await connectTestDatabase();
+  }, 120000);
 
   beforeEach(async () => {
     const db = getTestDB();
@@ -35,8 +30,7 @@ describe('gridfs utils', () => {
   });
 
   afterAll(async () => {
-    await mongoose.connection.close();
-    await mongoServer.stop();
+    await disconnectTestDatabase();
   });
 
   it('uploads a file to GridFS', async () => {

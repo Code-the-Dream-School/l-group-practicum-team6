@@ -11,7 +11,7 @@ export default function VisualInfoCard({ name, tags, visible = true }: VisualInf
 
   return (
     <div
-      className={`pointer-events-none absolute bottom-[88px] left-4 z-5 w-[200px] rounded-xl border border-[#2a2a3d]/80 bg-[#1c1c28]/90 p-4 backdrop-blur-sm transition-opacity ease-in-out motion-reduce:transition-none ${
+      className={`pointer-events-none absolute left-4 top-3 z-[5] w-[200px] rounded-xl border border-[#2a2a3d]/80 bg-[#1c1c28]/90 p-4 backdrop-blur-sm transition-opacity ease-in-out ${
         visible
           ? 'opacity-100 delay-200 duration-300 ease-out'
           : 'opacity-0 delay-0 duration-150 ease-in'
