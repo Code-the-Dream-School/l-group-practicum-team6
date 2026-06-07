@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { type VisualizerListItem } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import LoaderSpinner from '../components/LoaderSpinner';
 import {
   createAdminVisualizer,
@@ -383,6 +384,8 @@ export default function AdminVisualizersPage() {
           )}
         </section>
       </main>
+
+      <Footer />
     </div>
   );
 }

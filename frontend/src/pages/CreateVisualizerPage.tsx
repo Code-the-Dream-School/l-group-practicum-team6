@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { VisualizerPlayer } from '../components/VisualizerPlayerShell';
 import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
@@ -210,6 +211,8 @@ export default function CreateVisualizerPage() {
           </section>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }
