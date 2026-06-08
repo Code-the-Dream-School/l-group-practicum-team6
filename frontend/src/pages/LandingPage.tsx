@@ -95,30 +95,33 @@ function LandingPage() {
         </section>
 
         <section id="features" className="mx-auto grid max-w-5xl gap-6 px-6 py-20 md:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
-            <img src="/icons/wave.svg" alt="" className="mb-5 h-6 w-6" />
-
-            <h2 className="text-xl font-semibold">Real-time Visuals</h2>
+          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+            <div className="flex items-center gap-3">
+              <img src="/icons/wave.svg" alt="" className="h-6 w-6 shrink-0" />
+              <h2 className="text-xl font-semibold">Real-time Visuals</h2>
+            </div>
 
             <p className="mt-3 text-slate-300">
               Experience zero-latency frequency mapping that breathes with your music perfectly.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
-            <img src="/icons/mic.svg" alt="" className="mb-5 h-6 w-6" />
-
-            <h2 className="text-xl font-semibold">Microphone Input</h2>
+          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+            <div className="flex items-center gap-3">
+              <img src="/icons/mic.svg" alt="" className="h-6 w-6 shrink-0" />
+              <h2 className="text-xl font-semibold">Microphone Input</h2>
+            </div>
 
             <p className="mt-3 text-slate-300">
               Capture live performances or environmental sound and watch it transform instantly.
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
-            <img src="/icons/layers.svg" alt="" className="mb-5 h-6 w-6" />
-
-            <h2 className="text-xl font-semibold">Playlist Collections</h2>
+          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+            <div className="flex items-center gap-3">
+              <img src="/icons/layers.svg" alt="" className="h-6 w-6 shrink-0" />
+              <h2 className="text-xl font-semibold">Playlist Collections</h2>
+            </div>
 
             <p className="mt-3 text-slate-300">
               Curate sets of visual presets and audio tracks for seamless transitions during your
@@ -135,36 +138,42 @@ function LandingPage() {
           <h2 className="mt-3 text-3xl font-semibold">From audio to visuals in three steps</h2>
 
           <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-left">
-              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
+            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+              <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 1
               </div>
-              <img src="/icons/mic.svg" alt="" className="h-5 w-5" />
-              <h3 className="mt-3 font-semibold">Connect your audio</h3>
+              <div className="flex items-center justify-center gap-3">
+                <img src="/icons/mic.svg" alt="" className="h-5 w-5 shrink-0" />
+                <h3 className="font-semibold">Connect your audio</h3>
+              </div>
               <p className="mt-3 text-sm leading-6 text-white/50">
                 Plug in a microphone, line-in, or virtual audio source. Sonix picks up the signal
                 instantly — no plugins, no setup beyond choosing your input.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-left">
-              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
+            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+              <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 2
               </div>
-              <img src="/icons/grid.svg" alt="" className="h-5 w-5" />
-              <h3 className="mt-3 font-semibold">Pick a visual</h3>
+              <div className="flex items-center justify-center gap-3">
+                <img src="/icons/grid.svg" alt="" className="h-5 w-5 shrink-0" />
+                <h3 className="font-semibold">Pick a visual</h3>
+              </div>
               <p className="mt-3 text-sm leading-6 text-white/50">
                 Browse the curated library of reactive visuals. Switch between them instantly,
                 shuffle for variety, and find the one that fits your sound.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-left">
-              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
+            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+              <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 3
               </div>
-              <img src="/icons/play.svg" alt="" className="h-5 w-5" />
-              <h3 className="mt-3 font-semibold">Press play</h3>
+              <div className="flex items-center justify-center gap-3">
+                <img src="/icons/play.svg" alt="" className="h-5 w-5 shrink-0" />
+                <h3 className="font-semibold">Press play</h3>
+              </div>
               <p className="mt-3 text-sm leading-6 text-white/50">
                 Watch your audio render live. Go fullscreen for performances and streams, or save
                 the visuals you love to your favorites.
@@ -228,7 +237,7 @@ function LandingPage() {
 
               <Link
                 to="/visualizer/demo"
-                className="rounded-xl border border-white/15 bg-white/[0.03] px-8 py-3 font-semibold text-white transition hover:bg-white/[0.08]"
+                className="rounded-xl border border-white/15 bg-white/3 px-8 py-3 font-semibold text-white transition hover:bg-white/8"
               >
                 See a Demo
               </Link>
