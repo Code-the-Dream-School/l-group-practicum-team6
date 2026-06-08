@@ -11,6 +11,7 @@ import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { activateVisualPreview, startVisualPreview } from '../utils/visualPreview';
 import { welcomeShader } from '../assets/welcomeShader';
 import generateIcon from '../assets/icons/generate.svg';
+import randomIcon from '../assets/icons/random.svg';
 import saveIcon from '../assets/icons/save.svg';
 
 type FormState = {
@@ -26,6 +27,24 @@ function toTagArray(raw: string): string[] {
     .map((t) => t.trim().toLowerCase())
     .filter(Boolean);
 }
+
+const randomPrompts = [
+  'Sunny spinning mandala in space',
+  'Neon pulsing cat in a cylinder hat',
+  'Particles that pulse with the bass',
+  'Aurora waves drifting across a dark sky',
+  'Geometric tunnel with a neon glow',
+  'Fireflies swirling around a moonlit forest',
+  'Liquid mercury ripples in zero gravity',
+  'Retro synthwave grid stretching to the horizon',
+  'Starfield warping with the beat',
+  'Rainbow smoke rings expanding outward',
+  'Crystalline fractals blooming with treble hits',
+  'Underwater bioluminescent jellyfish pulse',
+  'Glitching VHS sunset over the ocean',
+  'Cosmic nebula clouds breathing with the music',
+  'Electric lightning branching on every snare',
+] as const;
 
 export default function CreateVisualizerPage() {
   const toast = useToast();
@@ -109,6 +128,11 @@ export default function CreateVisualizerPage() {
     };
   }
 
+  function handleRandomizePrompt() {
+    const example = randomPrompts[Math.floor(Math.random() * randomPrompts.length)];
+    setPrompt(example);
+  }
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-void text-text-primary">
       <NavBar />
@@ -151,7 +175,16 @@ export default function CreateVisualizerPage() {
         </div>
 
         <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center px-4">
-          <div className="pointer-events-auto flex w-full max-w-[500px] items-center gap-2 rounded-2xl border border-white/10 bg-elevated/95 px-4 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
+          <div className="pointer-events-auto flex w-full max-w-[600px] items-center gap-2 rounded-2xl border border-white/10 bg-elevated/95 px-4 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
+            <button
+              type="button"
+              onClick={handleRandomizePrompt}
+              disabled={generating}
+              aria-label="Randomize prompt"
+              className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <img src={randomIcon} alt="" className="h-7 w-7 brightness-0 invert" />
+            </button>
             <input
               type="text"
               value={prompt}
