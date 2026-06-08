@@ -1,246 +1,118 @@
 # Sonix
 
-Short, clear description of what this application does and who it’s for.  
-(1–2 sentences max.)
+A curated audio visualizer web app. Sign in, connect an audio source, watch
+reactive 3D visuals, browse the visual library, and save your favorites.
 
-**Example:**  
-A full-stack web application with a React frontend and a Node/Express backend that allows users to create, manage, and track data stored in a database.
-
-## 🚀 Live Demo
-
-- **Frontend Live Site:** https://your-frontend-url.com
-- **Frontend Repo:** /frontend
-- **Backend Repo:** /backend
-
-## 🧠 Problem Statement
-
-What problem does this project solve?
-
-- Who is this application for?
-- What pain point does it address?
-- Why does this solution matter?
-
-Focus on the **user problem**, not the technology.
-
-## 🎯 Features
-
-- User authentication (register, login, logout)
-- CRUD operations for core resources
-- Protected routes and authorization
-- Responsive UI (mobile & desktop)
-- Form validation and error handling
-- RESTful API integration
-
-## 📸 Screenshots
-
-Add screenshots or GIFs of key features here.
+Built as a Code the Dream practicum team project.
 
 ## 🛠 Tech Stack
 
-### Frontend
+This is a TypeScript monorepo with three npm workspaces: `frontend`, `backend`,
+and `shared`.
 
-- React
-- JavaScript (ES6+)
-- HTML5
-- CSS3 / Tailwind / Bootstrap
-- Vite or Create React App
+| Workspace  | Stack                                                                          |
+| ---------- | ------------------------------------------------------------------------------ |
+| `frontend` | React 19, Vite, Tailwind CSS, React Router, TanStack Query, three.js (visuals) |
+| `backend`  | Node.js, Express 5, MongoDB (Mongoose), JWT auth                               |
+| `shared`   | TypeScript types and constants shared by both apps                             |
 
-### Backend
-
-- Node.js
-- Express.js
-- REST API
-
-### Database
-
-- MongoDB (Mongoose) **or**
-- PostgreSQL (Prisma / Knex / Sequelize)
-
-### Tooling
-
-- Git & GitHub
-- dotenv (environment variables)
-- ESLint / Prettier
+Tooling: TypeScript, ESLint, Prettier, Vitest (unit), Playwright (e2e),
+Husky + lint-staged (pre-commit), deployed on Render.
 
 ## 📁 Project Structure
 
 ```text
-project-root/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── styles/
-│   │   ├── utils/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── index.html
-│   └── package.json
-│
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   ├── config/
-│   ├── app.js
-│   ├── server.js
-│   └── package.json
-│
+l-group-practicum-team6/
+├── frontend/   # React + Vite client
+├── backend/    # Express + MongoDB API
+├── shared/     # Types and constants shared by both apps
+├── e2e/        # Playwright end-to-end tests
+├── docs/       # Project and contributor guides
 └── README.md
 ```
 
-## ⚙️ Setup & Installation
+## ⚙️ Setup
 
 ### Prerequisites
 
-- Node.js 24 LTS (recommended)
-- npm or yarn
-- MongoDB or PostgreSQL (local or cloud)
+- Node.js 24 (see `.nvmrc`)
+- npm
+- A MongoDB connection string (local or Atlas)
 
-> **Monorepo install**: always run `npm install` from the **repo root**, not from inside `frontend/`, `backend/`, or `shared/`. Husky's `prepare` script and the workspace symlinks only resolve correctly at root.
+### Install
 
-### Backend Setup
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Create a `.env` file inside the `backend` folder:
-
-```env
-PORT=5001
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
-```
-
-Backend runs on:  
-http://localhost:5001
-
-### Frontend Setup
+This is a workspace monorepo — always run `npm install` from the **repo root**,
+not from inside a workspace folder.
 
 ```bash
-cd frontend
+git clone <repo-url>
+cd l-group-practicum-team6
 npm install
-npm run dev
 ```
 
-Frontend runs on:  
-http://localhost:5173
+### Environment Variables
 
-## 🧪 Available Scripts
+Backend (`backend/.env`):
 
-### Root (run from repo root)
+| Variable     | Description                    |
+| ------------ | ------------------------------ |
+| `PORT`       | Backend port (default `5001`)  |
+| `MONGO_URI`  | MongoDB connection string      |
+| `JWT_SECRET` | Secret used to sign JWT tokens |
+
+Frontend (`frontend/.env`):
+
+| Variable               | Description                   |
+| ---------------------- | ----------------------------- |
+| `VITE_API_BASE_URL`    | Backend URL the browser calls |
+| `VITE_PUBLIC_APP_NAME` | App name shown in the UI      |
+
+Never commit `.env` files. For full setup details and troubleshooting, see
+[SETUP.md](SETUP.md).
+
+### Run
+
+```bash
+npm run dev      # backend + frontend together
+```
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5001`
+
+## 🧪 Scripts
+
+Run from the repo root:
 
 ```bash
 npm run dev          # backend + frontend in parallel
 npm run build        # build all workspaces
-npm test             # run all tests
-npm run lint         # ESLint across all 3 workspaces
-npm run typecheck    # tsc --noEmit across all 3 workspaces
-npm run format       # Prettier write across the repo
-npm run format:check # Prettier check (no write)
-npm run release -- patch|minor|major
+npm test             # unit tests (backend + frontend)
+npm run test:e2e     # Playwright end-to-end tests
+npm run lint         # ESLint across all workspaces
+npm run typecheck    # TypeScript check across all workspaces
+npm run format       # Prettier write
 ```
-
-### Frontend
-
-```bash
-npm run dev
-npm run build
-npm run preview
-```
-
-### Backend
-
-```bash
-npm run dev
-npm start
-```
-
-## 🪝 Pre-commit hooks
-
-Husky + lint-staged run on every `git commit`, scoped to **staged files only**:
-
-1. Prettier auto-fix (re-staged)
-2. ESLint auto-fix (commit blocked on remaining errors)
-3. `tsc --noEmit` for each touched workspace
-4. `vitest related --run` for each touched workspace
-
-Hooks install automatically after `npm install` at the repo root.
-
-**To bypass in emergencies** (use sparingly):
-
-```bash
-git commit --no-verify -m "msg"
-```
-
-## 🚢 Release
-
-```bash
-npm run release -- patch   # or minor, major
-```
-
-Verifies clean tree → runs full lint + tests → bumps version → updates `CHANGELOG.md` → creates and pushes tag.
 
 ## 🔐 API Overview
 
-### Example Endpoints
+All routes are prefixed with `/api/v1`.
 
 ```text
-POST   /api/auth/register
-POST   /api/auth/login
-GET    /api/items
-POST   /api/items
-PUT    /api/items/:id
-DELETE /api/items/:id
+GET    /api/v1/health
+POST   /api/v1/auth/register
+POST   /api/v1/auth/login
+POST   /api/v1/auth/logout
+GET    /api/v1/users/current
+GET    /api/v1/visualizers
+GET    /api/v1/images
 ```
 
-## 🤝 Team & Collaboration
+## 🤝 Contributing
 
-### Team Members
-
-- Name — Role
-- Name — Role
-- Name — Role
-
-### Workflow
-
-- GitHub Issues for task tracking
-- Feature branches for development
-- Pull Requests required for all merges
-- Code reviews before merging to `main`
-
-## 🧩 Development Process
-
-- Agile / sprint-based workflow
-- Backend API built before frontend integration
-- MVP defined early
-- Incremental feature development
-
-## 📌 Known Issues / Limitations
-
-- Limited role-based access control
-- No automated tests yet
-- Performance optimizations pending
-
-## 🛣 Future Improvements
-
-- Add automated testing (Jest, Supertest)
-- Improve security and validation
-- Add caching and performance improvements
-- Dockerize the application
-
-## 🙌 Acknowledgments
-
-- Mentors
-- Instructors
-- Open-source libraries and tools
+This is a student team project. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+workflow and [docs/GIT_GUIDE.md](docs/GIT_GUIDE.md) for branch, commit, and PR
+naming. Pull requests and code review are required before merging to `dev`.
 
 ## 📄 License
 
-This project is for educational purposes only.
+For educational purposes only.
