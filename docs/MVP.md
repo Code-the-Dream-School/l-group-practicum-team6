@@ -2,7 +2,7 @@
 
 ## Product Goal
 
-Sonix is a curated audio visualizer app. The MVP should let users sign in, connect a supported audio source, play reactive visuals, browse a visual library, and save favorite visuals.
+Sonix.ai is a curated audio visualizer app. The MVP should let users sign in, connect a supported audio source, play reactive visuals, browse a visual library, and save favorite visuals.
 
 ## Core User Flows
 
@@ -39,7 +39,7 @@ The app contains the following routes:
 | `/`           | Public        | Landing page                                          |
 | `/signup`     | Public        | Sign up                                               |
 | `/login`      | Public        | Log in                                                |
-| `/about`      | Public        | About Sonix                                           |
+| `/about`      | Public        | About Sonix.ai                                        |
 | `/demo`       | Public        | Live visualizer demo _(not confirmed — may be added)_ |
 | `/privacy`    | Public        | Privacy policy _(not confirmed — may be deferred)_    |
 | `/terms`      | Public        | Terms of service _(not confirmed — may be deferred)_  |
@@ -56,7 +56,7 @@ The app contains the following routes:
 
 - Logo mark: three horizontal bars of unequal length with fully rounded ends — reads as a waveform silhouette and a stylized "S" letterform.
 - Color: primary accent `#7C5CFC`; the middle (longest) bar has a subtle `#00E5FF` right-end glow.
-- Wordmark: "SONIX" in Inter 700, all caps, `#7C5CFC`, tracking 0.05em.
+- Wordmark: "SONIX.AI" in Inter 700, all caps, `#7C5CFC`, tracking 0.05em.
 - Use icon + wordmark on public pages and standard authenticated nav; icon only on the visualizer nav and as favicon.
 
 ### Navbar Variants _(not confirmed — may be deferred)_

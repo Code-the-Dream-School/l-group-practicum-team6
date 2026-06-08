@@ -1,11 +1,11 @@
-# Sonix Stitch Prompt
+# Sonix.ai Stitch Prompt
 
 The key to consistency is front-loading every design decision so Stitch has no room to improvise.
 
 ## Prompt
 
 ```text
-Design a web application called Sonix — an audio visualizer platform where users connect audio sources and watch real-time visual effects synchronized to the sound.
+Design a web application called Sonix.ai — an audio visualizer platform where users connect audio sources and watch real-time visual effects synchronized to the sound.
 
 ---
 
@@ -115,7 +115,7 @@ Logo mark:
 - The overall icon bounding box is approximately 20×20px at nav size
 
 Wordmark:
-- "SONIX" in Inter 700, all caps, #7C5CFC, tracking 0.05em
+- "SONIX.AI" in Inter 700, all caps, #7C5CFC, tracking 0.05em
 - Always rendered in the same color as the icon — never split colors between icon and wordmark
 
 Combined lockup (icon + wordmark):
@@ -139,7 +139,7 @@ The application contains the following pages:
 1.  /           — Landing page (public)
 2.  /signup     — Sign up (public)
 3.  /login      — Log in (public)
-4.  /about      — About Sonix (public)
+4.  /about      — About Sonix.ai (public)
 5.  /demo       — Live visualizer demo (public)
 6.  /privacy    — Privacy policy (public) — NOT CONFIRMED, may be deferred
 7.  /terms      — Terms of service (public) — NOT CONFIRMED, may be deferred
@@ -317,7 +317,7 @@ FOOTER VARIANTS — NOT CONFIRMED, may be deferred. Specs below are preserved fo
 Variant A — Public site footer (landing, about, 404):
 - Height: 64px
 - Background: surface #12121A, 1px top border #2A2A3D
-- Left: "© 2025 Sonix" — caption, text-secondary
+- Left: "© 2025 Sonix.ai" — caption, text-secondary
 - Right: legal links "Privacy / Terms" plus optional lightweight product links such as "About"; caption text, text-secondary, 24px gaps
 
 Variant B — Public auth / legal footer (login, signup, privacy, terms):
@@ -417,7 +417,7 @@ Features section:
 
 Use Cases section:
 - Background: #0A0A0F, 96px vertical padding
-- Section label: "HOW PEOPLE USE SONIX" — caption, text-secondary, letter-spacing 0.12em, centered
+- Section label: "HOW PEOPLE USE SONIX.AI" — caption, text-secondary, letter-spacing 0.12em, centered
 - Section title: "Made for every stage" — H1, centered, 12px below label
 - 2×2 card grid (desktop), 24px gap, within layout grid
 - Each card: full-column width, 4:3 aspect ratio, overflow hidden, 12px radius
@@ -425,10 +425,10 @@ Use Cases section:
   - Content (bottom-left aligned, 24px padding): category badge pill (surface-elevated, text-secondary) at top-left of card interior; H2 title; body text (text-secondary); 8px between each element
   - Card hover: scale(1.01), brighter purple glow border
 - Use case content:
-  1. "Live Performance" — "From the stage to the screen" — "Sync Sonix to your PA system for real-time visuals during DJ sets, live shows, and concerts."
+  1. "Live Performance" — "From the stage to the screen" — "Sync Sonix.ai to your PA system for real-time visuals during DJ sets, live shows, and concerts."
   2. "Streaming" — "Make your stream unforgettable" — "Add a reactive visual layer to Twitch or YouTube broadcasts. No extra hardware required."
   3. "Meditation & Focus" — "Sound made visible, stress made small" — "Pair ambient audio with slow reactive visuals to create calming environments for study or meditation."
-  4. "Events & Venues" — "Fill the room with sound and light" — "Drive large-format displays at clubs, galleries, and events using Sonix on any laptop."
+  4. "Events & Venues" — "Fill the room with sound and light" — "Drive large-format displays at clubs, galleries, and events using Sonix.ai on any laptop."
 
 - Footer uses Variant A with legal links visible and optional lightweight product links
 
@@ -441,12 +441,12 @@ Footer: Variant A
 
 Page content below nav, within layout grid, 80px top padding:
 - Hero section:
-  - Section label: "ABOUT SONIX" — caption, text-secondary, letter-spacing 0.12em
+  - Section label: "ABOUT SONIX.AI" — caption, text-secondary, letter-spacing 0.12em
   - Title: "A curated visualizer for sound-led experiences" — H1, text-primary, max 720px
-  - Intro body copy: "Sonix helps performers, streamers, and creators turn live audio into polished realtime visuals without building a custom VJ setup." — H3, text-secondary, 16px below title, max 760px
+  - Intro body copy: "Sonix.ai helps performers, streamers, and creators turn live audio into polished realtime visuals without building a custom VJ setup." — H3, text-secondary, 16px below title, max 760px
 - Story section, 48px below hero:
   - Two-column layout, 24px gap
-  - Left card: "What Sonix does" — H2 + body copy about connecting an audio source, choosing visuals, and saving favorites
+  - Left card: "What Sonix.ai does" — H2 + body copy about connecting an audio source, choosing visuals, and saving favorites
   - Right card: "Why it exists" — H2 + body copy about reducing setup friction and focusing on a curated, reliable visual library
   - Both cards: surface background, 1px #2A2A3D border, 16px radius, 24px padding
 - Principles row, 48px below story section:
@@ -641,7 +641,7 @@ Privacy section:
 
 Header treatment:
 - Do not use the public marketing nav
-- Use a simple top row with the Sonix logo lockup only, aligned to the layout grid
+- Use a simple top row with the Sonix.ai logo lockup only, aligned to the layout grid
 - No auth CTAs or center nav links
 
 Footer: Variant B
@@ -665,7 +665,7 @@ Page content:
 
 Header treatment:
 - Do not use the public marketing nav
-- Use a simple top row with the Sonix logo lockup only, aligned to the layout grid
+- Use a simple top row with the Sonix.ai logo lockup only, aligned to the layout grid
 - No auth CTAs or center nav links
 
 Footer: Variant B
@@ -676,7 +676,7 @@ Page content:
 - Meta line 8px below: "Last updated: April 1, 2026" — caption, text-secondary
 - Intro paragraph summarizing account usage and acceptable use
 - Legal content sections stacked with 32px vertical spacing:
-  - "Using Sonix"
+  - "Using Sonix.ai"
   - "Content and availability"
   - "Account termination"
   - "Contact"
@@ -726,7 +726,7 @@ Live streaming (over-stretch):
 ---
 
 TONE AND COPY RULES
-- Product name: always "Sonix" — capital S, lowercase remaining — never "SONIX" in body copy (only the wordmark uses all-caps styling)
+- Product name: always "Sonix.ai" — capital S, lowercase remaining — never "SONIX.AI" in body copy (only the wordmark uses all-caps styling)
 - Visual names (use these exact strings everywhere): "Aurora Wave", "Spectrum Pulse", "Deep Bass Bloom", "Neon Lattice", "Void Drift", "Solar Flare", "Crystal Echo", "Fractal Storm"
 - Playlist names (for future reference / post-MVP): "Late Night Sessions", "Bass Heavy", "Ambient Drift" — do not display in MVP screens
 - No lorem ipsum anywhere — every text string must be plausible product copy

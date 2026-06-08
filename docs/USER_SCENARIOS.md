@@ -1,13 +1,13 @@
 # User Scenarios
 
-Top user scenarios for Sonix MVP. Ordered by importance. Each scenario lists the actor, preconditions, happy path, edge cases, and success criteria. Use these for QA, E2E tests, and design alignment.
+Top user scenarios for Sonix.ai MVP. Ordered by importance. Each scenario lists the actor, preconditions, happy path, edge cases, and success criteria. Use these for QA, E2E tests, and design alignment.
 
 ---
 
 ## 1. First-Time Visitor Discovers the Product
 
 **Actor:** Unauthenticated visitor.
-**Goal:** Understand what Sonix is and decide whether to sign up.
+**Goal:** Understand what Sonix.ai is and decide whether to sign up.
 
 **Preconditions:** None.
 
