@@ -3,13 +3,15 @@ import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import BackButton from '../components/BackButton';
-import Footer from '../components/Footer';
 import LoaderSpinner from '../components/LoaderSpinner';
 import VisualizerCard from '../components/VisualizerCard';
 import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { activateVisualPreview } from '../utils/visualPreview';
+import { activateVisualPreview, startVisualPreview } from '../utils/visualPreview';
+import { welcomeShader } from '../assets/welcomeShader';
+import generateIcon from '../assets/icons/generate.svg';
+import saveIcon from '../assets/icons/save.svg';
 
 type FormState = {
   name: string;
@@ -40,10 +42,20 @@ export default function CreateVisualizerPage() {
     source: 'Gemini',
   });
   const captureRef = useRef<((blob: Blob) => void) | null>(null);
+  const welcomePreviewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (generatedId) activateVisualPreview(generatedId);
   }, [generatedId]);
+
+  useEffect(() => {
+    if (generatedId || generating) return;
+
+    const container = welcomePreviewRef.current;
+    if (!container) return;
+
+    return startVisualPreview(container, welcomeShader, undefined, true);
+  }, [generatedId, generating]);
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
@@ -101,94 +113,78 @@ export default function CreateVisualizerPage() {
     <div className="flex h-screen flex-col overflow-hidden bg-void text-text-primary">
       <NavBar />
 
-      <div className="pointer-events-none relative flex-1 overflow-hidden">
-        <BackButton
-          fallback={ROUTES.ADMIN_VISUALS}
-          className="pointer-events-auto absolute left-3 top-3 z-10"
-        />
-        {generatedId && !generating ? (
-          <VisualizerCard
-            id={generatedId}
-            name={form.name}
-            tags={toTagArray(form.tags)}
-            previewGlsl={generatedGlsl}
-            isDemo={form.isDemo}
-            playPath="#"
-            captureRef={captureRef}
-            previewOnly
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="pointer-events-none relative flex-1 overflow-hidden">
+          <BackButton
+            fallback={ROUTES.ADMIN_VISUALS}
+            className="pointer-events-auto absolute left-3 top-3 z-10"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-white/30">
-            {generating ? (
+          {generatedId && !generating ? (
+            <VisualizerCard
+              id={generatedId}
+              name={form.name}
+              tags={toTagArray(form.tags)}
+              previewGlsl={generatedGlsl}
+              isDemo={form.isDemo}
+              playPath="#"
+              captureRef={captureRef}
+              previewOnly
+            />
+          ) : generating ? (
+            <div className="flex h-full items-center justify-center">
               <LoaderSpinner
                 label="Calling Gemini AI..."
                 labelClassName="text-sm text-white/60 pt-3"
               />
-            ) : (
-              'Generate a shader to see a preview'
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="border-t border-white/10 p-4">
-        <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/4 px-4 py-2">
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe your visualizer, e.g. particles that pulse with the bass"
-            className="h-9 flex-1 resize-none bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
-            disabled={generating}
-          />
-
-          <button
-            type="button"
-            onClick={() => void handleGenerate()}
-            disabled={generating || !prompt.trim()}
-            className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <svg
-              className="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-              <path d="M5 3v4M19 17v4M3 5h4M17 19h4" />
-            </svg>
-            {generating ? 'Generating…' : generatedId ? 'Regenerate' : 'Generate'}
-          </button>
-
-          {generatedId && !generating && (
-            <button
-              type="button"
-              onClick={() => void handleSave()}
-              disabled={submitting}
-              className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <svg
-                className="h-4 w-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                <polyline points="17 21 17 13 7 13 7 21" />
-                <polyline points="7 3 7 8 15 8" />
-              </svg>
-              {submitting ? 'Saving…' : 'Save'}
-            </button>
+            </div>
+          ) : (
+            <div className="relative h-full w-full">
+              <div
+                ref={welcomePreviewRef}
+                className="absolute inset-0 [&_canvas]:block [&_canvas]:h-full [&_canvas]:w-full"
+              />
+              <p className="absolute inset-x-0 bottom-22 z-10 flex items-center justify-center text-sm text-white/30">
+                Generate a visual to see a preview
+              </p>
+            </div>
           )}
         </div>
-      </div>
 
-      <Footer />
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center px-4">
+          <div className="pointer-events-auto flex w-full max-w-[500px] items-center gap-2 rounded-2xl border border-white/10 bg-elevated/95 px-4 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe it... e.g. particles that pulse with the bass"
+              className="h-9 min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+              disabled={generating}
+            />
+
+            <button
+              type="button"
+              onClick={() => void handleGenerate()}
+              disabled={generating || !prompt.trim()}
+              className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <img src={generateIcon} alt="" className="h-4 w-4" />
+              {generating ? 'Generating…' : generatedId ? 'Regenerate' : 'Generate'}
+            </button>
+
+            {generatedId && !generating && (
+              <button
+                type="button"
+                onClick={() => void handleSave()}
+                disabled={submitting}
+                className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <img src={saveIcon} alt="" className="h-4 w-4" />
+                {submitting ? 'Saving…' : 'Save'}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
