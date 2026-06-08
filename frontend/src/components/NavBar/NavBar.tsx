@@ -42,7 +42,7 @@ const NavBar = () => {
     return (
       <div className="flex h-16 items-center bg-surface px-6 md:px-20">
         <Link to={ROUTES.HOME}>
-          <img src={logoFull} alt="Sonix" />
+          <img src={logoFull} alt="Sonix.ai" />
         </Link>
       </div>
     );
@@ -52,8 +52,8 @@ const NavBar = () => {
     <header className="bg-surface">
       <div className="flex h-16 items-center justify-between px-6 md:px-20">
         <div className="flex items-center gap-10">
-          <Link to={ROUTES.HOME} aria-label="Sonix home">
-            <img src={logoFull} alt="Sonix" />
+          <Link to={ROUTES.HOME} aria-label="Sonix.ai home">
+            <img src={logoFull} alt="Sonix.ai" />
           </Link>
           {user && (
             <nav className="hidden md:flex items-center gap-6">

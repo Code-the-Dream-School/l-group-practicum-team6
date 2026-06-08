@@ -1,4 +1,4 @@
-# Sonix
+# Sonix.ai
 
 A curated audio visualizer web app. Sign in, connect an audio source, watch
 reactive 3D visuals, browse the visual library, and save your favorites. Create

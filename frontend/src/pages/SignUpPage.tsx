@@ -62,7 +62,7 @@ export default function SignUpPage() {
           className="flex w-120 flex-col gap-4 rounded-2xl border border-primary-border bg-surface p-10"
         >
           <div className="flex justify-center">
-            <img src={logoFull} alt="Sonix Logo" className="h-7 w-auto" />
+            <img src={logoFull} alt="Sonix.ai Logo" className="h-7 w-auto" />
           </div>
 
           <h1 className="text-center text-[32px] font-semibold text-text-primary">

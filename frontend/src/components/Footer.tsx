@@ -16,7 +16,7 @@ const Footer = () => {
           aria-expanded={showTeam}
           className="cursor-pointer text-sm text-text-secondary transition-colors hover:text-text-primary"
         >
-          © 2026 Sonix
+          © 2026 Sonix.ai
         </button>
       </div>
     </div>

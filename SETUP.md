@@ -1,6 +1,6 @@
 # Setup Guide
 
-Get Sonix running locally for the first time. For a project overview, see
+Get Sonix.ai running locally for the first time. For a project overview, see
 [README.md](README.md).
 
 ## Prerequisites

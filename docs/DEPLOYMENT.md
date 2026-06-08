@@ -22,7 +22,7 @@ Coverage is reported but thresholds are not enforced.
 
 ## Hosting
 
-Sonix deploys to Render as a **single web service** (see `render.yaml`). The
+Sonix.ai deploys to Render as a **single web service** (see `render.yaml`). The
 build compiles every workspace and the backend serves the built frontend, so
 there is no separate frontend host.
 
