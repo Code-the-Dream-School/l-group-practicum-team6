@@ -133,7 +133,7 @@ describe('basic pages', () => {
       expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Sonix\.ai home/i)).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /Sign Up to unlock all visualizers/i })
     ).toBeInTheDocument();
@@ -168,7 +168,7 @@ describe('basic pages', () => {
       expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
     });
 
-    expect(screen.getByLabelText(/Sonix home/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Sonix\.ai home/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/Add to favorites/i)).toBeInTheDocument();
   });

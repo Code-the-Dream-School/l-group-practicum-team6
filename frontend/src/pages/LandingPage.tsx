@@ -147,7 +147,7 @@ function LandingPage() {
                 <h3 className="font-semibold">Connect your audio</h3>
               </div>
               <p className="mt-3 text-sm leading-6 text-white/50">
-                Plug in a microphone, line-in, or virtual audio source. Sonix picks up the signal
+                Plug in a microphone, line-in, or virtual audio source. Sonix.ai picks up the signal
                 instantly — no plugins, no setup beyond choosing your input.
               </p>
             </div>
