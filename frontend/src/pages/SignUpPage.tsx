@@ -56,7 +56,7 @@ export default function SignUpPage() {
   return (
     <div className="flex h-screen flex-col justify-between">
       <NavBar />
-      <div className="flex flex-1 items-center justify-center bg-void px-4">
+      <div className="flex flex-1 items-center justify-center bg-transparent px-4">
         <form
           onSubmit={handleSubmit}
           className="flex w-120 flex-col gap-4 rounded-2xl border border-primary-border bg-surface p-10"

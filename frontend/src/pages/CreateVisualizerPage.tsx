@@ -134,7 +134,7 @@ export default function CreateVisualizerPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-void text-text-primary">
+    <div className="flex h-screen flex-col overflow-hidden bg-transparent text-text-primary">
       <NavBar />
 
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">

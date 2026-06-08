@@ -149,7 +149,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-void text-text-primary">
+    <div className="flex min-h-screen flex-col bg-transparent text-text-primary">
       <NavBar />
 
       <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-8 px-6 pb-24 pt-10">

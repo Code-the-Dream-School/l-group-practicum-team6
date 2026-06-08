@@ -12,10 +12,16 @@
   }
 
   body {
-    @apply bg-void text-text-primary;
+    @apply text-text-primary;
     min-height: 100%;
     overflow-x: hidden;
     overscroll-behavior: none;
+    background-color: theme(colors.void);
+    background-image:
+      radial-gradient(80% 70% at 0% 0%, rgba(124, 92, 252, 0.16), transparent 55%),
+      radial-gradient(80% 70% at 100% 100%, rgba(0, 229, 255, 0.1), transparent 55%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   #root {

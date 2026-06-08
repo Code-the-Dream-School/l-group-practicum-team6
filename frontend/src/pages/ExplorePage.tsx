@@ -131,7 +131,7 @@ export default function ExplorePage() {
   const showPagination = !isLoading && visuals.length > 0 && totalPages > 1;
 
   return (
-    <div className="flex min-h-screen flex-col bg-void">
+    <div className="flex min-h-screen flex-col bg-transparent">
       <NavBar />
 
       <main className="flex-1 px-6 py-10 text-white">

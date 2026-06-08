@@ -3,7 +3,7 @@ import NavBar from '../components/NavBar';
 
 export default function ForbiddenPage() {
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-void text-text-primary">
+    <div className="flex min-h-screen flex-col justify-between bg-transparent text-text-primary">
       <NavBar />
 
       <main className="mx-auto flex w-full max-w-4xl flex-1 items-center px-6 py-16">

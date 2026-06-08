@@ -37,7 +37,7 @@ export default function NotFoundPage() {
   const [showTeam, setShowTeam] = useState(false);
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-void text-text-primary">
+    <div className="flex min-h-screen flex-col justify-between bg-transparent text-text-primary">
       <NavBar />
 
       <main className="relative flex flex-1 items-center justify-center overflow-hidden px-6 py-20">

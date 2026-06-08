@@ -63,7 +63,7 @@ export default function MyVisualsPage() {
     sortOption === 'recent' ? 'Recently Saved' : sortOption === 'az' ? 'A-Z' : 'Z-A';
 
   return (
-    <div className="flex min-h-screen flex-col justify-between bg-void">
+    <div className="flex min-h-screen flex-col justify-between bg-transparent">
       <NavBar />
 
       <main className="flex flex-1 justify-center px-6 py-10 text-text-primary">
