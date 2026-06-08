@@ -44,7 +44,7 @@ export default function LoginPage() {
   return (
     <div className="flex h-screen flex-col justify-between">
       <NavBar />
-      <div className="flex items-center justify-center bg-void px-4 flex-1">
+      <div className="flex items-center justify-center bg-transparent px-4 flex-1">
         <form
           onSubmit={handleSubmit}
           className="flex w-120 flex-col gap-4 p-10 rounded-2xl border border-primary-border bg-surface"

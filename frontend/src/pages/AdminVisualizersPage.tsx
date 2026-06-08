@@ -200,7 +200,7 @@ export default function AdminVisualizersPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-void text-text-primary">
+    <div className="flex min-h-screen flex-col bg-transparent text-text-primary">
       <style>{`
         .admin-glsl-scrollbar {
           color-scheme: dark;
