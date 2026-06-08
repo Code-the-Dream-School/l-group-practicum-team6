@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
+import BackButton from '../components/BackButton';
 import { changePassword, deleteAccount } from '../api/users';
 import { useAuth } from '../context/useAuth';
 import { useToast } from '../context/useToast';
@@ -152,7 +153,8 @@ export default function SettingsPage() {
       <NavBar />
 
       <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-8 px-6 pb-24 pt-16">
-        <section className="w-full">
+        <section className="flex w-full items-center gap-2">
+          <BackButton fallback={ROUTES.EXPLORE} className="-ml-1" />
           <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">
             {LABELS.SETTINGS}
           </h1>

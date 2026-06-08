@@ -201,6 +201,7 @@ export const LABELS = {
   SIGN_UP: 'Sign Up',
   SIGN_UP_CTA: 'Sign Up to unlock all visualizers',
   CREATE_VISUALIZER: 'Create',
+  GO_BACK: 'Go back',
 } as const;
 
 export const PASSWORD_MIN_LENGTH = 8;

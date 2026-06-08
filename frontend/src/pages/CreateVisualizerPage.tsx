@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_SYSTEM_PROMPT } from '@sonix/shared';
+import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
+import BackButton from '../components/BackButton';
 import Footer from '../components/Footer';
 import LoaderSpinner from '../components/LoaderSpinner';
 import VisualizerCard from '../components/VisualizerCard';
@@ -100,7 +101,11 @@ export default function CreateVisualizerPage() {
     <div className="flex h-screen flex-col overflow-hidden bg-void text-text-primary">
       <NavBar />
 
-      <div className="pointer-events-none flex-1 overflow-hidden">
+      <div className="pointer-events-none relative flex-1 overflow-hidden">
+        <BackButton
+          fallback={ROUTES.ADMIN_VISUALS}
+          className="pointer-events-auto absolute left-3 top-3 z-10"
+        />
         {generatedId && !generating ? (
           <VisualizerCard
             id={generatedId}
