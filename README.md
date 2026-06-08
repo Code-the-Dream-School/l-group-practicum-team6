@@ -1,9 +1,8 @@
 # Sonix
 
 A curated audio visualizer web app. Sign in, connect an audio source, watch
-reactive 3D visuals, browse the visual library, and save your favorites.
-
-Built as a Code the Dream practicum team project.
+reactive 3D visuals, browse the visual library, and save your favorites. Create
+your own visuals or generate them with AI.
 
 ## 🛠 Tech Stack
 
