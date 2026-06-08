@@ -95,7 +95,7 @@ function LandingPage() {
         </section>
 
         <section id="features" className="mx-auto grid max-w-5xl gap-6 px-6 py-20 md:grid-cols-3">
-          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+          <div className="card-feature">
             <div className="flex items-center gap-3">
               <img src="/icons/wave.svg" alt="" className="h-6 w-6 shrink-0" />
               <h2 className="text-xl font-semibold">Real-time Visuals</h2>
@@ -106,7 +106,7 @@ function LandingPage() {
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+          <div className="card-feature">
             <div className="flex items-center gap-3">
               <img src="/icons/mic.svg" alt="" className="h-6 w-6 shrink-0" />
               <h2 className="text-xl font-semibold">Microphone Input</h2>
@@ -117,7 +117,7 @@ function LandingPage() {
             </p>
           </div>
 
-          <div className="rounded-3xl border border-white/10 bg-white/4 p-6 shadow-[0_0_40px_rgba(15,23,42,0.35)] backdrop-blur transition hover:-translate-y-1 hover:border-cyan-300/30 hover:shadow-[0_0_50px_rgba(34,211,238,0.12)]">
+          <div className="card-feature">
             <div className="flex items-center gap-3">
               <img src="/icons/layers.svg" alt="" className="h-6 w-6 shrink-0" />
               <h2 className="text-xl font-semibold">Playlist Collections</h2>
@@ -138,7 +138,7 @@ function LandingPage() {
           <h2 className="mt-3 text-3xl font-semibold">From audio to visuals in three steps</h2>
 
           <div className="mt-10 grid gap-6 md:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+            <div className="card text-left">
               <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 1
               </div>
@@ -152,7 +152,7 @@ function LandingPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+            <div className="card text-left">
               <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 2
               </div>
@@ -166,7 +166,7 @@ function LandingPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/4 p-6 text-left">
+            <div className="card text-left">
               <div className="mx-auto mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-purple-500 text-sm font-semibold">
                 3
               </div>

@@ -155,17 +155,13 @@ export default function SettingsPage() {
       <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col gap-8 px-6 pb-24 pt-10">
         <section className="flex w-full items-center gap-2">
           <BackButton fallback={ROUTES.EXPLORE} className="-ml-1" />
-          <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">
-            {LABELS.SETTINGS}
-          </h1>
+          <h1 className="heading-page">{LABELS.SETTINGS}</h1>
         </section>
 
         <section className="w-full rounded-xl border border-primary-border bg-surface p-12">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
-                {SETTINGS_LABELS.PROFILE}
-              </h2>
+              <h2 className="heading-section">{SETTINGS_LABELS.PROFILE}</h2>
 
               <div className="flex flex-col gap-2">
                 <div className="glass-card h-20 w-20 justify-center rounded-full bg-gradient-to-br from-primary to-secondary text-[32px] font-semibold leading-8 text-text-primary">
@@ -179,10 +175,7 @@ export default function SettingsPage() {
               <div className="flex w-full max-w-[480px] flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
                   <div className="inline-flex items-center gap-1">
-                    <label
-                      htmlFor="display-name"
-                      className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                    >
+                    <label htmlFor="display-name" className="label-field">
                       {SETTINGS_LABELS.DISPLAY_NAME}
                     </label>
                     <span className="group relative inline-flex items-center">
@@ -215,10 +208,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="email-address"
-                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                  >
+                  <label htmlFor="email-address" className="label-field">
                     {SETTINGS_LABELS.EMAIL_ADDRESS}
                   </label>
                   <input
@@ -242,9 +232,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
-                {SETTINGS_LABELS.ACCOUNT}
-              </h2>
+              <h2 className="heading-section">{SETTINGS_LABELS.ACCOUNT}</h2>
 
               <h3 className="pt-2 text-lg font-medium leading-[25.2px] text-text-primary">
                 {SETTINGS_LABELS.CHANGE_PASSWORD}
@@ -252,10 +240,7 @@ export default function SettingsPage() {
 
               <div className="flex w-full max-w-[480px] flex-col gap-4 pb-2">
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="current-password"
-                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                  >
+                  <label htmlFor="current-password" className="label-field">
                     {SETTINGS_LABELS.CURRENT_PASSWORD}
                   </label>
                   <input
@@ -273,10 +258,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="new-password"
-                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                  >
+                  <label htmlFor="new-password" className="label-field">
                     {SETTINGS_LABELS.NEW_PASSWORD}
                   </label>
                   <input
@@ -295,10 +277,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    htmlFor="confirm-password"
-                    className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                  >
+                  <label htmlFor="confirm-password" className="label-field">
                     {SETTINGS_LABELS.CONFIRM_PASSWORD}
                   </label>
                   <input
@@ -325,9 +304,7 @@ export default function SettingsPage() {
             </div>
 
             <div className="flex flex-col gap-4 border-t border-primary-border pt-12">
-              <h2 className="text-2xl font-semibold leading-[31.2px] text-text-primary">
-                {SETTINGS_LABELS.DANGER_ZONE}
-              </h2>
+              <h2 className="heading-section">{SETTINGS_LABELS.DANGER_ZONE}</h2>
 
               <div className="flex flex-col gap-4 rounded-xl border border-error/40 bg-error/5 p-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-col gap-1">
@@ -369,10 +346,7 @@ export default function SettingsPage() {
 
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="delete-account-password"
-                  className="text-xs font-medium leading-[19.2px] text-text-secondary"
-                >
+                <label htmlFor="delete-account-password" className="label-field">
                   {SETTINGS_LABELS.CURRENT_PASSWORD}
                 </label>
                 <input
