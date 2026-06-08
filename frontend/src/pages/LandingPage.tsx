@@ -5,7 +5,7 @@ import { AestheticFluidBg } from 'react-color4bg';
 
 function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-void">
+    <div className="flex min-h-screen flex-col bg-transparent">
       <NavBar />
       <main className="flex-1 text-white">
         <section className="relative overflow-hidden">
