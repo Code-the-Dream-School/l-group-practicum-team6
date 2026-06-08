@@ -142,7 +142,8 @@ describe('MyVisualsPage', () => {
       expect(screen.getByText('Alpha Visual')).toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByLabelText(/Sort by/i), { target: { value: 'az' } });
+    fireEvent.click(screen.getByLabelText(/Sort by/i));
+    fireEvent.click(screen.getByRole('option', { name: 'A-Z' }));
 
     const cards = screen.getAllByText(/Visual$/);
     expect(cards[0]).toHaveTextContent('Alpha Visual');
