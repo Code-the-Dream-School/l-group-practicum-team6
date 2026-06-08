@@ -65,7 +65,7 @@ export default function MyVisualsPage() {
               </h1>
             </div>
 
-            <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
+            <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary md:flex-row md:items-center md:gap-3">
               Sort by
               <select
                 value={sortOption}

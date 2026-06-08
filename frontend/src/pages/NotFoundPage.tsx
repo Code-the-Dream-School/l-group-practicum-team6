@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import Footer from '../components/Footer';
 import NavBar from '../components/NavBar';
+import TeamInfo from '../components/TeamInfo';
 import { ROUTES } from '@sonix/shared';
 
 const bars = [
@@ -102,52 +103,7 @@ export default function NotFoundPage() {
         </section>
       </main>
 
-      {showTeam && (
-        <div className="relative z-10 animate-fadeIn px-6 py-4 text-center">
-          <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest">
-            Team
-          </p>
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {[
-              { name: 'Almira Koshkina', handle: 'AlmiraKoshkina' },
-              { name: 'Dinar Ibragimov', handle: 'Alarlar' },
-              { name: 'Joe Siburov', handle: 'shweps13' },
-              { name: 'Lily Meyer', handle: 'Lili-Kiwi' },
-              { name: 'Olesia Mironenko', handle: 'olesiamironenko' },
-            ].map((member) => (
-              <a
-                key={member.handle}
-                href={`https://github.com/${member.handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
-              >
-                {member.name}
-              </a>
-            ))}
-          </div>
-
-          <p className="mt-4 text-xs font-semibold text-text-secondary uppercase tracking-widest">
-            Mentors
-          </p>
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {[
-              { name: 'Sergey Sherstobitov', handle: 'in43sh' },
-              { name: 'Serhii Smyk', handle: 'smykserhi' },
-            ].map((member) => (
-              <a
-                key={member.handle}
-                href={`https://github.com/${member.handle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors hover:underline"
-              >
-                {member.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
+      {showTeam && <TeamInfo />}
 
       <Footer />
     </div>
