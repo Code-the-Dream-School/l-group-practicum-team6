@@ -3,8 +3,11 @@ import { useCallback } from 'react';
 import { useRemoveVisualMutation, useSaveVisualMutation } from './useSavedVisualMutations';
 import { useSavedVisualsQuery } from './useSavedVisualsQuery';
 
-export function useFavoriteVisual(visualizerId: string) {
-  const { data: savedVisuals, isPending } = useSavedVisualsQuery();
+export function useFavoriteVisual(
+  visualizerId: string,
+  { enabled = true }: { enabled?: boolean } = {}
+) {
+  const { data: savedVisuals, isPending } = useSavedVisualsQuery({ enabled });
   const saveMutation = useSaveVisualMutation();
   const removeMutation = useRemoveVisualMutation();
 

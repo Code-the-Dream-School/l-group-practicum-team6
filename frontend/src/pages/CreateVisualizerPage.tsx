@@ -158,18 +158,22 @@ export default function CreateVisualizerPage() {
             </>
           ) : generatedVisual && generatedGlsl ? (
             <VisualizerPlayer
+              key={generatedId}
               glsl={generatedGlsl}
               visual={generatedVisual}
               showPlaybackControls={false}
+              enablePlaylist={false}
               captureRef={captureRef}
               backFallback={ROUTES.ADMIN_VISUALS}
             />
           ) : (
             <VisualizerPlayer
+              key="welcome-preview"
               glsl={welcomeShader}
               visual={WELCOME_VISUAL}
               showPlaybackControls={false}
               showInfoCard={false}
+              enablePlaylist={false}
               backFallback={ROUTES.ADMIN_VISUALS}
             />
           )}

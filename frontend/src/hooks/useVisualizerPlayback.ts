@@ -34,7 +34,10 @@ function buildVisualizerPath(id: string): string {
   return ROUTES.VISUALIZER.replace(':id', encodeURIComponent(id));
 }
 
-export function useVisualizerPlayback(currentId: string) {
+export function useVisualizerPlayback(
+  currentId: string,
+  { enabled = true }: { enabled?: boolean } = {}
+) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isNavigating, setIsNavigating] = useState(false);
@@ -47,10 +50,10 @@ export function useVisualizerPlayback(currentId: string) {
   const favoritesSort = context.source === 'favorites' ? context.sort : 'recent';
 
   const { data: listData, isPending: isListPending } = useVisualizerListQuery(exploreFilters, {
-    enabled: !isFavorites,
+    enabled: enabled && !isFavorites,
   });
   const { data: savedVisuals = [], isPending: isSavedPending } = useSavedVisualsQuery({
-    enabled: isFavorites,
+    enabled: enabled && isFavorites,
   });
 
   const favoriteIds = useMemo(
@@ -70,11 +73,15 @@ export function useVisualizerPlayback(currentId: string) {
     : `explore:${exploreFilters.page}:${exploreFilters.limit}:${exploreFilters.search ?? ''}:${exploreFilters.tag ?? ''}`;
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     setPlaybackShuffle(DEFAULT_PLAYBACK_SHUFFLE);
-  }, [playbackListKey]);
+  }, [enabled, playbackListKey]);
 
   useEffect(() => {
-    if (isPlaylistPending || idsOnPage.length === 0) {
+    if (!enabled || isPlaylistPending || idsOnPage.length === 0) {
       return;
     }
 
@@ -111,6 +118,7 @@ export function useVisualizerPlayback(currentId: string) {
   }, [
     currentIndex,
     currentPage,
+    enabled,
     exploreFilters,
     idsOnPage,
     currentId,

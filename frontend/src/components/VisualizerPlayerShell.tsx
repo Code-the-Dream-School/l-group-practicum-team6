@@ -21,6 +21,8 @@ type VisualizerPlayerProps = {
   visual: PlayerVisual;
   showPlaybackControls?: boolean;
   showInfoCard?: boolean;
+  /** When false, skips saved-visual and playlist fetches (e.g. create-page preview). */
+  enablePlaylist?: boolean;
   captureRef?: { current: ((blob: Blob) => void) | null };
   /** Back-button fallback route when there is no history. */
   backFallback?: string;
@@ -33,6 +35,7 @@ export function VisualizerPlayer({
   visual,
   showPlaybackControls = !visual.isDemo,
   showInfoCard = true,
+  enablePlaylist = true,
   captureRef,
   backFallback = ROUTES.HOME,
 }: VisualizerPlayerProps) {
@@ -89,8 +92,10 @@ export function VisualizerPlayer({
       }
     };
   }, []);
-  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id);
-  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id);
+  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, { enabled: enablePlaylist });
+  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id, {
+    enabled: enablePlaylist,
+  });
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
