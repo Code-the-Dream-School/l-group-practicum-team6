@@ -3,16 +3,22 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { LABELS, ROUTES } from '@sonix/shared';
 
 type BackButtonProps = {
-  /** Where to go when there is no in-app history (e.g. opened via direct link). */
+  // Where to go when there's no previous in-app page (opened via direct link / new tab).
   fallback?: string;
+  variant?: 'inline' | 'card';
   className?: string;
 };
 
-/**
- * Minimal icon-only back control. Goes to the previous page, or `fallback`
- * when there is no in-app history (direct link / new tab).
- */
-export default function BackButton({ fallback = ROUTES.HOME, className = '' }: BackButtonProps) {
+const VARIANT_CLASSES: Record<NonNullable<BackButtonProps['variant']>, string> = {
+  inline: 'h-8 w-8 rounded-md text-text-secondary hover:text-text-primary',
+  card: 'h-7 w-7 rounded-md text-white/60 hover:bg-white/10 hover:text-white',
+};
+
+export default function BackButton({
+  fallback = ROUTES.HOME,
+  variant = 'inline',
+  className = '',
+}: BackButtonProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,7 +36,7 @@ export default function BackButton({ fallback = ROUTES.HOME, className = '' }: B
       onClick={handleClick}
       aria-label={LABELS.GO_BACK}
       title={LABELS.GO_BACK}
-      className={`inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-text-secondary transition hover:text-text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${className}`}
+      className={`inline-flex shrink-0 cursor-pointer items-center justify-center transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary ${VARIANT_CLASSES[variant]} ${className}`}
     >
       <svg
         width="18"

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import { ROUTES } from '@sonix/shared';
 
 import LoaderSpinner from '../components/LoaderSpinner';
 import {
@@ -61,7 +62,14 @@ function PlayerPageContent({ id }: { id: string }) {
     return <PlayerMessage>Unable to load visualizer</PlayerMessage>;
   }
 
-  return <VisualizerPlayer glsl={glsl} visual={visual} showPlaybackControls />;
+  return (
+    <VisualizerPlayer
+      glsl={glsl}
+      visual={visual}
+      showPlaybackControls
+      backFallback={ROUTES.EXPLORE}
+    />
+  );
 }
 
 export default function PlayerPage() {

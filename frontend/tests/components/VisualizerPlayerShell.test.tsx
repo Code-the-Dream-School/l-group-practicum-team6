@@ -1,10 +1,16 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import { createRef } from 'react';
+import { createRef, type ReactElement } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PLAYER_CONTROLS_HIDE_MS } from '../../src/hooks/usePlayerControlsVisibility';
 
 import { VisualizerPlayer } from '../../src/components/VisualizerPlayerShell';
+
+// BackButton uses useNavigate, so a router is required.
+function renderPlayer(ui: ReactElement) {
+  return render(ui, { wrapper: MemoryRouter });
+}
 
 const mockToggleFullscreen = vi.fn();
 const mockToggleMic = vi.fn();
@@ -88,7 +94,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('shows player chrome when not in fullscreen', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
     expect(screen.getByTestId('visual-info-card')).toBeInTheDocument();
@@ -101,7 +107,7 @@ describe('VisualizerPlayer fullscreen', () => {
       toggleFullscreen: mockToggleFullscreen.mockResolvedValue(true),
     });
 
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     expect(screen.queryByTestId('player-control-bar')).not.toBeInTheDocument();
     expect(screen.queryByTestId('visual-info-card')).not.toBeInTheDocument();
@@ -115,7 +121,7 @@ describe('VisualizerPlayer fullscreen', () => {
       toggleFullscreen: mockToggleFullscreen.mockResolvedValue(true),
     });
 
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Exit fullscreen'));
 
@@ -123,7 +129,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('toggles fullscreen from the control bar without passing fullscreen state into it', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Fullscreen'));
 
@@ -131,7 +137,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('toggles the microphone with the m shortcut', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.keyDown(document, { key: 'm' });
 
@@ -139,7 +145,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('selects a microphone from the device dropdown', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Select audio source'));
     fireEvent.click(screen.getByRole('option', { name: 'USB Microphone' }));
@@ -149,7 +155,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('toggles favorites from the heart control', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Add to favorites'));
 
@@ -157,7 +163,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('toggles play and pause with the space shortcut', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     const overlay = screen.getByTestId('player-pause-overlay');
     expect(overlay).toHaveClass('opacity-0');
@@ -172,7 +178,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('shows the pause overlay when play is clicked', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Pause'));
 
@@ -180,7 +186,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('wires previous and next playback controls', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     fireEvent.click(screen.getByLabelText('Previous visual'));
     fireEvent.click(screen.getByLabelText('Next visual'));
@@ -190,7 +196,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('navigates visuals with left and right arrow shortcuts', () => {
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />);
 
     fireEvent.keyDown(document, { key: 'ArrowLeft' });
     fireEvent.keyDown(document, { key: 'ArrowRight' });
@@ -200,7 +206,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('ignores arrow shortcuts when playback controls are hidden', () => {
-    render(
+    renderPlayer(
       <VisualizerPlayer
         glsl="void main() {}"
         visual={{ ...visual, isDemo: true }}
@@ -216,7 +222,7 @@ describe('VisualizerPlayer fullscreen', () => {
   });
 
   it('ignores arrow shortcuts when focus is in an input', () => {
-    render(
+    renderPlayer(
       <>
         <input aria-label="Search" />
         <VisualizerPlayer glsl="void main() {}" visual={visual} showPlaybackControls />
@@ -255,7 +261,7 @@ describe('VisualizerPlayer controls visibility', () => {
   });
 
   it('hides player controls after 3 seconds of inactivity when mic is active', () => {
-    const view = render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    const view = renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
     playerTargetRef.current = view.container.firstElementChild as HTMLDivElement;
     view.rerender(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
@@ -282,7 +288,7 @@ describe('VisualizerPlayer controls visibility', () => {
   it('keeps player controls visible when mic state is idle', () => {
     mockMicStatus = 'idle';
 
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     act(() => {
       vi.advanceTimersByTime(PLAYER_CONTROLS_HIDE_MS + 1000);
@@ -295,7 +301,7 @@ describe('VisualizerPlayer controls visibility', () => {
   it('keeps player controls visible when mic state is denied', () => {
     mockMicStatus = 'denied';
 
-    render(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
+    renderPlayer(<VisualizerPlayer glsl="void main() {}" visual={visual} />);
 
     act(() => {
       vi.advanceTimersByTime(PLAYER_CONTROLS_HIDE_MS + 1000);
