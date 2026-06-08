@@ -136,7 +136,9 @@ export default function ExplorePage() {
 
       <main className="flex-1 px-6 py-10 text-white">
         <section className="mx-auto max-w-7xl space-y-8">
-          <h1 className="text-3xl font-bold text-text-primary">{LABELS.EXPLORE}</h1>
+          <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">
+            {LABELS.EXPLORE}
+          </h1>
 
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
             <label className="relative w-full shrink-0 sm:w-auto sm:min-w-[220px]">

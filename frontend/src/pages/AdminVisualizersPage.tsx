@@ -230,7 +230,9 @@ export default function AdminVisualizersPage() {
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-6 py-8">
         <section className="space-y-2">
-          <h1 className="text-3xl font-bold">Admin Visualizer Manager</h1>
+          <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">
+            Admin Visualizer Manager
+          </h1>
           <p className="text-sm text-text-secondary">
             Create, edit, and delete visualizers from the protected admin namespace.
           </p>
