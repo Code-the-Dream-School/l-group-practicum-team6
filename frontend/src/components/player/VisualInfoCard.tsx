@@ -1,12 +1,21 @@
+import BackButton from '../BackButton';
+
 import { formatTagLabel, getVisualSubtitle } from './formatTagLabel';
 
 type VisualInfoCardProps = {
   name: string;
   tags: string[];
   visible?: boolean;
+  /** When set, shows a back arrow in the card header. */
+  backFallback?: string;
 };
 
-export default function VisualInfoCard({ name, tags, visible = true }: VisualInfoCardProps) {
+export default function VisualInfoCard({
+  name,
+  tags,
+  visible = true,
+  backFallback,
+}: VisualInfoCardProps) {
   const categoryLabel = tags[0] ? formatTagLabel(tags[0]) : 'Visualizer';
 
   return (
@@ -18,11 +27,22 @@ export default function VisualInfoCard({ name, tags, visible = true }: VisualInf
       }`}
       data-testid="visual-info-card"
     >
-      <h2 className="text-sm font-semibold text-white">{name}</h2>
-      <span className="mt-1.5 inline-block rounded-full border border-[#00d4bf]/40 bg-[#00d4bf]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#00d4bf]">
-        {categoryLabel}
-      </span>
-      <p className="mt-1 text-[11px] text-white/50">{getVisualSubtitle(tags)}</p>
+      <div className="flex items-start gap-1.5">
+        {backFallback && (
+          <BackButton
+            fallback={backFallback}
+            variant="card"
+            className="pointer-events-auto -ml-1.5 -mt-0.5"
+          />
+        )}
+        <div className="flex min-w-0 flex-col">
+          <h2 className="text-sm font-semibold text-white">{name}</h2>
+          <span className="mt-1.5 inline-block self-start rounded-full border border-[#00d4bf]/40 bg-[#00d4bf]/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#00d4bf]">
+            {categoryLabel}
+          </span>
+          <p className="mt-1 text-[11px] text-white/50">{getVisualSubtitle(tags)}</p>
+        </div>
+      </div>
     </div>
   );
 }

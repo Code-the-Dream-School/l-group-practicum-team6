@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { ROUTES } from '@sonix/shared';
+
 import NavBar from './NavBar';
 import PlayerControlBar from './player/PlayerControlBar';
 import VisualInfoCard from './player/VisualInfoCard';
@@ -18,6 +20,8 @@ type VisualizerPlayerProps = {
   visual: PlayerVisual;
   showPlaybackControls?: boolean;
   captureRef?: { current: ((blob: Blob) => void) | null };
+  /** Back-button fallback route when there is no history. */
+  backFallback?: string;
 };
 
 const PAUSE_OVERLAY_MS = 500;
@@ -27,6 +31,7 @@ export function VisualizerPlayer({
   visual,
   showPlaybackControls = !visual.isDemo,
   captureRef,
+  backFallback = ROUTES.HOME,
 }: VisualizerPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const lastToastStatusRef = useRef<AudioAnalyzerStatus | null>(null);
@@ -211,7 +216,12 @@ export function VisualizerPlayer({
           data-testid="player-controls-overlay"
           className="pointer-events-none absolute inset-0 z-10"
         >
-          <VisualInfoCard name={visual.name} tags={visual.tags} visible={controlsVisible} />
+          <VisualInfoCard
+            name={visual.name}
+            tags={visual.tags}
+            visible={controlsVisible}
+            backFallback={backFallback}
+          />
           <div
             data-testid="player-control-bar-layer"
             className={`transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${
