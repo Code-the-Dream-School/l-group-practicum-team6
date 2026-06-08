@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ROUTES } from '@sonix/shared';
 
+import BackButton from './BackButton';
 import NavBar from './NavBar';
 import PlayerControlBar from './player/PlayerControlBar';
 import VisualInfoCard from './player/VisualInfoCard';
@@ -19,6 +20,9 @@ type VisualizerPlayerProps = {
   glsl: string;
   visual: PlayerVisual;
   showPlaybackControls?: boolean;
+  showInfoCard?: boolean;
+  /** When false, skips saved-visual and playlist fetches (e.g. create-page preview). */
+  enablePlaylist?: boolean;
   captureRef?: { current: ((blob: Blob) => void) | null };
   /** Back-button fallback route when there is no history. */
   backFallback?: string;
@@ -30,6 +34,8 @@ export function VisualizerPlayer({
   glsl,
   visual,
   showPlaybackControls = !visual.isDemo,
+  showInfoCard = true,
+  enablePlaylist = true,
   captureRef,
   backFallback = ROUTES.HOME,
 }: VisualizerPlayerProps) {
@@ -86,8 +92,10 @@ export function VisualizerPlayer({
       }
     };
   }, []);
-  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id);
-  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id);
+  const { isFavorited, toggleFavorite } = useFavoriteVisual(visual.id, { enabled: enablePlaylist });
+  const { goNext, goPrevious, isShuffled, toggleShuffle } = useVisualizerPlayback(visual.id, {
+    enabled: enablePlaylist,
+  });
 
   const handleToggleFullscreen = useCallback(async () => {
     const didToggle = await toggleFullscreen();
@@ -216,12 +224,21 @@ export function VisualizerPlayer({
           data-testid="player-controls-overlay"
           className="pointer-events-none absolute inset-0 z-10"
         >
-          <VisualInfoCard
-            name={visual.name}
-            tags={visual.tags}
-            visible={controlsVisible}
-            backFallback={backFallback}
-          />
+          {showInfoCard ? (
+            <VisualInfoCard
+              name={visual.name}
+              tags={visual.tags}
+              visible={controlsVisible}
+              backFallback={backFallback}
+            />
+          ) : (
+            backFallback && (
+              <BackButton
+                fallback={backFallback}
+                className="pointer-events-auto absolute left-3 top-3 z-[5]"
+              />
+            )
+          )}
           <div
             data-testid="player-control-bar-layer"
             className={`transition-opacity duration-300 ease-in-out motion-reduce:transition-none ${

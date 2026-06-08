@@ -50,7 +50,7 @@ export interface GenerateVisualizerRequest {
     maxOutputTokens: number;
   };
 }
-export const TOKEN_LIMIT = 8192;
+export const TOKEN_LIMIT = 15000;
 export const DEFAULT_SYSTEM_PROMPT = `
 You are an expert GLSL fragment shader author for a WebGL2 audio visualizer.
 Generate a complete fragment shader that reacts to live microphone audio via a 2D FFT texture. Make sure not to exceed limit of ${TOKEN_LIMIT} tokens.
@@ -101,7 +101,7 @@ void main() {
 - GLSL 300 es / WebGL2 only.
 - Do NOT include a #version directive.
 - Normalize coordinates with iResolution.y for aspect-correct visuals.
-- Use iTime for animation; iMouse is optional.
+- Use iTime for animation.
 - Output ONLY the raw fragment shader source code.
 - No markdown fences, no explanations, no comments outside the shader unless brief and inside the GLSL.
 `.trim();

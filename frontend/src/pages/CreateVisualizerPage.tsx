@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { DEFAULT_SYSTEM_PROMPT, ROUTES } from '@sonix/shared';
 
 import NavBar from '../components/NavBar';
 import BackButton from '../components/BackButton';
 import LoaderSpinner from '../components/LoaderSpinner';
-import VisualizerCard from '../components/VisualizerCard';
+import { VisualizerPlayer } from '../components/VisualizerPlayerShell';
 import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
+import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
-import { activateVisualPreview, startVisualPreview } from '../utils/visualPreview';
 import { welcomeShader } from '../assets/welcomeShader';
 import generateIcon from '../assets/icons/generate.svg';
 import randomIcon from '../assets/icons/random.svg';
@@ -31,20 +31,27 @@ function toTagArray(raw: string): string[] {
 const randomPrompts = [
   'Sunny spinning mandala in space',
   'Neon pulsing cat in a cylinder hat',
-  'Particles that pulse with the bass',
-  'Aurora waves drifting across a dark sky',
-  'Geometric tunnel with a neon glow',
-  'Fireflies swirling around a moonlit forest',
-  'Liquid mercury ripples in zero gravity',
-  'Retro synthwave grid stretching to the horizon',
-  'Starfield warping with the beat',
-  'Rainbow smoke rings expanding outward',
-  'Crystalline fractals blooming with treble hits',
-  'Underwater bioluminescent jellyfish pulse',
-  'Glitching VHS sunset over the ocean',
-  'Cosmic nebula clouds breathing with the music',
-  'Electric lightning branching on every snare',
+  'Bass particles',
+  'Aurora waves',
+  'Neon tunnel',
+  'Fireflies',
+  'Mercury ripples',
+  'Synthwave grid',
+  'Warping stars',
+  'Smoke rings',
+  'Crystal fractals',
+  'Glowing jellyfish',
+  'Glitch sunset',
+  'Nebula clouds',
+  'Lightning branches',
 ] as const;
+
+const WELCOME_VISUAL: PlayerVisual = {
+  id: 'welcome-preview',
+  name: 'Preview',
+  tags: [],
+  isDemo: true,
+};
 
 export default function CreateVisualizerPage() {
   const toast = useToast();
@@ -61,20 +68,17 @@ export default function CreateVisualizerPage() {
     source: 'Gemini',
   });
   const captureRef = useRef<((blob: Blob) => void) | null>(null);
-  const welcomePreviewRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (generatedId) activateVisualPreview(generatedId);
-  }, [generatedId]);
+  const generatedVisual = useMemo<PlayerVisual | null>(() => {
+    if (!generatedId) return null;
 
-  useEffect(() => {
-    if (generatedId || generating) return;
-
-    const container = welcomePreviewRef.current;
-    if (!container) return;
-
-    return startVisualPreview(container, welcomeShader, undefined, true);
-  }, [generatedId, generating]);
+    return {
+      id: generatedId,
+      name: form.name.trim() || 'Untitled',
+      tags: toTagArray(form.tags),
+      isDemo: true,
+    };
+  }, [form.name, form.tags, generatedId]);
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
@@ -138,43 +142,48 @@ export default function CreateVisualizerPage() {
       <NavBar />
 
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-        <div className="pointer-events-none relative flex-1 overflow-hidden">
-          <BackButton
-            fallback={ROUTES.ADMIN_VISUALS}
-            className="pointer-events-auto absolute left-3 top-3 z-10"
-          />
-          {generatedId && !generating ? (
-            <VisualizerCard
-              id={generatedId}
-              name={form.name}
-              tags={toTagArray(form.tags)}
-              previewGlsl={generatedGlsl}
-              isDemo={form.isDemo}
-              playPath="#"
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          {generating ? (
+            <>
+              <BackButton
+                fallback={ROUTES.ADMIN_VISUALS}
+                className="pointer-events-auto absolute left-3 top-3 z-10"
+              />
+              <div className="flex h-full items-center justify-center">
+                <LoaderSpinner
+                  label="Generating your visual..."
+                  labelClassName="text-sm text-white/60 pt-3"
+                />
+              </div>
+            </>
+          ) : generatedVisual && generatedGlsl ? (
+            <VisualizerPlayer
+              key={generatedId}
+              glsl={generatedGlsl}
+              visual={generatedVisual}
+              showPlaybackControls={false}
+              enablePlaylist={false}
               captureRef={captureRef}
-              previewOnly
+              backFallback={ROUTES.ADMIN_VISUALS}
             />
-          ) : generating ? (
-            <div className="flex h-full items-center justify-center">
-              <LoaderSpinner
-                label="Calling Gemini AI..."
-                labelClassName="text-sm text-white/60 pt-3"
-              />
-            </div>
           ) : (
-            <div className="relative h-full w-full">
-              <div
-                ref={welcomePreviewRef}
-                className="absolute inset-0 [&_canvas]:block [&_canvas]:h-full [&_canvas]:w-full"
-              />
-              <p className="absolute inset-x-0 bottom-22 z-10 flex items-center justify-center text-sm text-white/30">
-                Generate a visual to see a preview
-              </p>
-            </div>
+            <VisualizerPlayer
+              key="welcome-preview"
+              glsl={welcomeShader}
+              visual={WELCOME_VISUAL}
+              showPlaybackControls={false}
+              showInfoCard={false}
+              enablePlaylist={false}
+              backFallback={ROUTES.ADMIN_VISUALS}
+            />
           )}
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center px-4">
+        <div
+          className={`pointer-events-none absolute inset-x-0 z-20 flex justify-center px-4 ${
+            generating ? 'bottom-6' : 'bottom-3'
+          }`}
+        >
           <div className="pointer-events-auto flex w-full max-w-[600px] items-center gap-2 rounded-2xl border border-white/10 bg-elevated/95 px-4 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md">
             <button
               type="button"
