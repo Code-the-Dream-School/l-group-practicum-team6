@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
+import { AestheticFluidBg } from 'react-color4bg';
 
 function LandingPage() {
   return (
@@ -8,12 +9,17 @@ function LandingPage() {
       <NavBar />
       <main className="flex-1 text-white">
         <section className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_55%,rgba(6,182,212,0.18),transparent_28%),radial-gradient(circle_at_85%_20%,rgba(124,58,237,0.30),transparent_34%),radial-gradient(circle_at_80%_30%,rgba(34,211,238,0.10),transparent_26%)]" />
-          <div className="absolute inset-0 bg-slate-950/70" />
+          <div className="absolute inset-0">
+            <AestheticFluidBg
+              style={{ width: '100%', height: '100%' }}
+              colors={['#000000', '#1B1B1B', '#2A1E36', '#3A2152', '#49236D', '#582688']}
+              loop
+            />
+          </div>
 
           <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-6 pt-6">
-            <div className="flex justify-center pt-10 pb-6 text-center">
-              <div className="max-w-5xl py-10">
+            <div className="flex justify-center py-25 text-center">
+              <div className="max-w-5xl pt-5 pb-10">
                 <p className="mb-4 text-sm font-medium uppercase tracking-[0.25em] text-cyan-300">
                   Music Made Visible
                 </p>
@@ -22,15 +28,15 @@ function LandingPage() {
                   Transform Music Into Living Art
                 </h1>
 
-                <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-white/60 md:text-xl">
+                <p className="mx-auto mt-12 max-w-3xl text-lg leading-8 text-white/60 md:text-xl">
                   Experience the future of audio visualization with AI-generated, real-time reactive
                   visuals that dance to every beat.
                 </p>
 
-                <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+                <div className="mt-10 flex flex-col justify-center gap-8 sm:flex-row">
                   <Link
                     to="/visualizer/demo"
-                    className="rounded-xl bg-cyan-300 px-8 py-3 text-center font-semibold text-black transition hover:bg-cyan-200"
+                    className="rounded-xl bg-cyan-300 px-8 py-3 text-center font-semibold text-black transition hover:bg-5yan-250"
                   >
                     Try the Demo
                   </Link>
@@ -41,53 +47,6 @@ function LandingPage() {
                   >
                     Get Started Free
                   </Link>
-                </div>
-
-                <div className="mx-auto mt-10 w-full max-w-44 rounded-3xl border border-purple-400/30 bg-black/25 p-4 shadow-[0_0_70px_rgba(124,58,237,0.28)] backdrop-blur">
-                  <div className="mb-4 flex items-center justify-between text-xs text-white/50">
-                    <span>Live audio signal</span>
-                    <span className="text-cyan-300">Demo ready</span>
-                  </div>
-
-                  <div className="relative flex h-56 items-end justify-center gap-2 overflow-hidden rounded-2xl bg-black/50 p-5">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(124,58,237,0.18),transparent_60%)]" />
-
-                    <svg
-                      className="absolute top-7 left-1/2 h-16 w-40 -translate-x-1/2"
-                      viewBox="0 0 160 64"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="M0 16 C20 4, 36 4, 56 16 S92 28, 112 16 S144 4, 160 16"
-                        stroke="#22d3ee"
-                        strokeOpacity="0.55"
-                        strokeWidth="1.5"
-                      />
-                      <path
-                        d="M0 32 C20 20, 36 20, 56 32 S92 44, 112 32 S144 20, 160 32"
-                        stroke="#22d3ee"
-                        strokeOpacity="0.28"
-                        strokeWidth="1.2"
-                      />
-                      <path
-                        d="M0 48 C20 36, 36 36, 56 48 S92 60, 112 48 S144 36, 160 48"
-                        stroke="#22d3ee"
-                        strokeOpacity="0.14"
-                        strokeWidth="1"
-                      />
-
-                      <circle cx="34" cy="10" r="1.5" fill="#a855f7" opacity="0.7" />
-                      <circle cx="68" cy="6" r="1.5" fill="#22d3ee" opacity="0.7" />
-                      <circle cx="120" cy="22" r="1.5" fill="#a855f7" opacity="0.6" />
-                    </svg>
-
-                    <div className="relative h-10 w-3 rounded-full bg-cyan-300" />
-                    <div className="relative h-16 w-3 rounded-full bg-purple-400" />
-                    <div className="relative h-24 w-3 rounded-full bg-cyan-300" />
-                    <div className="relative h-14 w-3 rounded-full bg-purple-400" />
-                    <div className="relative h-20 w-3 rounded-full bg-cyan-300" />
-                  </div>
                 </div>
               </div>
             </div>
