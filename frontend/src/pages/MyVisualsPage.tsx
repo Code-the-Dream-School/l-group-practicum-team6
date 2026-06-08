@@ -60,7 +60,9 @@ export default function MyVisualsPage() {
         <div className="w-full max-w-4xl">
           <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h1 className="text-xl font-semibold tracking-tight">{LABELS.MY_VISUALS}</h1>
+              <h1 className="text-[32px] font-semibold leading-[51.2px] text-text-primary">
+                {LABELS.MY_VISUALS}
+              </h1>
             </div>
 
             <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
