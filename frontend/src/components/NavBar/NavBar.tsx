@@ -61,8 +61,8 @@ const NavBar = () => {
                 to={ROUTES.EXPLORE}
                 className={({ isActive }) =>
                   isActive
-                    ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
-                    : 'text-sm font-medium text-text-secondary hover:text-text-primary'
+                    ? 'px-3 py-2 text-sm font-medium text-text-primary border-b-2 border-primary'
+                    : 'px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary'
                 }
               >
                 {LABELS.EXPLORE}
@@ -71,8 +71,8 @@ const NavBar = () => {
                 to={ROUTES.MY_VISUALS}
                 className={({ isActive }) =>
                   isActive
-                    ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
-                    : 'text-sm font-medium text-text-secondary hover:text-text-primary'
+                    ? 'px-3 py-2 text-sm font-medium text-text-primary border-b-2 border-primary'
+                    : 'px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary'
                 }
               >
                 {LABELS.MY_VISUALS}
@@ -83,8 +83,8 @@ const NavBar = () => {
                   to={ROUTES.ADMIN_VISUALS_CREATE}
                   className={({ isActive }) =>
                     isActive
-                      ? 'text-sm font-medium text-text-primary border-b-2 border-primary pb-1'
-                      : 'text-sm font-medium text-text-secondary hover:text-text-primary'
+                      ? 'px-3 py-2 text-sm font-medium text-text-primary border-b-2 border-primary'
+                      : 'px-3 py-2 text-sm font-medium text-text-secondary hover:text-text-primary'
                   }
                 >
                   {LABELS.CREATE_VISUALIZER}
