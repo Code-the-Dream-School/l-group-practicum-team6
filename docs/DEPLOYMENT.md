@@ -2,78 +2,58 @@
 
 ## CI/CD
 
-GitHub Actions workflow is located at:
+GitHub Actions workflow: `.github/workflows/ci.yml`. It runs on pull requests
+and pushes to `dev` and `main`.
 
-`.github/workflows/ci.yml`
+**Test job** (runs on Node 24):
 
-The workflow runs on pull requests and pushes to `dev` and `main`.
+- install dependencies (`npm ci --include=optional`)
+- check formatting (`npm run format:check`)
+- lint (`npm run lint`)
+- typecheck (`npm run typecheck`)
+- test (`npm run test`)
+- coverage (`npm run coverage`)
+- build (`npm run build`)
 
-The workflow performs:
+**E2E job** (runs after the test job): spins up MongoDB, installs Playwright,
+and runs `npm run test:e2e`. Reports are uploaded as artifacts.
 
-- dependency installation with `npm ci --include=optional`
-- shared workspace build with `npm run format:check`
-- linting with `npm run lint`
-- typechecking with `npm run typecheck`
-- test execution with `npm run test`
-- coverage reporting with `npm run coverage`
-- production builds with `npm run build`
+Coverage is reported but thresholds are not enforced.
 
-Coverage reports are generated, but coverage thresholds are not currently enforced.
+## Hosting
 
----
+Sonix deploys to Render as a **single web service** (see `render.yaml`). The
+build compiles every workspace and the backend serves the built frontend, so
+there is no separate frontend host.
 
-## Frontend Deployment
-
-Platform: `Render Static Site`
-
-### Build Command
-
-`npm run build -w frontend`
-
-### Publish Directory
-
-`frontend/dist`
+| Setting           | Value                          |
+| ----------------- | ------------------------------ |
+| Type              | Render Web Service (Node)      |
+| Build command     | `npm install && npm run build` |
+| Start command     | `npm start`                    |
+| Health check path | `/api/v1/health`               |
+| Deploy branch     | `dev` (auto-deploy on push)    |
 
 ### Environment Variables
 
-`VITE_API_URL=<backend-api-url>`
-
----
-
-## Backend Deployment
-
-Platform: `Render Web Service`
-
-### Build Command
-
-`npm run build`
-
-### Start Command
-
-`npm start`
-
-### Required Environment Variables
+Set these in the Render dashboard (never commit real values):
 
 ```env
-PORT=5001
+NODE_ENV=production
 MONGO_URI=
 JWT_SECRET=
+JWT_LIFETIME=1d
 CLIENT_URL=
-NODE_ENV=production
 ```
 
----
+`render.yaml` also generates `JWT_SECRET` and pins the Node version. The
+frontend reads `VITE_API_BASE_URL` at build time; in the single-service setup
+it can stay empty so the browser calls the same origin.
 
 ## Local Development
 
-### Run both services
-
-`npm run dev`
-
-### Run frontend only
-
-`npm run dev -w frontend`
-
-### Run backend only
-
-`npm run dev -w backend`
+```bash
+npm run dev            # backend + frontend together
+npm run dev -w frontend  # frontend only
+npm run dev -w backend   # backend only
+```
