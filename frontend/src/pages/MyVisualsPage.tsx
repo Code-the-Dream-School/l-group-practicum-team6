@@ -11,10 +11,12 @@ import LoaderSpinner from '../components/LoaderSpinner';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
 import { LABELS, TOAST_MESSAGES, ROUTES } from '@sonix/shared';
 import { sortSavedVisuals, type FavoritesSortOption } from '../utils/savedVisuals';
+import chevronIcon from '../assets/icons/chevron.svg';
 
 export default function MyVisualsPage() {
   const toast = useToast();
   const [sortOption, setSortOption] = useState<FavoritesSortOption>('recent');
+  const [sortOpen, setSortOpen] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const { data: savedVisuals = [], isPending: isLoading, isError, error } = useSavedVisualsQuery();
   const removeMutation = useRemoveVisualMutation();
@@ -52,6 +54,14 @@ export default function MyVisualsPage() {
     }
   }
 
+  function handleSortSelect(value: FavoritesSortOption) {
+    setSortOption(value);
+    setSortOpen(false);
+  }
+
+  const selectedSortLabel =
+    sortOption === 'recent' ? 'Recently Saved' : sortOption === 'az' ? 'A-Z' : 'Z-A';
+
   return (
     <div className="flex min-h-screen flex-col justify-between bg-void">
       <NavBar />
@@ -63,18 +73,56 @@ export default function MyVisualsPage() {
               <h1 className="text-xl font-semibold tracking-tight">{LABELS.MY_VISUALS}</h1>
             </div>
 
-            <label className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
-              Sort by
-              <select
-                value={sortOption}
-                onChange={(event) => setSortOption(event.target.value as FavoritesSortOption)}
-                className="cursor-pointer rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm text-text-primary outline-none transition hover:border-cyan-300/40 focus:border-cyan-300"
-              >
-                <option value="recent">Recently Saved</option>
-                <option value="az">A-Z</option>
-                <option value="za">Z-A</option>
-              </select>
-            </label>
+            <div className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
+              <span id="sort-by-label">Sort by</span>
+              <div className="relative">
+                <button
+                  type="button"
+                  aria-haspopup="listbox"
+                  aria-expanded={sortOpen}
+                  aria-labelledby="sort-by-label"
+                  onClick={() => setSortOpen((open) => !open)}
+                  className="relative inline-flex min-w-40 cursor-pointer items-center rounded-full border border-white/10 bg-white/6 px-4 py-2 pr-9 text-sm text-text-primary outline-none"
+                >
+                  <span className="w-full text-center">{selectedSortLabel}</span>
+                  <img
+                    src={chevronIcon}
+                    alt=""
+                    className="absolute right-4 top-1/2 h-3.5 w-3.5 -translate-y-1/2 shrink-0"
+                  />
+                </button>
+                {sortOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setSortOpen(false)} />
+                    <ul
+                      role="listbox"
+                      aria-labelledby="sort-by-label"
+                      className="absolute right-0 top-full z-20 mt-2 min-w-full overflow-hidden rounded-lg border border-primary-border bg-elevated py-1 shadow-lg"
+                    >
+                      {(['recent', 'az', 'za'] as const).map((option) => (
+                        <li key={option} role="presentation">
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={sortOption === option}
+                            onClick={() => handleSortSelect(option)}
+                            className={`block w-full cursor-pointer px-4 py-2 text-left text-sm outline-none transition hover:bg-surface ${
+                              sortOption === option ? 'text-primary' : 'text-text-primary'
+                            }`}
+                          >
+                            {option === 'recent'
+                              ? 'Recently Saved'
+                              : option === 'az'
+                                ? 'A-Z'
+                                : 'Z-A'}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
           {isLoading ? (
