@@ -7,7 +7,6 @@ export async function connectTestDatabase() {
   mongoServer = await MongoMemoryServer.create({
     binary: {
       version: '7.0.14',
-      arch: 'x64',
     },
   });
 

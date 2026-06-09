@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import CreateVisualizerPage from '../../src/pages/CreateVisualizerPage';
-import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../../src/api';
+import { generateVisualiser, createAdminVisualizer, uploadVisualizerImage } from '../../src/api';
 
 const mockToastSuccess = vi.fn();
 const mockToastError = vi.fn();
@@ -39,7 +39,7 @@ vi.mock('../../src/components/VisualizerPlayerShell', () => ({
 
 vi.mock('../../src/api', () => ({
   generateVisualiser: vi.fn(),
-  updateAdminVisualizer: vi.fn(),
+  createAdminVisualizer: vi.fn(),
   uploadVisualizerImage: vi.fn(),
 }));
 
@@ -52,7 +52,7 @@ vi.mock('../../src/context/useToast', () => ({
 }));
 
 const mockedGenerateVisualiser = vi.mocked(generateVisualiser);
-const mockedUpdateAdminVisualizer = vi.mocked(updateAdminVisualizer);
+const mockedCreateAdminVisualizer = vi.mocked(createAdminVisualizer);
 const mockedUploadVisualizerImage = vi.mocked(uploadVisualizerImage);
 
 function renderCreateVisualizerPage() {
@@ -99,11 +99,9 @@ describe('CreateVisualizerPage', () => {
 
     mockedGenerateVisualiser.mockResolvedValue({
       data: {
-        _id: 'visualizer-1',
         name: 'Ocean Pulse',
         source: 'generated',
         glsl: 'void main() {}',
-        isDemo: false,
         tags: ['ocean', 'pulse'],
       },
     });
@@ -160,11 +158,9 @@ describe('CreateVisualizerPage', () => {
 
     mockedGenerateVisualiser.mockResolvedValue({
       data: {
-        _id: 'visualizer-1',
         name: 'Ocean Pulse',
         source: 'Gemini',
         glsl: 'void main() {}',
-        isDemo: false,
         tags: ['ocean'],
       },
     });
@@ -181,7 +177,7 @@ describe('CreateVisualizerPage', () => {
       },
     });
 
-    mockedUpdateAdminVisualizer.mockResolvedValue({
+    mockedCreateAdminVisualizer.mockResolvedValue({
       data: {
         _id: 'visualizer-1',
         name: 'Ocean Pulse',
@@ -204,8 +200,9 @@ describe('CreateVisualizerPage', () => {
 
     await waitFor(() => {
       expect(mockedUploadVisualizerImage).toHaveBeenCalledTimes(1);
-      expect(mockedUpdateAdminVisualizer).toHaveBeenCalledWith('visualizer-1', {
+      expect(mockedCreateAdminVisualizer).toHaveBeenCalledWith({
         name: 'Ocean Pulse',
+        glsl: 'void main() {}',
         tags: ['ocean'],
         isDemo: false,
         source: 'Gemini',
@@ -219,6 +216,15 @@ describe('CreateVisualizerPage', () => {
     const user = userEvent.setup();
 
     mockedGenerateVisualiser.mockResolvedValue({
+      data: {
+        name: 'Ocean Pulse',
+        source: 'Gemini',
+        glsl: 'void main() {}',
+        tags: ['ocean'],
+      },
+    });
+
+    mockedCreateAdminVisualizer.mockResolvedValue({
       data: {
         _id: 'visualizer-1',
         name: 'Ocean Pulse',
@@ -245,6 +251,6 @@ describe('CreateVisualizerPage', () => {
       expect(mockToastError).toHaveBeenCalled();
     });
 
-    expect(mockedUpdateAdminVisualizer).not.toHaveBeenCalled();
+    expect(mockedCreateAdminVisualizer).toHaveBeenCalled();
   });
 });
