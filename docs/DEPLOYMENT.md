@@ -44,6 +44,11 @@ MONGO_URI=
 JWT_SECRET=
 JWT_LIFETIME=1d
 CLIENT_URL=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+ADMIN_NAME=
+GEMINI_API_KEY=
+GEMINI_MODEL=
 ```
 
 `render.yaml` also generates `JWT_SECRET` and pins the Node version. The
