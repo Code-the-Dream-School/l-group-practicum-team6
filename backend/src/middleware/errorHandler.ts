@@ -11,12 +11,19 @@ export const errorHandler = (
 ): void => {
   const isProduction = process.env.NODE_ENV === 'production';
 
-  // Log full error details in development, but only essential info in production
-  console.error(`Error:`, {
-    name: err.name,
-    message: err.message,
-    stack: isProduction ? undefined : err.stack,
-  });
+  // Expected operational errors (auth failures, 404s, validation) are part of
+  // normal request flow — log a concise line, not a full stack, so the output
+  // stays readable (e.g. during e2e runs that exercise logged-out paths).
+  if (err instanceof CustomAPIError) {
+    console.warn(`${err.name} (${err.statusCode}): ${err.message}`);
+  } else {
+    // Unexpected errors: log full details in development, essentials in prod.
+    console.error(`Error:`, {
+      name: err.name,
+      message: err.message,
+      stack: isProduction ? undefined : err.stack,
+    });
+  }
 
   // Multer errors
   if (err instanceof multer.MulterError) {
