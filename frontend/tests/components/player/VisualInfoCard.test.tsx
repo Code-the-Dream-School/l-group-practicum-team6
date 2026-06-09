@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import VisualInfoCard from '../../src/components/player/VisualInfoCard';
+import VisualInfoCard from '../../../src/components/player/VisualInfoCard';
 
 describe('VisualInfoCard', () => {
   it('uses delayed show and faster hide opacity transitions', () => {

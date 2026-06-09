@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import PlayerControlBar from '../../src/components/player/PlayerControlBar';
+import PlayerControlBar from '../../../src/components/player/PlayerControlBar';
 
 describe('PlayerControlBar', () => {
   it('renders left, center, and right control zones', () => {
