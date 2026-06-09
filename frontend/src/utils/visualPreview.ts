@@ -266,9 +266,13 @@ export function startVisualPreview(
     if (captureRef?.current) {
       const cb = captureRef.current;
       captureRef.current = null;
-      canvas.toBlob((blob) => {
-        if (blob) cb(blob);
-      }, 'image/png');
+      canvas.toBlob(
+        (blob) => {
+          if (blob) cb(blob);
+        },
+        'image/jpeg',
+        0.8
+      );
     }
 
     if (!hasNotifiedReady) {
