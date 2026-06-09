@@ -98,6 +98,30 @@ npm run typecheck    # TypeScript check across all workspaces
 npm run format       # Prettier write
 ```
 
+## Database Seed
+
+Before running the seed, set admin credentials in your local `backend/.env` (see `.env.example`):
+
+```env
+SEED_ADMIN_EMAIL=admin@sonix.dev
+SEED_ADMIN_NAME=Admin
+SEED_ADMIN_PASSWORD=<ask the team for the current dev password>
+```
+
+Then run from repo root:
+
+```bash
+npm run seed -w backend              # idempotent — re-runs produce the same state
+```
+
+Seed inserts:
+
+- 20 visualizers from `backend/src/seed/visualizers.seed.json` (with PNG previews uploaded to GridFS, first one marked `isDemo: true`)
+- 1 admin user — credentials from `SEED_ADMIN_*` env vars
+- 5 `UserVisual` favorites for the admin (first 5 visualizers by `_id`)
+
+The seed script refuses to run when `NODE_ENV=production`.
+
 ## 🔐 API Overview
 
 All routes are prefixed with `/api/v1`.
