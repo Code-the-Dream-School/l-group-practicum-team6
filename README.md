@@ -103,8 +103,8 @@ npm run format       # Prettier write
 Before running the seed, set admin credentials in your local `backend/.env` (see `.env.example`):
 
 ```env
-SEED_ADMIN_EMAIL=admin@sonix.dev
-SEED_ADMIN_NAME=Admin
+SEED_ADMIN_EMAIL=<your-admin-email>
+SEED_ADMIN_NAME=<admin display name>
 SEED_ADMIN_PASSWORD=<ask the team for the current dev password>
 ```
 
