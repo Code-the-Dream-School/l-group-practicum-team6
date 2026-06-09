@@ -147,14 +147,16 @@ function LandingPage() {
             <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/performance.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Live Performance</h3>
-                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Stage ready</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white font-medium [text-shadow:0_0_4px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
+                  Stage ready
+                </p>
               </div>
             </div>
 
             <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/streaming.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Streaming</h3>
-                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">
+                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white font-medium [text-shadow:0_0_4px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
                   Content creation
                 </p>
               </div>
@@ -163,14 +165,16 @@ function LandingPage() {
             <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/focus.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Meditation & Focus</h3>
-                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Wellness</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white font-medium [text-shadow:0_0_4px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
+                  Wellness
+                </p>
               </div>
             </div>
 
             <div className="relative min-h-64 overflow-hidden rounded-2xl border border-white/10 bg-[url('/images/events.avif')] bg-cover bg-center p-6">
               <div className="flex h-full flex-col justify-end">
                 <h3 className="text-2xl font-semibold">Events & Venues</h3>
-                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">
+                <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white font-medium [text-shadow:0_0_4px_rgba(0,0,0,0.95),0_1px_3px_rgba(0,0,0,0.9)]">
                   Immersive tech
                 </p>
               </div>
