@@ -31,12 +31,17 @@ cp frontend/.env.example frontend/.env
 
 Backend (`backend/.env`):
 
-| Variable     | Description                    |
-| ------------ | ------------------------------ |
-| `PORT`       | Backend port (default `5001`)  |
-| `MONGO_URI`  | MongoDB connection string      |
-| `JWT_SECRET` | Secret used to sign JWT tokens |
-| `CLIENT_URL` | Frontend URL allowed by CORS   |
+| Variable         | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `PORT`           | Backend port (default `5001`)                |
+| `MONGO_URI`      | MongoDB connection string                    |
+| `JWT_SECRET`     | Secret used to sign JWT tokens               |
+| `CLIENT_URL`     | Frontend URL allowed by CORS                 |
+| `ADMIN_EMAIL`    | Email for the admin user seeded on startup   |
+| `ADMIN_PASSWORD` | Password for the seeded admin user           |
+| `ADMIN_NAME`     | Display name for the seeded admin user       |
+| `GEMINI_API_KEY` | Gemini API key for shader generation         |
+| `GEMINI_MODEL`   | Gemini model name used for shader generation |
 
 Frontend (`frontend/.env`):
 

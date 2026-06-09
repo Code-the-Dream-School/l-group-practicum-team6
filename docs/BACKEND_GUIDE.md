@@ -280,18 +280,23 @@ Common backend values:
 
 - `PORT`
 - `MONGO_URI`
-- `SESSION_SECRET`
 - `JWT_SECRET`
-- `CLIENT_ORIGIN`
+- `CLIENT_URL`
+- `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`
+- `GEMINI_API_KEY`, `GEMINI_MODEL`
 
 `.env.example` example:
 
 ```text
-PORT=5000
+PORT=5001
 MONGO_URI=
-SESSION_SECRET=
 JWT_SECRET=
-CLIENT_ORIGIN=http://localhost:5173
+CLIENT_URL=http://localhost:5173
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+ADMIN_NAME=
+GEMINI_API_KEY=
+GEMINI_MODEL=
 ```
 
 For deployment, use MongoDB Atlas or another managed database provider and set these values in the hosting platform instead of hardcoding them.
