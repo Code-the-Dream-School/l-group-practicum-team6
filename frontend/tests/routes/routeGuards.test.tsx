@@ -8,8 +8,17 @@ vi.mock('../../src/context/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
+vi.mock('../../src/context/useToast', () => ({
+  useToast: () => ({
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  }),
+}));
+
 import GuestRoute from '../../src/routes/GuestRoute';
 import ProtectedRoute from '../../src/routes/ProtectedRoute';
+import AdminRoute from '../../src/routes/AdminRoute';
 
 describe('route guards', () => {
   beforeEach(() => {
@@ -74,5 +83,64 @@ describe('route guards', () => {
     );
 
     expect(screen.getByText('secret content')).toBeInTheDocument();
+  });
+
+  it('AdminRoute redirects guests to login', () => {
+    mockUseAuth.mockReturnValue({ user: null });
+
+    render(
+      <MemoryRouter initialEntries={['/admin/visualizers']}>
+        <AdminRoute>
+          <div>admin content</div>
+        </AdminRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByText('admin content')).not.toBeInTheDocument();
+  });
+
+  it('AdminRoute renders ForbiddenPage for authenticated non-admin users', () => {
+    mockUseAuth.mockReturnValue({
+      user: {
+        _id: '1',
+        name: 'Sam',
+        email: 'sam@test.com',
+        createdAt: 'now',
+        isAdmin: false,
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <AdminRoute>
+          <div>admin content</div>
+        </AdminRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByText('admin content')).not.toBeInTheDocument();
+    expect(screen.getByText(/forbidden/i)).toBeInTheDocument();
+  });
+
+  it('AdminRoute renders children for admin users', () => {
+    mockUseAuth.mockReturnValue({
+      user: {
+        _id: '1',
+        name: 'Admin',
+        email: 'admin@test.com',
+        createdAt: 'now',
+        isAdmin: true,
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <AdminRoute>
+          <div>admin content</div>
+        </AdminRoute>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('admin content')).toBeInTheDocument();
   });
 });

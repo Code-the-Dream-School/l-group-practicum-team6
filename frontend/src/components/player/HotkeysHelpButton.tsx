@@ -47,7 +47,11 @@ export default function HotkeysHelpButton({
 
       {open && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div
+            data-testid="hotkeys-backdrop"
+            className="fixed inset-0 z-10"
+            onClick={() => setOpen(false)}
+          />
           <div className="absolute bottom-full right-0 z-20 mb-2 w-[calc(100vw-4rem)] max-w-105 rounded-lg border border-[#2a2a3d] bg-[#1c1c28] p-4 text-base text-white/90 shadow-lg">
             <button
               type="button"

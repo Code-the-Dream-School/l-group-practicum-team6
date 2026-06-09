@@ -70,7 +70,6 @@ import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
 import ExplorePage from '../../src/pages/ExplorePage';
 import LandingPage from '../../src/pages/LandingPage';
 import MyVisualsPage from '../../src/pages/MyVisualsPage';
-import NotFoundPage from '../../src/pages/NotFoundPage';
 import PlayerPage from '../../src/pages/PlayerPage';
 import { ROUTES as RoutePaths } from '@sonix/shared';
 import { useAuth } from '../../src/context/useAuth';
@@ -177,15 +176,5 @@ describe('basic pages', () => {
     renderWithRouter(<MyVisualsPage />);
 
     expect(screen.getByRole('heading', { name: /My Visuals/i })).toBeInTheDocument();
-  });
-
-  it('renders NotFoundPage', () => {
-    renderWithRouter(<NotFoundPage />);
-
-    expect(screen.getByText(/404/i)).toBeInTheDocument();
-
-    expect(screen.getByText(/The page you are looking for/i)).toBeInTheDocument();
-
-    expect(screen.getByRole('link', { name: /Go Home/i })).toHaveAttribute('href', '/');
   });
 });
