@@ -20,7 +20,7 @@ export type AdminVisualizerPayload = {
 export function generateVisualiser(
   userPrompt: string,
   systemPrompt: string
-): Promise<ApiResponse<Visualizer>> {
+): Promise<ApiResponse<Pick<Visualizer, 'glsl' | 'name' | 'tags' | 'source'>>> {
   const payload: GenerateVisualizerRequest = {
     systemInstruction: {
       parts: [{ text: systemPrompt }],

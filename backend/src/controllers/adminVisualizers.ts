@@ -29,14 +29,14 @@ export const generateVisualizer = async (req: Request, res: Response) => {
     .filter((w) => w.length > 2)
     .map((w) => w.toLowerCase());
 
-  const visualizer = await Visualizer.create({
-    name: `AI Generated - ${userPrompt} - ${new Date().toISOString().split('T')[0]}`,
-    glsl,
-    isDemo: false,
-    tags,
-    source: `Generated with User prompt: ${userPrompt}`,
+  res.status(StatusCodes.OK).json({
+    data: {
+      glsl,
+      name: `AI Generated - ${userPrompt} - ${new Date().toISOString().split('T')[0]}`,
+      tags,
+      source: `Generated with User prompt: ${userPrompt}`,
+    },
   });
-  res.status(StatusCodes.CREATED).json({ data: visualizer });
 };
 
 export const createVisualizer = async (req: Request, res: Response) => {

@@ -5,7 +5,7 @@ import NavBar from '../components/NavBar';
 import BackButton from '../components/BackButton';
 import LoaderSpinner from '../components/LoaderSpinner';
 import { VisualizerPlayer } from '../components/VisualizerPlayerShell';
-import { generateVisualiser, updateAdminVisualizer, uploadVisualizerImage } from '../api';
+import { generateVisualiser, createAdminVisualizer, uploadVisualizerImage } from '../api';
 import type { PlayerVisual } from '../hooks/usePlayerVisualizer';
 import { useToast } from '../context/useToast';
 import { getToastErrorMessage } from '../utils/toastErrorMessage';
@@ -59,7 +59,7 @@ export default function CreateVisualizerPage() {
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [generatedId, setGeneratedId] = useState<string | null>(null);
+  const [generateKey, setGenerateKey] = useState(0);
   const [generatedGlsl, setGeneratedGlsl] = useState<string>('');
   const [form, setForm] = useState<FormState>({
     name: '',
@@ -70,24 +70,26 @@ export default function CreateVisualizerPage() {
   const captureRef = useRef<((blob: Blob) => void) | null>(null);
 
   const generatedVisual = useMemo<PlayerVisual | null>(() => {
-    if (!generatedId) return null;
+    if (!generatedGlsl) return null;
 
     return {
-      id: generatedId,
+      id: 'preview',
       name: form.name.trim() || 'Untitled',
       tags: toTagArray(form.tags),
       isDemo: true,
     };
-  }, [form.name, form.tags, generatedId]);
+  }, [form.name, form.tags, generatedGlsl]);
 
   async function handleGenerate() {
     if (!prompt.trim()) return;
+    captureRef.current = null;
+    setSubmitting(false);
     setGenerating(true);
     try {
       const response = await generateVisualiser(prompt.trim(), DEFAULT_SYSTEM_PROMPT);
       const visualizer = response.data;
-      setGeneratedId(visualizer._id);
       setGeneratedGlsl(visualizer.glsl ?? '');
+      setGenerateKey((k) => k + 1);
       setForm({
         name: visualizer.name,
         source: visualizer.source,
@@ -103,14 +105,14 @@ export default function CreateVisualizerPage() {
   }
 
   async function handleSave() {
-    if (!generatedId) return;
+    if (!generatedGlsl) return;
 
     if (!form.name.trim()) {
       toast.error('Name is required.');
       return;
     }
 
-    const id = generatedId;
+    const glsl = generatedGlsl;
     const name = form.name.trim();
     const tags = toTagArray(form.tags);
     const isDemo = form.isDemo;
@@ -119,10 +121,10 @@ export default function CreateVisualizerPage() {
     setSubmitting(true);
 
     captureRef.current = async (blob) => {
-      const file = new File([blob], 'preview.png', { type: 'image/png' });
+      const file = new File([blob], 'preview.jpg', { type: 'image/jpeg' });
       try {
-        await uploadVisualizerImage(id, file);
-        await updateAdminVisualizer(id, { name, tags, isDemo, source });
+        const { data } = await createAdminVisualizer({ name, glsl, tags, isDemo, source });
+        await uploadVisualizerImage(data._id, file);
         toast.success('Visualizer saved.');
       } catch (error) {
         toast.error(getToastErrorMessage(error, 'Failed to save visualizer.'));
@@ -156,9 +158,9 @@ export default function CreateVisualizerPage() {
                 />
               </div>
             </>
-          ) : generatedVisual && generatedGlsl ? (
+          ) : generatedVisual ? (
             <VisualizerPlayer
-              key={generatedId}
+              key={generateKey}
               glsl={generatedGlsl}
               visual={generatedVisual}
               showPlaybackControls={false}
@@ -210,10 +212,10 @@ export default function CreateVisualizerPage() {
               className="btn-primary flex shrink-0 cursor-pointer items-center gap-1.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
             >
               <img src={generateIcon} alt="" className="h-4 w-4" />
-              {generating ? 'Generating…' : generatedId ? 'Regenerate' : 'Generate'}
+              {generating ? 'Generating…' : generatedGlsl ? 'Regenerate' : 'Generate'}
             </button>
 
-            {generatedId && !generating && (
+            {generatedGlsl && !generating && (
               <button
                 type="button"
                 onClick={() => void handleSave()}
