@@ -103,9 +103,9 @@ npm run format       # Prettier write
 Before running the seed, set admin credentials in your local `backend/.env` (see `.env.example`):
 
 ```env
-SEED_ADMIN_EMAIL=<your-admin-email>
-SEED_ADMIN_NAME=<admin display name>
-SEED_ADMIN_PASSWORD=<ask the team for the current dev password>
+ADMIN_EMAIL=<your-admin-email>
+ADMIN_NAME=<admin display name>
+ADMIN_PASSWORD=<ask the team for the current dev password>
 ```
 
 Then run from repo root:

@@ -77,14 +77,12 @@ async function seedJsonVisualizers(
 }
 
 async function seedAdmin(): Promise<void> {
-  const email = process.env.SEED_ADMIN_EMAIL;
-  const password = process.env.SEED_ADMIN_PASSWORD;
-  const name = process.env.SEED_ADMIN_NAME ?? 'Admin';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const name = process.env.ADMIN_NAME ?? 'Admin';
 
   if (!email || !password) {
-    throw new Error(
-      'SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must be set in .env to seed the admin user'
-    );
+    throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env to seed the admin user');
   }
 
   const existing = await User.findOne({ email });
@@ -99,7 +97,7 @@ async function seedAdmin(): Promise<void> {
 }
 
 async function seedAdminFavorites(): Promise<void> {
-  const email = process.env.SEED_ADMIN_EMAIL;
+  const email = process.env.ADMIN_EMAIL;
   if (!email) return;
 
   const admin = await User.findOne({ email });
