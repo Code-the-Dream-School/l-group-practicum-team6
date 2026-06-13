@@ -1,7 +1,44 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-})
+  resolve: {
+    alias: {
+      '@sonix/shared': path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../shared/src/index.ts'
+      ),
+    },
+  },
+  server: {
+    proxy: {
+      // Proxy /api to the backend. Defaults to the local dev server on 5001;
+      // e2e overrides VITE_PROXY_TARGET to hit its own isolated backend instance.
+      '/api': process.env.VITE_PROXY_TARGET ?? 'http://localhost:5001',
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/setupTests.ts'],
+    include: ['tests/**/*.{test,spec}.{ts,tsx}', '__tests__/**/*.{test,spec}.{ts,tsx}'],
+    css: true,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/**',
+        'dist/**',
+        '**/*.d.ts',
+        '**/*.config.*',
+        'src/setupTests.ts',
+        'src/main.tsx',
+        'tests/**',
+      ],
+    },
+  },
+});

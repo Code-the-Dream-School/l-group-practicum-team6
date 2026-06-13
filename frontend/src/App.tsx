@@ -1,40 +1,104 @@
-import { useEffect, useState } from 'react';
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import ExplorePage from './pages/ExplorePage';
+import DemoPlayerPage from './pages/DemoPlayerPage';
+import PlayerPage from './pages/PlayerPage';
+import MyVisualsPage from './pages/MyVisualsPage';
+import NotFoundPage from './pages/NotFoundPage';
+import SettingsPage from './pages/SettingsPage';
+import AdminVisualizersPage from './pages/AdminVisualizersPage';
+import CreateVisualizerPage from './pages/CreateVisualizerPage';
+import ProtectedRoute from './routes/ProtectedRoute';
+import GuestRoute from './routes/GuestRoute';
+import { ROUTES as RoutePaths } from '@sonix/shared';
+import AdminRoute from './routes/AdminRoute';
 function App() {
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Call the backend API
-    fetch('http://localhost:8080/api/hello')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch from backend');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setMessage(data.message);
-      })
-      .catch((err) => {
-        setError(err.message);
-      });
-  }, []);
-
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Frontend ↔ Backend Test</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path={RoutePaths.HOME} element={<LandingPage />} />
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        <Route
+          path={RoutePaths.LOGIN}
+          element={
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
+          }
+        />
 
-      {!error && (
-        <p>
-          Message from API: <strong>{message}</strong>
-        </p>
-      )}
-    </main>
+        <Route
+          path={RoutePaths.SIGNUP}
+          element={
+            <GuestRoute>
+              <SignUpPage />
+            </GuestRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.EXPLORE}
+          element={
+            <ProtectedRoute>
+              <ExplorePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path={RoutePaths.VISUALIZER_DEMO} element={<DemoPlayerPage />} />
+
+        <Route
+          path={RoutePaths.VISUALIZER}
+          element={
+            <ProtectedRoute>
+              <PlayerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.MY_VISUALS}
+          element={
+            <ProtectedRoute>
+              <MyVisualsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.SETTINGS}
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.ADMIN_VISUALS_CREATE}
+          element={
+            <AdminRoute>
+              <CreateVisualizerPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path={RoutePaths.ADMIN_VISUALS}
+          element={
+            <AdminRoute>
+              <AdminVisualizersPage />
+            </AdminRoute>
+          }
+        />
+
+        <Route path={RoutePaths.NOT_FOUND} element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
-export default App
+export default App;

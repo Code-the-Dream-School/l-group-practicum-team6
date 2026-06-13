@@ -46,8 +46,8 @@ function Button({ label, onClick, disabled }: ButtonProps) {
 TypeScript usually infers the type from the initial value. Only annotate when needed.
 
 ```ts
-const [count, setCount] = useState(0);           // inferred: number
-const [name, setName] = useState('');            // inferred: string
+const [count, setCount] = useState(0); // inferred: number
+const [name, setName] = useState(''); // inferred: string
 const [user, setUser] = useState<User | null>(null); // needs annotation
 ```
 
@@ -181,10 +181,7 @@ async function getBookHandler(req: Request<BookParams>, res: Response) {
   res.json(book);
 }
 
-async function listBooksHandler(
-  req: Request<{}, {}, {}, BooksQuery>,
-  res: Response
-) {
+async function listBooksHandler(req: Request<{}, {}, {}, BooksQuery>, res: Response) {
   const page = Number(req.query.page ?? '1');
   const sort = req.query.sort ?? 'title';
 
@@ -270,10 +267,10 @@ console.log(user?.name);
 A few that come up often:
 
 ```ts
-Partial<User>        // all fields optional
-Required<User>       // all fields required
-Pick<User, 'id' | 'name'>   // only those fields
-Omit<User, 'email'>         // everything except those fields
+Partial<User>; // all fields optional
+Required<User>; // all fields required
+Pick<User, 'id' | 'name'>; // only those fields
+Omit<User, 'email'>; // everything except those fields
 ```
 
 ## When not to type everything

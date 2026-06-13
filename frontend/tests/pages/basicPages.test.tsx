@@ -1,0 +1,180 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('../../src/context/useAuth', () => ({
+  useAuth: vi.fn(() => ({
+    user: null,
+    loading: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+    register: vi.fn(),
+    updateProfile: vi.fn(),
+  })),
+}));
+
+vi.mock('../../src/context/useToast', () => ({
+  useToast: () => ({
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  }),
+}));
+
+vi.mock('../../src/api/visualizers', () => ({
+  listVisualizers: vi.fn().mockResolvedValue({ data: [], total: 0, page: 1, pages: 0 }),
+  getVisualizerTags: vi.fn().mockResolvedValue({
+    data: ['geometric', 'audio', 'spectrum', 'fractal', 'warp'],
+  }),
+  getVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'visual123',
+      name: 'Test Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: false,
+      tags: ['abstract'],
+    },
+  }),
+  getDemoVisualizer: vi.fn().mockResolvedValue({
+    data: {
+      _id: 'demo123',
+      name: 'Demo Visualizer',
+      source: '',
+      glsl: 'void main() {}',
+      isDemo: true,
+      tags: ['reactive'],
+    },
+  }),
+}));
+
+vi.mock('../../src/hooks/useAudioAnalyzer', () => ({
+  useAudioAnalyzer: () => ({
+    getAudioData: vi.fn(),
+    status: 'idle',
+    isMicEnabled: true,
+    toggleMic: vi.fn(),
+    devices: [{ deviceId: 'default', label: 'Microphone' }],
+    selectedDeviceId: 'default',
+    selectDevice: vi.fn(),
+  }),
+}));
+
+vi.mock('../../src/utils/visualPreview', () => ({
+  startVisualPreview: vi.fn(() => vi.fn()),
+}));
+
+import { queryClient } from '../../src/lib/queryClient';
+import { QueryClientTestProvider } from '../../src/test/queryClient';
+import DemoPlayerPage from '../../src/pages/DemoPlayerPage';
+import ExplorePage from '../../src/pages/ExplorePage';
+import LandingPage from '../../src/pages/LandingPage';
+import MyVisualsPage from '../../src/pages/MyVisualsPage';
+import PlayerPage from '../../src/pages/PlayerPage';
+import { ROUTES as RoutePaths } from '@sonix/shared';
+import { useAuth } from '../../src/context/useAuth';
+
+function renderWithRouter(
+  ui: React.ReactElement,
+  { initialEntries = ['/'] }: { initialEntries?: string[] } = {}
+) {
+  return render(
+    <QueryClientTestProvider>
+      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
+    </QueryClientTestProvider>
+  );
+}
+
+const guestAuth = {
+  user: null,
+  loading: false,
+  login: vi.fn(),
+  logout: vi.fn(),
+  register: vi.fn(),
+  updateProfile: vi.fn(),
+};
+
+describe('basic pages', () => {
+  beforeEach(() => {
+    queryClient.clear();
+    vi.mocked(useAuth).mockReturnValue(guestAuth);
+  });
+  it('renders LandingPage', () => {
+    renderWithRouter(<LandingPage />);
+
+    expect(screen.getByText(/Transform Music Into Living Art/i)).toBeInTheDocument();
+  });
+
+  it('renders ExplorePage for authenticated users', () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: {
+        _id: 'u1',
+        name: 'Alex',
+        email: 'alex@example.com',
+        createdAt: '2026-01-01',
+      },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+      updateProfile: vi.fn(),
+    });
+
+    renderWithRouter(<ExplorePage />);
+
+    expect(screen.getByRole('heading', { name: /^Explore$/i })).toBeInTheDocument();
+  });
+
+  it('renders DemoPlayerPage', async () => {
+    renderWithRouter(<DemoPlayerPage />, { initialEntries: ['/visualizer/demo'] });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText(/Sonix\.ai home/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /Sign Up to unlock all visualizers/i })
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /^Explore$/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/favorite/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('playback-controls')).not.toBeInTheDocument();
+  });
+
+  it('renders PlayerPage', async () => {
+    vi.mocked(useAuth).mockReturnValue({
+      user: {
+        _id: 'u1',
+        name: 'Alex',
+        email: 'alex@example.com',
+        createdAt: '2026-01-01',
+      },
+      loading: false,
+      login: vi.fn(),
+      logout: vi.fn(),
+      register: vi.fn(),
+      updateProfile: vi.fn(),
+    });
+
+    renderWithRouter(
+      <Routes>
+        <Route path={RoutePaths.VISUALIZER} element={<PlayerPage />} />
+      </Routes>,
+      { initialEntries: ['/visualizer/visual123'] }
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('player-control-bar')).toBeInTheDocument();
+    });
+
+    expect(screen.getByLabelText(/Sonix\.ai home/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Explore/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Add to favorites/i)).toBeInTheDocument();
+  });
+
+  it('renders MyVisualsPage', () => {
+    renderWithRouter(<MyVisualsPage />);
+
+    expect(screen.getByRole('heading', { name: /My Visuals/i })).toBeInTheDocument();
+  });
+});

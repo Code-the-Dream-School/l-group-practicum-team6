@@ -1,200 +1,147 @@
-# Project Name
+# Sonix.ai
 
-Short, clear description of what this application does and who it’s for.  
-(1–2 sentences max.)
-
-**Example:**  
-A full-stack web application with a React frontend and a Node/Express backend that allows users to create, manage, and track data stored in a database.
-
-## 🚀 Live Demo
-
-- **Frontend Live Site:** https://your-frontend-url.com  
-- **Frontend Repo:** /frontend  
-- **Backend Repo:** /backend
-
-## 🧠 Problem Statement
-
-What problem does this project solve?
-
-- Who is this application for?
-- What pain point does it address?
-- Why does this solution matter?
-
-Focus on the **user problem**, not the technology.
-
-## 🎯 Features
-
-- User authentication (register, login, logout)
-- CRUD operations for core resources
-- Protected routes and authorization
-- Responsive UI (mobile & desktop)
-- Form validation and error handling
-- RESTful API integration
-
-## 📸 Screenshots
-
-Add screenshots or GIFs of key features here.
-
-
+A curated audio visualizer web app. Sign in, connect an audio source, watch
+reactive 3D visuals, browse the visual library, and save your favorites. Create
+your own visuals or generate them with AI.
 
 ## 🛠 Tech Stack
 
-### Frontend
-- React
-- JavaScript (ES6+)
-- HTML5
-- CSS3 / Tailwind / Bootstrap
-- Vite or Create React App
+This is a TypeScript monorepo with three npm workspaces: `frontend`, `backend`,
+and `shared`.
 
-### Backend
-- Node.js
-- Express.js
-- REST API
+| Workspace  | Stack                                                                          |
+| ---------- | ------------------------------------------------------------------------------ |
+| `frontend` | React 19, Vite, Tailwind CSS, React Router, TanStack Query, three.js (visuals) |
+| `backend`  | Node.js, Express 5, MongoDB (Mongoose), JWT auth                               |
+| `shared`   | TypeScript types and constants shared by both apps                             |
 
-### Database
-- MongoDB (Mongoose) **or**
-- PostgreSQL (Prisma / Knex / Sequelize)
-
-### Tooling
-- Git & GitHub
-- dotenv (environment variables)
-- ESLint / Prettier
+Tooling: TypeScript, ESLint, Prettier, Vitest (unit), Playwright (e2e),
+Husky + lint-staged (pre-commit), deployed on Render.
 
 ## 📁 Project Structure
 
 ```text
-project-root/
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── hooks/
-│   │   ├── services/        
-│   │   ├── styles/
-│   │   ├── utils/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── index.html
-│   └── package.json
-│
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   ├── config/
-│   ├── app.js
-│   ├── server.js
-│   └── package.json
-│
+l-group-practicum-team6/
+├── frontend/   # React + Vite client
+├── backend/    # Express + MongoDB API
+├── shared/     # Types and constants shared by both apps
+├── e2e/        # Playwright end-to-end tests
+├── docs/       # Project and contributor guides
 └── README.md
 ```
 
-## ⚙️ Setup & Installation
+## ⚙️ Setup
 
 ### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
-- MongoDB or PostgreSQL (local or cloud)
 
-### Backend Setup
+- Node.js 24 (see `.nvmrc`)
+- npm
+- A MongoDB connection string (local or Atlas)
+
+### Install
+
+This is a workspace monorepo — always run `npm install` from the **repo root**,
+not from inside a workspace folder.
 
 ```bash
-cd backend
+git clone <repo-url>
+cd l-group-practicum-team6
 npm install
-npm run dev
 ```
 
-Create a `.env` file inside the `backend` folder:
+### Environment Variables
+
+Backend (`backend/.env`):
+
+| Variable         | Description                                  |
+| ---------------- | -------------------------------------------- |
+| `PORT`           | Backend port (default `5001`)                |
+| `MONGO_URI`      | MongoDB connection string                    |
+| `JWT_SECRET`     | Secret used to sign JWT tokens               |
+| `CLIENT_URL`     | Frontend URL allowed by CORS                 |
+| `ADMIN_EMAIL`    | Email for the admin user seeded on startup   |
+| `ADMIN_PASSWORD` | Password for the seeded admin user           |
+| `ADMIN_NAME`     | Display name for the seeded admin user       |
+| `GEMINI_API_KEY` | Gemini API key for shader generation         |
+| `GEMINI_MODEL`   | Gemini model name used for shader generation |
+
+Frontend (`frontend/.env`):
+
+| Variable               | Description                   |
+| ---------------------- | ----------------------------- |
+| `VITE_API_BASE_URL`    | Backend URL the browser calls |
+| `VITE_PUBLIC_APP_NAME` | App name shown in the UI      |
+
+Never commit `.env` files. For full setup details and troubleshooting, see
+[SETUP.md](SETUP.md).
+
+### Run
+
+```bash
+npm run dev      # backend + frontend together
+```
+
+- Frontend: `http://localhost:5173`
+- Backend: `http://localhost:5001`
+
+## 🧪 Scripts
+
+Run from the repo root:
+
+```bash
+npm run dev          # backend + frontend in parallel
+npm run build        # build all workspaces
+npm test             # unit tests (backend + frontend)
+npm run test:e2e     # Playwright end-to-end tests
+npm run lint         # ESLint across all workspaces
+npm run typecheck    # TypeScript check across all workspaces
+npm run format       # Prettier write
+```
+
+## Database Seed
+
+Before running the seed, set admin credentials in your local `backend/.env` (see `.env.example`):
 
 ```env
-PORT=5000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
+ADMIN_EMAIL=<your-admin-email>
+ADMIN_NAME=<admin display name>
+ADMIN_PASSWORD=<ask the team for the current dev password>
 ```
 
-Backend runs on:  
-http://localhost:8080
-
-### Frontend Setup
+Then run from repo root:
 
 ```bash
-cd frontend
-npm install
-npm run dev
+npm run seed -w backend              # idempotent — re-runs produce the same state
 ```
 
-Frontend runs on:  
-http://localhost:5173
+Seed inserts:
 
-## 🧪 Available Scripts
+- 20 visualizers from `backend/src/seed/visualizers.seed.json` (with PNG previews uploaded to GridFS, first one marked `isDemo: true`)
+- 1 admin user — credentials from `SEED_ADMIN_*` env vars
+- 5 `UserVisual` favorites for the admin (first 5 visualizers by `_id`)
 
-### Frontend
-```bash
-npm run dev
-npm run build
-npm run preview
-```
-
-### Backend
-```bash
-npm run dev
-npm start
-```
+The seed script refuses to run when `NODE_ENV=production`.
 
 ## 🔐 API Overview
 
-### Example Endpoints
+All routes are prefixed with `/api/v1`.
 
 ```text
-POST   /api/auth/register
-POST   /api/auth/login
-GET    /api/items
-POST   /api/items
-PUT    /api/items/:id
-DELETE /api/items/:id
+GET    /api/v1/health
+POST   /api/v1/auth/register
+POST   /api/v1/auth/login
+POST   /api/v1/auth/logout
+GET    /api/v1/users/current
+GET    /api/v1/visualizers
+GET    /api/v1/images
 ```
 
-## 🤝 Team & Collaboration
+## 🤝 Contributing
 
-### Team Members
-- Name — Role
-- Name — Role
-- Name — Role
-
-### Workflow
-- GitHub Issues for task tracking
-- Feature branches for development
-- Pull Requests required for all merges
-- Code reviews before merging to `main`
-
-
-## 🧩 Development Process
-
-- Agile / sprint-based workflow
-- Backend API built before frontend integration
-- MVP defined early
-- Incremental feature development
-
-## 📌 Known Issues / Limitations
-
-- Limited role-based access control
-- No automated tests yet
-- Performance optimizations pending
-
-## 🛣 Future Improvements
-
-- Add automated testing (Jest, Supertest)
-- Improve security and validation
-- Add caching and performance improvements
-- Dockerize the application
-
-## 🙌 Acknowledgments
-
-- Mentors
-- Instructors
-- Open-source libraries and tools
+This is a student team project. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+workflow and [docs/GIT_GUIDE.md](docs/GIT_GUIDE.md) for branch, commit, and PR
+naming. Pull requests and code review are required before merging to `dev`.
 
 ## 📄 License
 
-This project is for educational purposes only.
+For educational purposes only.
